@@ -1,0 +1,198 @@
+[
+  {
+    "id": "notice_course_registration_01",
+    "intent": "course_registration",
+    "title": "Spring 2027 Registration Windows Posted",
+    "body": "Registration windows for Spring 2027 are now posted on the Student Portal. Seniors may register beginning next Monday, followed by juniors, sophomores, and first-year students in the following days.",
+    "date": "2026-11-03"
+  },
+  {
+    "id": "notice_course_registration_02",
+    "intent": "course_registration",
+    "title": "New Waitlist Auto-Enroll Policy",
+    "body": "Starting this semester, waitlisted students are automatically enrolled when a seat opens, instead of receiving only a notification. Check your Student Portal messages for confirmation before assuming you still need to act.",
+    "date": "2026-08-18"
+  },
+  {
+    "id": "notice_course_registration_03",
+    "intent": "course_registration",
+    "title": "Add/Drop Deadline Reminder",
+    "body": "The add/drop deadline for the current semester is this Friday at 11:59 PM. Courses dropped after this date will show a withdrawal grade on the transcript.",
+    "date": "2026-09-02"
+  },
+  {
+    "id": "notice_course_registration_04",
+    "intent": "course_registration",
+    "title": "Prerequisite Override Requests Move Online",
+    "body": "Prerequisite override requests must now be submitted through the Student Portal override form instead of paper forms at the department office.",
+    "date": "2026-07-21"
+  },
+  {
+    "id": "notice_exam_01",
+    "intent": "exam",
+    "title": "Final Exam Schedule Published",
+    "body": "The final exam schedule for this semester is now available on the Registrar's exam calendar page. Review your exam times before the conflict-reporting deadline.",
+    "date": "2026-11-10"
+  },
+  {
+    "id": "notice_exam_02",
+    "intent": "exam",
+    "title": "Conflict Exam Request Deadline",
+    "body": "Students with two exams scheduled at the same time must submit a conflict exam request by the date listed on the exam calendar to be rescheduled.",
+    "date": "2026-11-17"
+  },
+  {
+    "id": "notice_exam_03",
+    "intent": "exam",
+    "title": "Accommodated Testing Room Assignments",
+    "body": "Students approved for extended time or a reduced-distraction room should check the Office of Accessibility Services portal for their assigned testing room before exam week.",
+    "date": "2026-11-24"
+  },
+  {
+    "id": "notice_exam_04",
+    "intent": "exam",
+    "title": "Exam Week Building Hours Extended",
+    "body": "Library and study room hours are extended during exam week; see the Library's exam-week hours notice for the updated schedule.",
+    "date": "2026-12-01"
+  },
+  {
+    "id": "notice_tuition_01",
+    "intent": "tuition",
+    "title": "Tuition Payment Deadline Approaching",
+    "body": "Tuition payment for the upcoming semester is due in two weeks. Set up an installment plan now if you need to spread out payments.",
+    "date": "2026-07-15"
+  },
+  {
+    "id": "notice_tuition_02",
+    "intent": "tuition",
+    "title": "Installment Plan Enrollment Fee Update",
+    "body": "The enrollment fee for the four-installment tuition payment plan has been updated; see the Bursar's payment plan page for the current amount.",
+    "date": "2026-06-20"
+  },
+  {
+    "id": "notice_tuition_03",
+    "intent": "tuition",
+    "title": "New Authorized Payer Feature Live",
+    "body": "Students can now add a parent or sponsor as an authorized payer directly from the Student Portal billing tab.",
+    "date": "2026-05-11"
+  },
+  {
+    "id": "notice_tuition_04",
+    "intent": "tuition",
+    "title": "Refund Schedule Posted for Withdrawals",
+    "body": "The prorated refund schedule for students withdrawing from all classes this semester is now posted on the Bursar's refund policy page.",
+    "date": "2026-08-25"
+  },
+  {
+    "id": "notice_class_schedule_01",
+    "intent": "class_schedule",
+    "title": "Next Semester Schedule Preview Available",
+    "body": "A tentative preview of next semester's class schedule is now available on the Registrar's site ahead of the official registration window.",
+    "date": "2026-10-06"
+  },
+  {
+    "id": "notice_class_schedule_02",
+    "intent": "class_schedule",
+    "title": "Room Changes Posted for Several Sections",
+    "body": "Several course sections have updated room assignments due to building maintenance; check My Schedule for the latest room numbers.",
+    "date": "2026-09-08"
+  },
+  {
+    "id": "notice_class_schedule_03",
+    "intent": "class_schedule",
+    "title": "New Printable Weekly Schedule Option",
+    "body": "You can now generate a PDF of your weekly class schedule directly from the My Schedule page using the new Print Schedule button.",
+    "date": "2026-08-04"
+  },
+  {
+    "id": "notice_class_schedule_04",
+    "intent": "class_schedule",
+    "title": "Linked Lab and Discussion Sections Reminder",
+    "body": "Remember that courses with a linked lab or discussion section require registering for both the lecture and the linked section together.",
+    "date": "2026-08-12"
+  },
+  {
+    "id": "notice_student_services_01",
+    "intent": "student_services",
+    "title": "Extended Counseling Hours This Month",
+    "body": "Counseling and Psychological Services is offering extended evening hours this month to accommodate more student appointments.",
+    "date": "2026-10-13"
+  },
+  {
+    "id": "notice_student_services_02",
+    "intent": "student_services",
+    "title": "Involvement Fair Date Announced",
+    "body": "The fall Involvement Fair where student clubs recruit new members will be held in the Student Union Plaza; check the Student Life portal for the exact date.",
+    "date": "2026-08-28"
+  },
+  {
+    "id": "notice_student_services_03",
+    "intent": "student_services",
+    "title": "Tutoring Sign-Ups Open for the Semester",
+    "body": "Sign-ups for free peer tutoring through the Academic Success Center are now open for the current semester on the Student Portal.",
+    "date": "2026-09-01"
+  },
+  {
+    "id": "notice_student_services_04",
+    "intent": "student_services",
+    "title": "ID Card Replacement Fee Waived for Stolen Cards",
+    "body": "Card Services is temporarily waiving the replacement fee for students who file a police report for a stolen student ID card.",
+    "date": "2026-09-22"
+  },
+  {
+    "id": "notice_graduation_01",
+    "intent": "graduation",
+    "title": "Graduation Application Deadline Reminder",
+    "body": "The deadline to apply for graduation this term is next Friday. Submit your application through the Student Portal before the deadline.",
+    "date": "2026-10-20"
+  },
+  {
+    "id": "notice_graduation_02",
+    "intent": "graduation",
+    "title": "Commencement Date Confirmed",
+    "body": "The commencement ceremony date for this term has been confirmed; see the Commencement website for the schedule and guest ticket policy.",
+    "date": "2026-10-27"
+  },
+  {
+    "id": "notice_graduation_03",
+    "intent": "graduation",
+    "title": "Cap and Gown Ordering Window Open",
+    "body": "The campus bookstore's graduation portal is now open for ordering caps, gowns, and regalia for this term's commencement.",
+    "date": "2026-11-05"
+  },
+  {
+    "id": "notice_graduation_04",
+    "intent": "graduation",
+    "title": "Honors Cutoff GPA Updated for This Term",
+    "body": "The cumulative GPA cutoffs for Latin honors this term have been posted on the Registrar's honors policy page.",
+    "date": "2026-11-12"
+  },
+  {
+    "id": "notice_technical_support_01",
+    "intent": "technical_support",
+    "title": "Scheduled Wi-Fi Maintenance This Weekend",
+    "body": "Campus Wi-Fi, including HANU-Secure, will have brief outages this weekend during scheduled maintenance overnight.",
+    "date": "2026-09-11"
+  },
+  {
+    "id": "notice_technical_support_02",
+    "intent": "technical_support",
+    "title": "New Self-Service Password Reset Tool",
+    "body": "A new self-service password reset tool is now available on the Student Portal login page, reducing the need to contact the IT Help Desk directly.",
+    "date": "2026-08-07"
+  },
+  {
+    "id": "notice_technical_support_03",
+    "intent": "technical_support",
+    "title": "VPN Client Update Required",
+    "body": "Students connecting to the campus VPN from off campus must update to the latest VPN client version listed on the IT Services site.",
+    "date": "2026-09-15"
+  },
+  {
+    "id": "notice_technical_support_04",
+    "intent": "technical_support",
+    "title": "Laptop Loan Program Extended Hours",
+    "body": "The Library's laptop loan desk is extending its hours during the first two weeks of the semester to meet higher demand.",
+    "date": "2026-08-20"
+  }
+]

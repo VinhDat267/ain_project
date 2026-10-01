@@ -1,0 +1,13 @@
+# Copied from ../python-baseline/requirements-common.txt, plus this
+# project's addition (scikit-learn) per ../python-baseline/README.md.
+streamlit==1.39.0
+numpy==1.26.4
+pandas==2.2.3
+matplotlib==3.9.2
+pytest==8.3.3
+
+# Project 12 addition: classical text classification / IR (Bag-of-Words,
+# TF-IDF, Naive Bayes, cosine similarity, etc.).
+# Do not add a hosted LLM client library here (no openai, no
+# huggingface_hub inference client, etc.).
+scikit-learn==1.5.2

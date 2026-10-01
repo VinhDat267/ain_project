@@ -1,0 +1,121 @@
+id,query,type,expected_intent,expected_doc_id,notes
+q_001,What happens if the course section I want is full?,normal,course_registration,faq_course_registration_05,verbatim FAQ question
+q_002,How do I order my cap and gown for graduation?,normal,graduation,faq_graduation_05,verbatim FAQ question
+q_003,Why can't I conncet to the campus Wi-Fi network?,typo,technical_support,faq_technical_support_02,one adjacent-letter-swap typo injected
+q_004,What's the best restaurant near campus for vegan food?,out_of_corpus,,,"correct behavior: no document / low confidence, do not fabricate"
+q_005,How do I reset my Sutdent Portal password?,typo,technical_support,faq_technical_support_01,one adjacent-letter-swap typo injected
+q_006,When is tuition due for the semester?,normal,tuition,faq_tuition_01,verbatim FAQ question
+q_007,Why can't I connect to the campus Wi-Fi network?,normal,technical_support,faq_technical_support_02,verbatim FAQ question
+q_008,How do I request an official transcript after graduating?,normal,graduation,faq_graduation_09,verbatim FAQ question
+q_009,How do I get access to campus-licensed software?,normal,technical_support,faq_technical_support_03,verbatim FAQ question
+q_010,Does the university offer a shuttle to the airport on weekends?,out_of_corpus,,,"correct behavior: no document / low confidence, do not fabricate"
+q_011,Where can I find my lcass schedule?,typo,class_schedule,faq_class_schedule_01,one adjacent-letter-swap typo injected
+q_012,How can I confirm I've completed everything needed for my degree?,paraphrase,graduation,faq_graduation_02,"reworded, same underlying question"
+q_013,"After I graduate, how do I get an official transcript sent out?",paraphrase,graduation,faq_graduation_09,"reworded, same underlying question"
+q_014,When is tuition due for the seemster?,typo,tuition,faq_tuition_01,one adjacent-letter-swap typo injected
+q_015,When does final exam week happen?,paraphrase,exam,faq_exam_01,"reworded, same underlying question"
+q_016,How do I make an papointment with academic advising?,typo,student_services,faq_student_services_01,one adjacent-letter-swap typo injected
+q_017,When does the graduation ceremony take place?,paraphrase,graduation,faq_graduation_03,"reworded, same underlying question"
+q_018,How can I download software that the campus provides a license for?,paraphrase,technical_support,faq_technical_support_03,"reworded, same underlying question"
+q_019,How do I find out which building a class meets in?,normal,class_schedule,faq_class_schedule_04,verbatim FAQ question
+q_020,What mental health support is avaliable on campus?,typo,student_services,faq_student_services_04,one adjacent-letter-swap typo injected
+q_021,Can I register for a cuorse if I have not completed the prerequisite?,typo,course_registration,faq_course_registration_03,one adjacent-letter-swap typo injected
+q_022,How do I book a meeting with an academic advisor?,paraphrase,student_services,faq_student_services_01,"reworded, same underlying question"
+q_023,How do I get access to cmapus-licensed software?,typo,technical_support,faq_technical_support_03,one adjacent-letter-swap typo injected
+q_024,Can I bring my dog to live with me in the dorm?,out_of_corpus,,,"correct behavior: no document / low confidence, do not fabricate"
+q_025,Is it possible to enroll in a class without finishing the required prerequisite first?,paraphrase,course_registration,faq_course_registration_03,"reworded, same underlying question"
+q_026,What's the process for signing up for courses at Hanoi University?,paraphrase,course_registration,faq_course_registration_01,"reworded, same underlying question"
+q_027,How do I check if I have met all my degree requirements?,normal,graduation,faq_graduation_02,verbatim FAQ question
+q_028,I lost my student ID - how do I get a new one?,paraphrase,student_services,faq_student_services_06,"reworded, same underlying question"
+q_029,How do I request etxra exam time for a documented disability?,typo,exam,faq_exam_05,one adjacent-letter-swap typo injected
+q_030,How do I check if I have met all my degree requireemnts?,typo,graduation,faq_graduation_02,one adjacent-letter-swap typo injected
+q_031,Can I request a makeup exam if I am sick on exam day?,normal,exam,faq_exam_03,verbatim FAQ question
+q_032,Where can I see what building my class is held in?,paraphrase,class_schedule,faq_class_schedule_04,"reworded, same underlying question"
+q_033,How do I aplpy for a need-based tuition grant?,typo,tuition,faq_tuition_04,one adjacent-letter-swap typo injected
+q_034,How do I check if two of my lcasses overlap in time?,typo,class_schedule,faq_class_schedule_02,one adjacent-letter-swap typo injected
+q_035,What mental health support is available on campus?,normal,student_services,faq_student_services_04,verbatim FAQ question
+q_036,How do I apply for a need-based tuition grant?,normal,tuition,faq_tuition_04,verbatim FAQ question
+q_037,What counseling or mental health resources can I access at HANU?,paraphrase,student_services,faq_student_services_04,"reworded, same underlying question"
+q_038,Is there a way to split my tuition payment into smaller chunks?,paraphrase,tuition,faq_tuition_02,"reworded, same underlying question"
+q_039,How do I make an appointment with academic advising?,normal,student_services,faq_student_services_01,verbatim FAQ question
+q_040,What happens if I miss the utition payment deadline?,typo,tuition,faq_tuition_03,one adjacent-letter-swap typo injected
+q_041,How do I know if a clsas has a required lab or discussion section?,typo,class_schedule,faq_class_schedule_07,one adjacent-letter-swap typo injected
+q_042,My class shows TBA for the room - what does that mean?,paraphrase,class_schedule,faq_class_schedule_05,"reworded, same underlying question"
+q_043,What's the process for applying for graduation?,paraphrase,graduation,faq_graduation_01,"reworded, same underlying question"
+q_044,"If I get sick on the day of my final, can I take it later instead?",paraphrase,exam,faq_exam_03,"reworded, same underlying question"
+q_045,Where is the campus health center located?,normal,student_services,faq_student_services_02,verbatim FAQ question
+q_046,Where is the campus helath center located?,typo,student_services,faq_student_services_02,one adjacent-letter-swap typo injected
+q_047,Can I requets a makeup exam if I am sick on exam day?,typo,exam,faq_exam_03,one adjacent-letter-swap typo injected
+q_048,How can I apply for financial aid based on my family's income?,paraphrase,tuition,faq_tuition_04,"reworded, same underlying question"
+q_049,What do I do if I am locked out of my account after too many failed logins?,normal,technical_support,faq_technical_support_06,verbatim FAQ question
+q_050,What time does the campus coffee shop close on Fridays?,out_of_corpus,,,"correct behavior: no document / low confidence, do not fabricate"
+q_051,How do I request extra exam time for a documented disability?,normal,exam,faq_exam_05,verbatim FAQ question
+q_052,Can I register for a course if I have not completed the prerequisite?,normal,course_registration,faq_course_registration_03,verbatim FAQ question
+q_053,What does it mean if a class is listde as TBA for room or time?,typo,class_schedule,faq_class_schedule_05,one adjacent-letter-swap typo injected
+q_054,How do I reset my Student Portal password?,normal,technical_support,faq_technical_support_01,verbatim FAQ question
+q_055,What do I do if two of my final exams are scheduled at the same time?,normal,exam,faq_exam_02,verbatim FAQ question
+q_056,How can I tell if my class times conflict with each other?,paraphrase,class_schedule,faq_class_schedule_02,"reworded, same underlying question"
+q_057,Does the university sell parking permits for food trucks?,out_of_corpus,,,"correct behavior: no document / low confidence, do not fabricate"
+q_058,How do I get a refund if I withdraw from all my classes?,normal,tuition,faq_tuition_06,verbatim FAQ question
+q_059,How do I register for classse at HANU?,typo,course_registration,faq_course_registration_01,one adjacent-letter-swap typo injected
+q_060,How do I use the VPN to reach campus resources from home?,paraphrase,technical_support,faq_technical_support_07,"reworded, same underlying question"
+q_061,What tutoring services are available for struggling in a course?,normal,student_services,faq_student_services_09,verbatim FAQ question
+q_062,Where can I find free tutoring if I'm behind in a class?,paraphrase,student_services,faq_student_services_09,"reworded, same underlying question"
+q_063,What happens if I miss the tuition payment deadline?,normal,tuition,faq_tuition_03,verbatim FAQ question
+q_064,Where do I go to see my current classes and times?,paraphrase,class_schedule,faq_class_schedule_01,"reworded, same underlying question"
+q_065,What are the consequences of paying my tuition bill late?,paraphrase,tuition,faq_tuition_03,"reworded, same underlying question"
+q_066,What should I do if the class section I need has no open seats?,paraphrase,course_registration,faq_course_registration_05,"reworded, same underlying question"
+q_067,What tutoring services are available for strugglnig in a course?,typo,student_services,faq_student_services_09,one adjacent-letter-swap typo injected
+q_068,When are final exams scheduled?,normal,exam,faq_exam_01,verbatim FAQ question
+q_069,How can I tell whether a course comes with a mandatory lab or discussion?,paraphrase,class_schedule,faq_class_schedule_07,"reworded, same underlying question"
+q_070,What is the dad/drop deadline for Fall 2026?,typo,course_registration,faq_course_registration_02,one adjacent-letter-swap typo injected
+q_071,Can I pay tuition in installments?,normal,tuition,faq_tuition_02,verbatim FAQ question
+q_072,How do I get a refund if I withdraw from all my clasess?,typo,tuition,faq_tuition_06,one adjacent-letter-swap typo injected
+q_073,Where can I find my class schedule?,normal,class_schedule,faq_class_schedule_01,verbatim FAQ question
+q_074,What is a registration hold and how do I clear it?,normal,course_registration,faq_course_registration_09,verbatim FAQ question
+q_075,How do I check if two of my classes overlap in time?,normal,class_schedule,faq_class_schedule_02,verbatim FAQ question
+q_076,What do I do if I am lockde out of my account after too many failed logins?,typo,technical_support,faq_technical_support_06,one adjacent-letter-swap typo injected
+q_077,What is the current price of gold?,out_of_corpus,,,"correct behavior: no document / low confidence, do not fabricate"
+q_078,What is the score of tonight's professional football game?,out_of_corpus,,,"correct behavior: no document / low confidence, do not fabricate"
+q_079,My account got locked after failed login attempts - what now?,paraphrase,technical_support,faq_technical_support_06,"reworded, same underlying question"
+q_080,Two of my finals overlap on the same day - who do I tell?,paraphrase,exam,faq_exam_02,"reworded, same underlying question"
+q_081,Where do I order my graduation cap and gown?,paraphrase,graduation,faq_graduation_05,"reworded, same underlying question"
+q_082,"If I drop every class this semester, how do refunds work?",paraphrase,tuition,faq_tuition_06,"reworded, same underlying question"
+q_083,How do I connect to the acmpus VPN from off campus?,typo,technical_support,faq_technical_support_07,one adjacent-letter-swap typo injected
+q_084,What do I do if two of my fnial exams are scheduled at the same time?,typo,exam,faq_exam_02,one adjacent-letter-swap typo injected
+q_085,How do I register for classes at HANU?,normal,course_registration,faq_course_registration_01,verbatim FAQ question
+q_086,Can I rent a kayak from the campus recreation center?,out_of_corpus,,,"correct behavior: no document / low confidence, do not fabricate"
+q_087,What is the weather forecast for this weekend?,out_of_corpus,,,"correct behavior: no document / low confidence, do not fabricate"
+q_088,How do I know if a class has a required lab or discussion section?,normal,class_schedule,faq_class_schedule_07,verbatim FAQ question
+q_089,Does the university have a rooftop stargazing club?,out_of_corpus,,,"correct behavior: no document / low confidence, do not fabricate"
+q_090,How do I find out which building a class metes in?,typo,class_schedule,faq_class_schedule_04,one adjacent-letter-swap typo injected
+q_091,What is the campus mascot's name?,out_of_corpus,,,"correct behavior: no document / low confidence, do not fabricate"
+q_092,How do I reuqest an official transcript after graduating?,typo,graduation,faq_graduation_09,one adjacent-letter-swap typo injected
+q_093,When is the commencemetn ceremony held?,typo,graduation,faq_graduation_03,one adjacent-letter-swap typo injected
+q_094,I forgot my Student Portal password - how do I reset it?,paraphrase,technical_support,faq_technical_support_01,"reworded, same underlying question"
+q_095,How can I get additional time on exams because of a disability accommodation?,paraphrase,exam,faq_exam_05,"reworded, same underlying question"
+q_096,How do I get a replaecment student ID card?,typo,student_services,faq_student_services_06,one adjacent-letter-swap typo injected
+q_097,How do I connect to the campus VPN from off campus?,normal,technical_support,faq_technical_support_07,verbatim FAQ question
+q_098,How do I apply to garduate?,typo,graduation,faq_graduation_01,one adjacent-letter-swap typo injected
+q_099,Where on campus is the student health center?,paraphrase,student_services,faq_student_services_02,"reworded, same underlying question"
+q_100,What happens if I miss a final exam withuot an approved excuse?,typo,exam,faq_exam_06,one adjacent-letter-swap typo injected
+q_101,What happens if I miss a final exam without an approved excuse?,normal,exam,faq_exam_06,verbatim FAQ question
+q_102,Who won the university's last home basketball game?,out_of_corpus,,,"correct behavior: no document / low confidence, do not fabricate"
+q_103,Are there fireworks on campus for the Fourth of July?,out_of_corpus,,,"correct behavior: no document / low confidence, do not fabricate"
+q_104,By when do I need to add or drop a class this fall?,paraphrase,course_registration,faq_course_registration_02,"reworded, same underlying question"
+q_105,What does it mean if a class is listed as TBA for room or time?,normal,class_schedule,faq_class_schedule_05,verbatim FAQ question
+q_106,How do I apply to graduate?,normal,graduation,faq_graduation_01,verbatim FAQ question
+q_107,What happens if the course esction I want is full?,typo,course_registration,faq_course_registration_05,one adjacent-letter-swap typo injected
+q_108,How do I get a replacement student ID card?,normal,student_services,faq_student_services_06,verbatim FAQ question
+q_109,Is there a farmers market near campus on Sundays?,out_of_corpus,,,"correct behavior: no document / low confidence, do not fabricate"
+q_110,How do I odrer my cap and gown for graduation?,typo,graduation,faq_graduation_05,one adjacent-letter-swap typo injected
+q_111,My account has a registration hold - what does that mean and how do I remove it?,paraphrase,course_registration,faq_course_registration_09,"reworded, same underlying question"
+q_112,What is the university president's favorite book?,out_of_corpus,,,"correct behavior: no document / low confidence, do not fabricate"
+q_113,When are final xeams scheduled?,typo,exam,faq_exam_01,one adjacent-letter-swap typo injected
+q_114,What's the penalty for skipping a final without a valid excuse?,paraphrase,exam,faq_exam_06,"reworded, same underlying question"
+q_115,What's the payment deadline for this semester's tuition?,paraphrase,tuition,faq_tuition_01,"reworded, same underlying question"
+q_116,Can I pay tuiiton in installments?,typo,tuition,faq_tuition_02,one adjacent-letter-swap typo injected
+q_117,My laptop won't join the campus Wi-Fi - what should I check?,paraphrase,technical_support,faq_technical_support_02,"reworded, same underlying question"
+q_118,What is the add/drop deadline for Fall 2026?,normal,course_registration,faq_course_registration_02,verbatim FAQ question
+q_119,What is a ergistration hold and how do I clear it?,typo,course_registration,faq_course_registration_09,one adjacent-letter-swap typo injected
+q_120,When is the commencement ceremony held?,normal,graduation,faq_graduation_03,verbatim FAQ question
