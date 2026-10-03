@@ -94,6 +94,7 @@ Project 12 thuộc mảng **Language** trong 7 mảng của CS50 AI, nhưng dùn
 | MRR, P@k, Hit@k | — | *Evaluating Models* (precision là nền) | **Mở rộng**: chỉ số chuyên cho bài toán truy hồi |
 | Ngưỡng từ chối trả lời | **W4**: ngưỡng của perceptron (phép tương tự) | *Supervised Learning* §5; *Evaluating Models* (đánh đổi precision và recall) | Liên hệ |
 | Chọn ngưỡng và α bằng quét lưới | **W3 Optimization**: hàm mục tiêu, tìm phương án tốt nhất | *Tối ưu hoá: chọn phương án tốt nhất* | Liên hệ |
+| BM25 (chỉ để so sánh) | — | — | **Ngoài môn** (sách *Introduction to Information Retrieval*, chương 11). Sản phẩm vẫn dùng cosine như đề bài yêu cầu |
 | So sánh lý thuyết với word2vec, Transformer, LLM | **W6**: word2vec, Attention, Transformers; **W5**: Neural Networks | *Neural Networks* | So sánh, không cài đặt |
 
 ### 1.6 Các thí nghiệm
@@ -111,7 +112,7 @@ Tất cả chạy trên **tập dev**, trừ dòng cuối.
 | E5 | **So sánh 5 cách phân loại intent** trên câu hỏi: lớp phổ biến nhất, k-NN (k = 1, 5), Naive Bayes, Logistic Regression, Linear SVM; train đầy đủ và LODO | Thuật toán nào tốt nhất? Rò rỉ làm điểm ảo bao nhiêu? | W2, W4, W6 | Vinh | 12/10 |
 | E5b | 5-fold cross-validation phân tầng trên 112 tài liệu, cùng các thuật toán | Kết luận của E5 có vững khi đổi cách chia dữ liệu không? | W4 | Dương | 12/10 |
 | E6 | Quét ngưỡng từ chối cho cấu hình đã chọn | Ngưỡng nào cân bằng tốt nhất giữa từ chối đúng và từ chối nhầm? | W3, W4 | Vinh | 13/10 |
-| E7 | *(Tuỳ chọn)* BM25 so với TF-IDF | Một thuật toán truy hồi ngoài môn có tốt hơn không? | ngoài môn | Việt Anh | 13/10 |
+| E7 | BM25 tự viết so với TF-IDF + cosine | Một thuật toán truy hồi ngoài môn có tốt hơn không? | ngoài môn | Vinh | 11/10 |
 | **Test** | **Một mẻ duy nhất trên tập test:** cấu hình cuối và các phương pháp so sánh đã chốt | **Kết quả chính thức đưa vào slide** | | Vinh | **15/10** |
 
 ### 1.7 Sáu điều cần biết
@@ -153,22 +154,22 @@ Phần ⑤ Kết quả và ⑥ Kết luận là nhóm bổ sung. Nếu thầy c�
 
 | # | Phần | Nội dung slide | Kiến thức môn | Trình bày | Lấy từ việc |
 |---|---|---|---|---|---|
-| 1 | Mở đầu | Tên project, thành viên, dàn ý bài | — | Vinh | V15 |
+| 1 | Mở đầu | Tên project, thành viên, dàn ý bài | — | Vinh | V16 |
 | 2 | **① Project làm gì** | Bài toán trợ lý FAQ: đầu vào, đầu ra, 3 yêu cầu (phân loại intent, truy hồi, từ chối) | W6 | Dương | ASSIGNMENT.md |
 | 3 | ① | Dữ liệu: 112 tài liệu, 7 intent, 120 câu test chia theo 4 loại; thống kê corpus | — | Dương | D05 |
 | 4 | ① | **Demo nhanh**: một câu bình thường chạy trên app | — | Dương | D10 |
-| 5 | **② Team đã làm gì, làm thế nào** | Sơ đồ hệ thống, ai làm phần nào; quy trình dev/test, đóng băng, khoá tập test | W4 holdout, overfitting | Vinh | V08, V16 |
+| 5 | **② Team đã làm gì, làm thế nào** | Sơ đồ hệ thống, ai làm phần nào; quy trình dev/test, đóng băng, khoá tập test | W4 holdout, overfitting | Vinh | V08, V17 |
 | 6 | ② | Cách đo: MRR, P@k, Hit@k, Intent Acc, Balanced E2E; vì sao P@3 tối đa là 1/3 | *Evaluating Models* | Vinh | V07 |
 | 7 | ② | Ánh xạ kiến thức môn học (bảng rút gọn của mục 1.5) | W2–W6 | Vinh | mục 1.5 |
 | 8 | **③ Thuật toán** | TF-IDF và cosine: công thức, ví dụ tính tay, vì sao dùng cosine thay cho Euclid | W6 (mở rộng), W4 | Việt Anh | A01, A04 |
 | 9 | ③ | N-gram ký tự và kết hợp với n-gram từ | W6 | Việt Anh | A07 |
-| 10 | ③ | Quy tắc từ chối: ngưỡng trên score top-1 | W4 (liên hệ) | Việt Anh | A04, V14 |
+| 10 | ③ | Quy tắc từ chối: ngưỡng trên score top-1 | W4 (liên hệ) | Việt Anh | A04, V15 |
 | 11 | ③ | Naive Bayes (Bayes' rule, giả định độc lập, Laplace smoothing) và Logistic Regression | W2, W4, W6 | Dương | D04, D06 |
-| 12 | **④ So sánh** | Retrieval: Jaccard, TF-IDF theo từ, n-gram ký tự, kết hợp (BM25 nếu có); so sánh lý thuyết với word2vec, Transformer, LLM | W5, W6 | Việt Anh | A08, A11 |
-| 13 | ④ | Intent: lớp phổ biến nhất, k-NN, NB, LR, SVM; train đầy đủ và LODO; 5-fold CV. NB là mô hình sinh, LR và SVM là mô hình phân biệt | W2, W4 | Dương | V13, D08, D09 |
-| 14 | **⑤ Kết quả** | Kết quả chính thức trên tập test theo loại câu; đường cong suy giảm theo số lỗi gõ | — | Vinh | V17, V18, A09 |
-| 15 | ⑤ | Chọn ngưỡng: đường cong đánh đổi; phân tích câu ngoài kho lọt ngưỡng và câu bị từ chối nhầm | W3 | Vinh | V14, V19 |
-| 16 | ⑤ | Phân tích lỗi: retrieval (giải thích bằng `explain()`) và intent | — | Việt Anh, Dương | A13, D11 |
+| 12 | **④ So sánh** | Retrieval: Jaccard, TF-IDF theo từ, n-gram ký tự, kết hợp, BM25; so sánh lý thuyết với word2vec, Transformer, LLM | W5, W6 | Việt Anh | A08, A10, V13 |
+| 13 | ④ | Intent: lớp phổ biến nhất, k-NN, NB, LR, SVM; train đầy đủ và LODO; 5-fold CV. NB là mô hình sinh, LR và SVM là mô hình phân biệt | W2, W4 | Dương | V14, D08, D09 |
+| 14 | **⑤ Kết quả** | Kết quả chính thức trên tập test theo loại câu; đường cong suy giảm theo số lỗi gõ | — | Vinh | V18, V19, A09 |
+| 15 | ⑤ | Chọn ngưỡng: đường cong đánh đổi; phân tích câu ngoài kho lọt ngưỡng và câu bị từ chối nhầm | W3 | Vinh | V15, V20 |
+| 16 | ⑤ | Phân tích lỗi: retrieval (giải thích bằng `explain()`) và intent | — | Việt Anh, Dương | A12, D11 |
 | 17 | **⑥ Kết luận** | **Demo các câu khó**: paraphrase, typo, ngoài kho | — | Vinh | D10 |
 | 18 | ⑥ | Hạn chế; hướng làm cho Final (đóng gói thành app) | — | Vinh | — |
 | 19 | | Hỏi đáp | | Cả nhóm | `qa_bank.md` |
@@ -176,8 +177,8 @@ Phần ⑤ Kết quả và ⑥ Kết luận là nhóm bổ sung. Nếu thầy c�
 | P2 | Phụ lục | Tính tay Naive Bayes | | Dương | D04 |
 | P3 | Phụ lục | Bảng đầy đủ E1–E4, E7 | | Việt Anh | A08 |
 | P4 | Phụ lục | Bảng đầy đủ E5 và E5b | | Dương | D08 |
-| P5 | Phụ lục | So sánh lý thuyết chi tiết | | Việt Anh | A11 |
-| P6 | Phụ lục | Cấu hình đóng băng (`config.json`) và quy trình chọn | | Vinh | V16 |
+| P5 | Phụ lục | So sánh lý thuyết chi tiết | | Việt Anh | A10 |
+| P6 | Phụ lục | Cấu hình đóng băng (`config.json`) và quy trình chọn | | Vinh | V17 |
 
 **Chia thời gian gợi ý:** ① kèm demo nhanh 15% · ② 15% · ③ 25% · ④ 15% · ⑤ 20% · ⑥ 10%. Chốt lại khi thầy trả lời về thời lượng (mục 8).
 
@@ -187,7 +188,7 @@ Phần ⑤ Kết quả và ⑥ Kết luận là nhóm bổ sung. Nếu thầy c�
 
 | Người | Midterm | Final |
 |---|---|---|
-| **Vinh** (nhóm trưởng) | Đánh giá (`evaluate.py`, chỉ số, baseline), E0–E2, E5, chọn cấu hình và ngưỡng (E6), chạy tập test, phân tích câu ngoài kho, ghép slide; **điều phối; review toàn bộ bài của Việt Anh và Dương** | App Streamlit (phát triển từ bản demo của Dương), tab Evaluation dashboard, README |
+| **Vinh** (nhóm trưởng) | **Code:** `metrics.py`, `evaluate.py`, `baselines.py` (Jaccard, majority, k-NN), **`bm25.py` (BM25 tự viết)**, `run_ablation.py` (chạy tập test một mẻ có khoá), `sweep_threshold.py` (hiệu chỉnh ngưỡng từ chối), `make_auto_dev.py`. **Thí nghiệm:** E0–E2, E5, E6, E7; chọn cấu hình; chạy tập test; phân tích câu ngoài kho. Ghép slide; **điều phối; review toàn bộ bài của Việt Anh và Dương** | App Streamlit (phát triển từ bản demo của Dương), tab Evaluation dashboard, README |
 | **Việt Anh** | `preprocess.py`, **`retrieval.py`** (TF-IDF và cosine tự viết, `explain`), wiring `student_core`, **chạy E3, E3b, E4**, so sánh lý thuyết; review PR của Vinh | Chủ biên báo cáo IEEE, test tự động, tối ưu tốc độ |
 | **Dương** | **`intent.py`** (NB, LR, SVM), **cross-validation E5b**, ma trận nhầm lẫn, thống kê corpus, **app demo**, video demo dự phòng | Các thành phần nhỏ của app, kiểm thử thủ công |
 
@@ -195,23 +196,23 @@ Phần ⑤ Kết quả và ⑥ Kết luận là nhóm bổ sung. Nếu thầy c�
 
 ## 3. Bắt đầu ngay
 
-### Vinh: tối nay T5 01/10 và ngày mai
-1. **[V01]** Tạo repo GitHub **private**, mời Việt Anh và Dương, push code, kiểm tra CI chạy xanh. Nếu có GitHub Pro (miễn phí qua GitHub Student Developer Pack) thì bật bảo vệ nhánh `main`. **Hạn: tối nay 23:59.**
+### Vinh: hôm nay T6 02/10
+1. **[V01]** Repo và CI đã xong; còn mời Việt Anh, Dương làm collaborator và bật bảo vệ nhánh `main`.
 2. **[V02]** Gửi thầy các câu hỏi ở mục 8.
-3. **[V03]** Chuẩn bị và chủ trì kick-off tối T6 02/10.
+3. **[V03]** Gửi nhóm tin nhắn kế hoạch: link repo và link trang kế hoạch.
 
-### Việt Anh: từ ngày mai T6 02/10
-1. **[N01]** Đọc mục 0–3 của file này, phần của mình ở mục 5.3, và INTERFACE §1–§5, §7.8–§7.9, §8. **Hạn: T6 02/10 20:00.**
+### Việt Anh: từ hôm nay T6 02/10
+1. **[N01]** Đọc mục 0–3 của file này, phần của mình ở mục 5.3, và INTERFACE §1–§5, §7.8–§7.9, §8. **Hạn: tối nay 23:59.**
 2. **[A01]** Tính tay TF-IDF và cosine trên 3 câu ngắn, ghi vào `notes/hand_calc.md`.
 3. **[A02]** Viết 14 câu paraphrase và 10 câu ngoài kho vào `experiments/dev/queries_dev_vietanh.csv`, theo INTERFACE §8. **Không mở `queries_test.csv`.**
 
-### Dương: từ ngày mai T6 02/10
-1. **[D01]** Cài môi trường theo các bước ở mục 5.4. Gặp lỗi cứ mang tới buổi kick-off, sẽ có 10 phút hỗ trợ.
+### Dương: từ hôm nay T6 02/10
+1. **[D01]** Cài môi trường theo các bước ở mục 5.4. Gặp lỗi thì chụp màn hình gửi nhóm chat, Vinh hỗ trợ.
 2. **[N01]** Đọc mục 0–3 của file này, phần của mình ở mục 5.4, và INTERFACE §1–§4, §6, §7.10, §8.
 3. **[D02]** Viết 14 câu paraphrase và 10 câu ngoài kho vào `experiments/dev/queries_dev_duong.csv`, theo INTERFACE §8. **Không mở `queries_test.csv`.**
 
 ### Cả nhóm
-- **[N02] Họp kick-off online: T6 02/10 lúc 21:00, 45–60 phút.** Nội dung ở mục 5.1.
+- **[N02] Xác nhận qua nhóm chat, không họp: trước T7 03/10 10:00.** Nội dung cần nhắn ở mục 5.1.
 
 ---
 
@@ -229,12 +230,12 @@ Phần ⑤ Kết quả và ⑥ Kết luận là nhóm bổ sung. Nếu thầy c�
   - Việc lớn mở **PR nháp sớm** để kịp 2 vòng góp ý trước hạn.
 - **Thấy sắp trễ thì báo vào nhóm chat ít nhất 24 giờ trước hạn**, kèm lý do và ngày dự kiến xong.
 - **⛔ Quá hạn cứng:** Vinh xử lý hoặc chuyển sang phương án dự phòng. Người phụ trách sau đó đọc lại phần đã sửa để giải thích được khi vấn đáp.
-- **🏁 là mốc của cả nhóm.** Trễ mốc thì phải họp nhanh để dời kế hoạch.
+- **🏁 là mốc của cả nhóm.** Trễ mốc thì Vinh dời kế hoạch và báo cả nhóm qua chat.
 - **Khi trễ, cắt việc theo thứ tự này:**
-  1. E7 BM25 (A10);
-  2. bớt các biến thể trong E2;
-  3. lưới α của E4, chỉ giữ α = 0.5;
-  4. `explain()` (A12) dời sang Final, phân tích lỗi làm bằng tay.
+  1. bớt các biến thể trong E2;
+  2. lưới α của E4, chỉ giữ α = 0.5;
+  3. E7 BM25 (V13);
+  4. `explain()` (A11) dời sang Final, phân tích lỗi làm bằng tay.
 
   **Không bao giờ cắt:** E0, E5, E6, E3b, phân tích câu ngoài kho, diễn tập.
 
@@ -248,35 +249,35 @@ Mã việc đánh theo thứ tự thời gian: việc tiếp theo của mỗi ng
 
 | Mã | Việc | Hạn |
 |---|---|---|
-| N01 | Đọc phần của mình trong PLAN và INTERFACE (mục 3), ghi lại câu hỏi mang tới kick-off | T6 02/10 20:00 |
-| N02 | 🏁 **Kick-off online 45–60 phút** | **T6 02/10 21:00** |
+| N01 | Đọc phần của mình trong PLAN và INTERFACE (mục 3) | T6 02/10 |
+| N02 | 🏁 **Xác nhận qua nhóm chat** (không họp), nội dung bên dưới | **T7 03/10 10:00** |
 | N03 | Trinh sát buổi 10/10 (P01–P03): ghi câu thầy hỏi vào `notes/qa_bank.md` phần B; xem trang Language của thầy đã có nội dung chưa | CN 11/10 12:00 |
-| N04 | Họp tuần: rút kinh nghiệm từ buổi trinh sát, xem kết quả E1, E2 | CN 11/10 21:00 |
+| N04 | Cập nhật tuần qua nhóm chat: việc đã xong, việc trễ, lịch bận tuần tới, điều rút ra từ buổi trinh sát | CN 11/10 21:00 |
 | N05 | Trinh sát buổi 17/10 (P04–P06), ghi vào `qa_bank.md`; xem trang Language | CN 18/10 12:00 |
 | N06 | 🏁 **Diễn tập lần 1**, mỗi người trình bày phần của mình | **CN 18/10 20:00** |
 | N07 | **Diễn tập lần 2**, trình bày chéo (mỗi người trình bày phần của người khác) | **T4 21/10 20:00** |
 | N08 | Mỗi người viết câu trả lời cho các câu được giao trong `qa_bank.md` phần A | T6 23/10 |
-| N09 | Trinh sát buổi 24/10 (P07–P09), xem trang Language, họp tuần | CN 25/10 21:00 |
+| N09 | Trinh sát buổi 24/10 (P07–P09), xem trang Language; cập nhật tuần qua nhóm chat | CN 25/10 21:00 |
 | N10 | **Diễn tập lần 3**, có bấm giờ, có người đóng vai thầy hỏi vặn | **T4 28/10 20:00** |
 | N11 | **Tổng duyệt** theo checklist ở mục 10 | **T6 30/10 20:00** |
 | N12 | 🎯 **Thuyết trình Midterm** | **T7 31/10** |
 
-**Nội dung kick-off N02 (45–60 phút):**
-1. **Lịch bận (10 phút):** mỗi người báo lịch bận trong tháng 10 (môn khác, đi làm, thực tập, thi).
-2. **Tổng quan (5 phút):** Vinh trình bày mục 0–1.
-3. **Interface (10 phút):** cả nhóm đi qua INTERFACE §4–§8 và chốt.
-4. **Hạn (15 phút):** từng người xác nhận việc và hạn đến 07/10. **Được đổi hạn ngay trong buổi** nếu vướng lịch bận.
-5. **Cài đặt (10 phút):** hỗ trợ ai còn lỗi.
-6. **Chốt nhịp (5 phút):** giờ báo tiến độ hằng ngày và giờ họp Chủ nhật.
+**Nội dung xác nhận N02:** nhóm không họp kick-off. Mỗi người nhắn vào nhóm chat:
+1. Đã đọc xong phần của mình.
+2. **INTERFACE:** đồng ý, hoặc góp ý cụ thể. Góp ý được thì Vinh sửa qua PR.
+3. **Hạn việc của mình đến 07/10:** xác nhận, hoặc đề xuất ngày khác kèm lý do.
+4. **Lịch bận trong tháng 10:** môn khác, đi làm, thực tập, thi.
+
+Ai cài môi trường bị lỗi thì gửi ảnh chụp màn hình vào nhóm chat.
 
 ### 5.2 Vinh (V)
 
 | Mã | Việc | Hạn | Phụ thuộc |
 |---|---|---|---|
-| V01 | Tạo repo private, mời thành viên, push code, kiểm tra CI xanh; bật bảo vệ `main` nếu có GitHub Pro | **T5 01/10** | — |
+| V01 | Tạo repo, push code, kiểm tra CI xanh *(đã xong)*; mời Việt Anh và Dương; bật bảo vệ nhánh `main` | **T5 01/10** | — |
 | V02 | Gửi thầy các câu hỏi ở mục 8 | T6 02/10 | — |
-| V03 | Chủ trì kick-off N02 | T6 02/10 21:00 | — |
-| V04 | Tạo GitHub Issues **sau kick-off**, theo hạn đã chốt; chỉ tạo cho việc có sản phẩm trong repo (khoảng 35 việc), họp và trinh sát giữ ở checklist | T7 03/10 12:00 | N02 |
+| V03 | Gửi nhóm tin nhắn kế hoạch (link repo, link trang kế hoạch) | T6 02/10 | — |
+| V04 | Tạo GitHub Issues **sau khi cả nhóm xác nhận (N02)**, theo hạn đã chốt; chỉ tạo cho việc có sản phẩm trong repo (khoảng 35 việc); cập nhật tuần và trinh sát giữ ở checklist | T7 03/10 12:00 | N02 |
 | V05 | `make_auto_dev.py`: sinh `queries_dev_auto.csv` gồm 49 normal và 49 typo (INTERFACE §8) | T7 03/10 | — |
 | V06 | Kiểm tra câu dev viết tay của Việt Anh và Dương: đúng định dạng, đúng tài liệu đích, câu ngoài kho thật sự ngoài kho | CN 04/10 18:00 | A02, D02 |
 | V07 | `metrics.py` và `tests/test_metrics.py` | CN 04/10 | — |
@@ -285,19 +286,20 @@ Mã việc đánh theo thứ tự thời gian: việc tiếp theo của mỗi ng
 | V10 | 🏁 **Mốc 1:** chạy E0 và v1 trên tập dev, gửi bảng `summary.csv` vào nhóm chat | **T4 07/10** | V05, V08, V09, A05 |
 | V11 | `run_ablation.py`: các nhóm thí nghiệm, `FROZEN_COMPARISONS`, batch tập test có khoá (INTERFACE §7.4, §7.8) | T6 09/10 | V08 |
 | V12 | Chạy **E1, E2** | T7 10/10 | V11, A06 |
-| V13 | Chạy **E5** (5 cách phân loại intent, full và LODO) | T2 12/10 | V11, D06 |
-| V14 | **Chọn cấu hình theo 2 bước** (INTERFACE §7.5): chọn retrieval, rồi `sweep_threshold.py` và **E6**; chọn mô hình intent | T3 13/10 | V12, V13, A08 |
-| V15 | Khung slide theo **dàn ý mục 1.9**: template, slide trống có tiêu đề, tên người phụ trách từng slide | T3 13/10 | — |
-| V16 | 🏁 **Đóng băng:** PR đặt `DEFAULT_*_CONFIG` và `FROZEN_COMPARISONS`, Việt Anh duyệt, gắn tag `midterm-freeze` | **T4 14/10** ⛔ | V14 |
-| V17 | 🏁 **Chạy tập test một mẻ** (`run_ablation.py --split test --final`), gửi kết quả vào nhóm chat | **T5 15/10 21:00** ⛔ | V16 |
-| V18 | Bảng và biểu đồ: theo loại câu, E3b, đường cong ngưỡng, ma trận nhầm lẫn; lưu vào `results/figures/` | T6 16/10 | V17, A09 |
-| V19 | **Phân tích câu ngoài kho**: câu lọt ngưỡng và câu trong kho bị từ chối nhầm, ghi vào `notes/error_analysis.md` | T7 17/10 | V17 |
-| V20 | Duyệt phân tích lỗi, slide và app demo của hai bạn (A13, A14, D05, D10, D11, D12) | CN 18/10 12:00 | — |
-| V21 | Làm slide 1, 5–7, 14–15, 17–18, P6 và ghép slide v1 | CN 18/10 18:00 | V20 |
-| V22 | Slide v2 theo góp ý của diễn tập lần 1 | T3 20/10 | N06 |
-| V23 | 🏁 **Bản cuối:** `presentation.pdf` có số liệu khớp kết quả test, demo chạy ổn, push toàn bộ, gắn tag `midterm-submission` | **CN 25/10** ⛔ | — |
-| V24 | Chuẩn bị checklist và chủ trì tổng duyệt N11 | T6 30/10 20:00 | — |
-| V25 | Review PR của Việt Anh và Dương | 12 giờ / 24 giờ (mục 4) | — |
+| V13 | `starter/bm25.py`: **BM25 tự viết** (cùng `rank`/`search` như `Retriever`, INTERFACE §5.5) và test; chạy **E7** trên tập dev | CN 11/10 | A03, V11 |
+| V14 | Chạy **E5** (5 cách phân loại intent, full và LODO) | T2 12/10 | V11, D06 |
+| V15 | **Chọn cấu hình theo 2 bước** (INTERFACE §7.5): chọn retrieval, rồi `sweep_threshold.py` và **E6**; chọn mô hình intent | T3 13/10 | V12, V14, A08 |
+| V16 | Khung slide theo **dàn ý mục 1.9**: template, slide trống có tiêu đề, tên người phụ trách từng slide | T3 13/10 | — |
+| V17 | 🏁 **Đóng băng:** PR đặt `DEFAULT_*_CONFIG` và `FROZEN_COMPARISONS`, Việt Anh duyệt, gắn tag `midterm-freeze` | **T4 14/10** ⛔ | V15, V13 |
+| V18 | 🏁 **Chạy tập test một mẻ** (`run_ablation.py --split test --final`), gửi kết quả vào nhóm chat | **T5 15/10 21:00** ⛔ | V17 |
+| V19 | Bảng và biểu đồ: theo loại câu, E3b, đường cong ngưỡng, ma trận nhầm lẫn; lưu vào `results/figures/` | T6 16/10 | V18, A09 |
+| V20 | **Phân tích câu ngoài kho**: câu lọt ngưỡng và câu trong kho bị từ chối nhầm, ghi vào `notes/error_analysis.md` | T7 17/10 | V18 |
+| V21 | Duyệt phân tích lỗi, slide và app demo của hai bạn (A12, A13, D05, D10, D11, D12) | CN 18/10 12:00 | — |
+| V22 | Làm slide 1, 5–7, 14–15, 17–18, P6 và ghép slide v1 | CN 18/10 18:00 | V21 |
+| V23 | Slide v2 theo góp ý của diễn tập lần 1 | T3 20/10 | N06 |
+| V24 | 🏁 **Bản cuối:** `presentation.pdf` có số liệu khớp kết quả test, demo chạy ổn, push toàn bộ, gắn tag `midterm-submission` | **CN 25/10** ⛔ | — |
+| V25 | Chuẩn bị checklist và chủ trì tổng duyệt N11 | T6 30/10 20:00 | — |
+| V26 | Review PR của Việt Anh và Dương | 12 giờ / 24 giờ (mục 4) | — |
 
 **Cách làm các việc chính của Vinh**
 
@@ -312,7 +314,7 @@ Mã việc đánh theo thứ tự thời gian: việc tiếp theo của mỗi ng
     - gọi `search(q, 3) == []` để biết có bị từ chối không;
     - lấy intent, tính các chỉ số, đo latency.
   - `summarize`: gom nhóm theo `type`, cộng một dòng tổng; Balanced E2E lấy trung bình theo 4 loại câu.
-- **V14 chọn cấu hình:** làm đúng 3 bước của INTERFACE §7.5, ghi lại lý do từng lựa chọn vào `notes/selection.md`. Slide 15 và phụ lục P6 lấy từ file này.
+- **V15 chọn cấu hình:** làm đúng 3 bước của INTERFACE §7.5, ghi lại lý do từng lựa chọn vào `notes/selection.md`. Slide 15 và phụ lục P6 lấy từ file này.
 
 ### 5.3 Việt Anh (A)
 
@@ -327,13 +329,12 @@ Mã việc đánh theo thứ tự thời gian: việc tiếp theo của mỗi ng
 | A07 | `analyzer="char"` và `"hybrid"`, kèm test | CN 11/10 | A06 |
 | A08 | Chạy **E3, E4** trên tập dev bằng `run_ablation.py --group E3/E4`. Ghi nhận xét: n-gram ký tự giúp câu paraphrase ở đâu, tách câu ngoài kho ra sao | T2 12/10 | A07, V11 |
 | A09 | `noise_curve.py`: **E3b**, đường cong suy giảm theo 0–3 lỗi gõ (INTERFACE §7.9) | T3 13/10 | A07, V05 |
-| A10 | *(Tuỳ chọn)* BM25 cho E7. Chỉ làm khi A08, A09 đã xong; quá hạn thì bỏ | T3 13/10 | A09 |
-| A11 | Đọc CS50 W6 notes (Word Representation, word2vec, Attention, Transformers); viết so sánh lý thuyết TF-IDF với word2vec, Transformer, LLM vào `notes/theory_comparison.md` | T4 14/10 | — |
-| A12 | `explain()` kèm test (tổng contribution bằng score) | T5 15/10 | A07 |
-| A13 | Phân tích ít nhất 3 lỗi retrieval bằng `explain()`, ghi vào `notes/error_analysis.md` | T6 16/10 | A12, V17 |
-| A14 | Slide 8, 9, 10, 12, phần retrieval của slide 16, phụ lục P1, P3, P5 | T7 17/10 | V15, A11 |
-| A15 | Luyện phần trình bày, trả lời các câu được giao trong `qa_bank.md` | CN 25/10 | — |
-| A16 | Review PR của Vinh | 12 giờ với V08, 24 giờ với PR khác | — |
+| A10 | Đọc CS50 W6 notes (Word Representation, word2vec, Attention, Transformers); viết so sánh lý thuyết TF-IDF với word2vec, Transformer, LLM vào `notes/theory_comparison.md` | T4 14/10 | — |
+| A11 | `explain()` kèm test (tổng contribution bằng score) | T5 15/10 | A07 |
+| A12 | Phân tích ít nhất 3 lỗi retrieval bằng `explain()`, ghi vào `notes/error_analysis.md` | T6 16/10 | A11, V18 |
+| A13 | Slide 8, 9, 10, 12, phần retrieval của slide 16, phụ lục P1, P3, P5 | T7 17/10 | V16, A10 |
+| A14 | Luyện phần trình bày, trả lời các câu được giao trong `qa_bank.md` | CN 25/10 | — |
+| A15 | Review PR của Vinh | 12 giờ với V08, 24 giờ với PR khác | — |
 
 **Cách làm A04 (TF-IDF và cosine tự viết)**
 1. Tokenize mọi tài liệu theo `index_field` để lập bộ từ vựng, rồi đếm `df(t)` là số tài liệu chứa từ t.
@@ -348,7 +349,7 @@ Mã việc đánh theo thứ tự thời gian: việc tiếp theo của mỗi ng
 
 | Mã | Việc | Hạn | Phụ thuộc |
 |---|---|---|---|
-| D01 | Cài môi trường; `pytest` ra `15 passed, 2 deselected`; mở được app. *Hạn mềm: vướng thì mang tới kick-off* | T6 02/10 20:00 | V01 |
+| D01 | Cài môi trường; `pytest` ra `15 passed, 2 deselected`; mở được app. *Hạn mềm: vướng thì nhắn nhóm chat* | T7 03/10 | V01 |
 | D02 | 14 câu paraphrase và 10 câu ngoài kho (`queries_dev_duong.csv`, INTERFACE §8) | CN 04/10 12:00 | — |
 | D03 | Đọc tài liệu **đợt 1** (danh sách bên dưới) | CN 04/10 | — |
 | D04 | `intent.py`: `build_training_data`, `IntentClassifier` (NB + BoW), `tests/test_intent.py`. PR nháp T2 05/10 | **T3 06/10** · ⛔ **T5 08/10** | D03 |
@@ -356,10 +357,10 @@ Mã việc đánh theo thứ tự thời gian: việc tiếp theo của mỗi ng
 | D06 | Thêm `model="logreg"`, `model="svm"`, `features="tfidf"`, `include_descriptions`, kèm test (INTERFACE §6) | CN 11/10 | D04 |
 | D07 | Đọc tài liệu **đợt 2** | CN 11/10 | — |
 | D08 | `intent_cv.py`: **E5b**, 5-fold cross-validation (INTERFACE §7.10) | T2 12/10 | D06, A04, V09 |
-| D09 | Ma trận nhầm lẫn 7×7 trên tập dev (`notebooks/intent_confusion.ipynb`) | T3 13/10 | V13 |
+| D09 | Ma trận nhầm lẫn 7×7 trên tập dev (`notebooks/intent_confusion.ipynb`) | T3 13/10 | V14 |
 | D10 | **App demo tối thiểu** (sửa `starter/app.py`) | T5 15/10 | A05 |
-| D11 | Phân tích ít nhất 2 lỗi intent, ghi vào `notes/error_analysis.md` | T6 16/10 | V17 |
-| D12 | Slide 2, 3, 4, 11, 13, phần intent của slide 16, phụ lục P2, P4 | T7 17/10 | V15 |
+| D11 | Phân tích ít nhất 2 lỗi intent, ghi vào `notes/error_analysis.md` | T6 16/10 | V18 |
+| D12 | Slide 2, 3, 4, 11, 13, phần intent của slide 16, phụ lục P2, P4 | T7 17/10 | V16 |
 | D13 | Quay video demo dự phòng 2–3 phút, đủ 4 loại câu | T5 22/10 | D10 |
 | D14 | Luyện trình bày; tính tay được TF-IDF, Naive Bayes, MRR | CN 25/10 | — |
 
@@ -419,8 +420,8 @@ Gặp lỗi thì chụp màn hình và gửi vào nhóm chat.
 | Ngày | Hạn chót và sự kiện |
 |---|---|
 | **T5 01/10** | V01 |
-| **T6 02/10** | V02 · D01, N01 (20:00) · **N02 kick-off, V03 chủ trì (21:00)** |
-| **T7 03/10** | V04 (12:00) · V05 · A01 |
+| **T6 02/10** | V02 · V03 · N01 |
+| **T7 03/10** | 🏁 **N02: xác nhận qua nhóm chat (10:00)** · V04 (12:00) · V05 · A01 · D01 |
 | **CN 04/10** | A02, D02 (12:00) · V06 (18:00) · V07 · A03 · D03 |
 | T2 05/10 | *PR nháp của A04 và D04* |
 | **T3 06/10** | A04 (12:00) · V08 · D04 |
@@ -428,22 +429,22 @@ Gặp lỗi thì chụp màn hình và gửi vào nhóm chat.
 | T5 08/10 | ⛔ D04 hạn cứng |
 | T6 09/10 | V11 · A06 · D05 |
 | **T7 10/10** | 👀 Trinh sát P01–P03 · V12 (E1, E2) |
-| **CN 11/10** | N03 (12:00) · A07 · D06 · D07 · N04 họp tuần (21:00) |
-| T2 12/10 | V13 (E5) · A08 (E3, E4) · D08 (E5b) |
-| T3 13/10 | V14 (chọn cấu hình, E6) · V15 · A09 (E3b) · A10 · D09 |
-| **T4 14/10** | 🏁 ⛔ **V16: đóng băng** · A11 |
-| **T5 15/10** | 🏁 ⛔ **V17: chạy tập test lúc 21:00** · A12 · D10 |
-| T6 16/10 | V18 · A13 · D11 |
-| **T7 17/10** | 👀 Trinh sát P04–P06 · V19 · A14 · D12 |
-| **CN 18/10** | N05, V20 (12:00) · V21 (18:00) · **N06 diễn tập lần 1 (20:00)** |
-| T3 20/10 | V22 |
+| **CN 11/10** | N03 (12:00) · V13 (BM25, E7) · A07 · D06 · D07 · N04 cập nhật tuần qua chat (21:00) |
+| T2 12/10 | V14 (E5) · A08 (E3, E4) · D08 (E5b) |
+| T3 13/10 | V15 (chọn cấu hình, E6) · V16 · A09 (E3b) · D09 |
+| **T4 14/10** | 🏁 ⛔ **V17: đóng băng** · A10 |
+| **T5 15/10** | 🏁 ⛔ **V18: chạy tập test lúc 21:00** · A11 · D10 |
+| T6 16/10 | V19 · A12 · D11 |
+| **T7 17/10** | 👀 Trinh sát P04–P06 · V20 · A13 · D12 |
+| **CN 18/10** | N05, V21 (12:00) · V22 (18:00) · **N06 diễn tập lần 1 (20:00)** |
+| T3 20/10 | V23 |
 | **T4 21/10** | **N07 diễn tập lần 2 (20:00)** |
 | T5 22/10 | D13 |
 | T6 23/10 | N08 |
 | **T7 24/10** | 👀 Trinh sát P07–P09 |
-| **CN 25/10** | 🏁 ⛔ **V23: bản cuối, tag `midterm-submission`** · A15 · D14 · N09 (21:00) |
+| **CN 25/10** | 🏁 ⛔ **V24: bản cuối, tag `midterm-submission`** · A14 · D14 · N09 (21:00) |
 | T4 28/10 | **N10 diễn tập lần 3 (20:00)** |
-| T6 30/10 | **N11 tổng duyệt, V24 chủ trì (20:00)** |
+| T6 30/10 | **N11 tổng duyệt, V25 chủ trì (20:00)** |
 | **T7 31/10** | 🎯 **N12: THUYẾT TRÌNH MIDTERM** |
 
 ---
@@ -451,7 +452,7 @@ Gặp lỗi thì chụp màn hình và gửi vào nhóm chat.
 ## 7. Cách làm việc
 
 - **Báo tiến độ hằng ngày trước 22:00**, qua nhóm chat, mỗi người 3 dòng: *đã xong · đang làm · vướng gì*.
-- **Họp Chủ nhật lúc 21:00, 30 phút:** rút kinh nghiệm từ buổi trinh sát thứ Bảy, xem lại tiến độ so với mục 6.
+- **Không họp định kỳ.** Mỗi Chủ nhật 21:00, mỗi người cập nhật tuần qua nhóm chat: việc đã xong, việc trễ, lịch bận tuần tới, điều rút ra từ buổi trinh sát. Chỉ các buổi diễn tập thuyết trình (N06, N07, N10, N11) mới cần gặp, online hoặc trực tiếp.
 - **Git:** theo INTERFACE §9. Mỗi việc một nhánh; tên PR bắt đầu bằng mã việc, ví dụ `A04: word-level retriever`. Không push thẳng `main`.
 - **CI:** GitHub Actions tự chạy pytest cho mọi PR. PR đỏ thì chưa review.
 - **Review:** Vinh duyệt toàn bộ bài của Việt Anh và Dương, gồm code, phân tích lỗi, slide và app demo. Việt Anh duyệt PR của Vinh. Thời hạn xem mục 4.
@@ -474,7 +475,7 @@ Gặp lỗi thì chụp màn hình và gửi vào nhóm chat.
 
 1. Thứ tự thuyết trình có đúng theo số topic không? P12 có chắc là thứ Bảy 31/10?
 2. Mỗi nhóm có bao nhiêu phút, chia giữa thuyết trình và hỏi đáp thế nào? Có template slide không? Slide viết tiếng Anh hay tiếng Việt?
-3. Midterm có phải nộp code, script, `presentation.pdf` lên hệ thống trước không? Hạn lúc nào? *(Nếu trước 31/10 thì dời V23 lên sớm hơn.)*
+3. Midterm có phải nộp code, script, `presentation.pdf` lên hệ thống trước không? Hạn lúc nào? *(Nếu trước 31/10 thì dời V24 lên sớm hơn.)*
 4. Nhóm bỏ qua 2 test stub bằng `pytest.ini` thay vì sửa file test có được không?
 5. Có được dùng mô hình embedding chạy local không?
 6. Hạn nộp Final là khi nào? Báo cáo IEEE viết bằng tiếng Anh hay tiếng Việt?

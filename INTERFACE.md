@@ -4,7 +4,7 @@
 >
 > **Muốn đổi interface:** mở PR sửa file này trước, cả 3 người đồng ý rồi mới sửa code.
 >
-> Phiên bản **v2** (sau rà soát) — 01/10/2026 · hạn chốt tại buổi kick-off **T6 02/10/2026**. Mã việc (V01, A04, D10…) tham chiếu tới [PLAN.md](PLAN.md).
+> Phiên bản **v2** (sau rà soát) — 01/10/2026 · chốt qua nhóm chat trước **T7 03/10/2026 10:00** (việc N02, không họp). Mã việc (V01, A04, D10…) tham chiếu tới [PLAN.md](PLAN.md).
 
 ---
 
@@ -37,6 +37,7 @@ ain_project/  (gốc repo)
 ├── starter/
 │   ├── student_core.py                  # API công khai — chung (wiring A05)
 │   ├── preprocess.py, retrieval.py      # Việt Anh
+│   ├── bm25.py                          # Vinh (BM25 để so sánh, E7)
 │   ├── intent.py                        # Dương
 │   └── app.py                           # Dương (app demo D10)
 ├── experiments/
@@ -94,7 +95,7 @@ Mỗi người chỉ sửa file của mình. File chung (`student_core.py`, `INT
 **Wiring** (A05, **T4 07/10 12:00**, Việt Anh làm, Vinh duyệt):
 
 ```python
-DEFAULT_RETRIEVAL_CONFIG = RetrievalConfig(...)  # cấu hình đóng băng — chỉ cập nhật 1 lần ở V16 (14/10)
+DEFAULT_RETRIEVAL_CONFIG = RetrievalConfig(...)  # cấu hình đóng băng — chỉ cập nhật 1 lần ở V17 (14/10)
 DEFAULT_INTENT_CONFIG = IntentConfig(...)        # model chỉ được là "nb" hoặc "logreg" (mục 6)
 
 def retrieve(query, top_k=3):
@@ -153,7 +154,7 @@ class Retriever:
     def __init__(self, documents: list[Document], config: RetrievalConfig = RetrievalConfig()) -> None: ...
     def rank(self, query: str) -> Ranked: ...
     def search(self, query: str, top_k: int = 3) -> Ranked: ...
-    def explain(self, query: str, doc_id: str, top_n: int = 5) -> list[tuple[str, float]]: ...  # A12
+    def explain(self, query: str, doc_id: str, top_n: int = 5) -> list[tuple[str, float]]: ...  # A11
 ```
 
 - **`rank(query)`** trả về **toàn bộ** tài liệu kèm cosine thô, **không áp ngưỡng**. Script đánh giá dùng hàm này để quét ngưỡng mà không phải chạy lại retrieval.
@@ -180,7 +181,22 @@ class Retriever:
 
 **A06–A07 (T6 09/10 và CN 11/10):** các tuỳ chọn theo từ, `char`, `hybrid`, `sublinear_tf` chạy được, có test.
 
-**A12 (T5 15/10):** `explain()` chạy được, có test kiểm tra tổng contribution bằng score.
+**A11 (T5 15/10):** `explain()` chạy được, có test kiểm tra tổng contribution bằng score.
+
+### 5.5 BM25 — `starter/bm25.py` (Vinh, V13, chỉ để so sánh)
+
+```python
+class BM25Retriever:
+    def __init__(self, documents: list[Document], k1: float = 1.5, b: float = 0.75,
+                 index_field: Literal["question", "text"] = "text", threshold: float = 0.0) -> None: ...
+    def rank(self, query: str) -> Ranked: ...
+    def search(self, query: str, top_k: int = 3) -> Ranked: ...
+```
+
+- **Tự viết**, dùng `tokenize(..., remove_stopwords=True)` của `preprocess.py`; không dùng thư viện BM25.
+- Công thức: `score(q, d) = Σ_{t ∈ q} idf(t) · tf(t,d)·(k1+1) / (tf(t,d) + k1·(1 − b + b·|d|/avgdl))`, với `idf(t) = ln((N − df(t) + 0.5)/(df(t) + 0.5) + 1)` (luôn không âm).
+- `rank` và `search` theo đúng quy tắc ở mục 5.3, **trừ một điểm: score BM25 không nằm trong [0, 1]**. Vì vậy BM25 chỉ được so sánh bằng chỉ số xếp hạng (MRR, Hit@k, P@k); sản phẩm vẫn dùng cosine và ngưỡng như đề bài yêu cầu.
+- Test: thứ tự giảm dần, tất định, query rỗng ra `[]`, và một ví dụ nhỏ tính tay khớp với code.
 
 ---
 
@@ -294,7 +310,7 @@ python experiments/evaluate.py --split dev --run-name baseline --retriever jacca
 python experiments/evaluate.py --split dev --run-name word_v1
 python experiments/run_ablation.py --split dev --group E3
 
-# Tập test: CHỈ MỘT LẦN, T5 15/10 21:00 (V17), chấm cả mẻ FROZEN_COMPARISONS
+# Tập test: CHỈ MỘT LẦN, T5 15/10 21:00 (V18), chấm cả mẻ FROZEN_COMPARISONS
 python experiments/run_ablation.py --split test --final
 ```
 
@@ -305,7 +321,7 @@ python experiments/run_ablation.py --split test --final
   - Nếu `LOCK` đã tồn tại, script **từ chối chạy**, trừ khi có `--rerun-reason "<lý do>"`.
   - Chạy lại **chỉ được phép để sửa bug trong code đánh giá**, không bao giờ để đổi tham số. Script kiểm tra hash của `FROZEN_COMPARISONS` phải trùng với hash trong `LOCK`, và ghi thêm một dòng vào `experiments/results/test/RERUN_LOG.md` (thời điểm, commit, lý do).
 
-### 7.5 Chọn cấu hình, ngưỡng và mô hình intent (V14)
+### 7.5 Chọn cấu hình, ngưỡng và mô hình intent (V15)
 
 Chọn theo **hai bước**, để không bị vòng tròn giữa cấu hình và ngưỡng:
 
@@ -344,7 +360,7 @@ def knn_intent(ranked: Ranked, k: int, exclude_id: str | None = None) -> tuple[s
 def evaluate_run(
     queries: list[dict[str, str]],
     documents: list[Document],
-    retriever: Retriever | JaccardRetriever,                       # bất kỳ object nào có rank() và search()
+    retriever: Retriever | JaccardRetriever | BM25Retriever,       # bất kỳ object nào có rank() và search()
     intent: IntentConfig | Literal["majority", "knn1", "knn5"],
     intent_mode: Literal["full", "lodo"] = "full",
 ) -> pandas.DataFrame: ...
@@ -354,7 +370,7 @@ def evaluate_run(
 |---|---|---|
 | `--split` | chỉ `dev` | `dev` |
 | `--run-name` | tên thư mục kết quả | bắt buộc |
-| `--retriever` | `tfidf` (dùng `DEFAULT_RETRIEVAL_CONFIG`) / `jaccard` | `tfidf` |
+| `--retriever` | `tfidf` (dùng `DEFAULT_RETRIEVAL_CONFIG`) / `jaccard` / `bm25` | `tfidf` |
 | `--intent` | `model` (dùng `DEFAULT_INTENT_CONFIG`) / `majority` / `knn1` / `knn5` | `model` |
 | `--intent-mode` | `full` / `lodo` | `full` |
 
@@ -366,13 +382,13 @@ def evaluate_run(
 EXPERIMENTS: dict[str, dict[str, tuple[RetrievalConfig | str, IntentConfig | str, str]]]
 #            nhóm ("E1"…"E5") → tên run → (retrieval, intent, intent_mode)
 FROZEN_COMPARISONS: dict[str, tuple[RetrievalConfig | str, IntentConfig | str, str]]
-#            chốt ở V16 (14/10); phải có run tên "final" = cấu hình DEFAULT
+#            chốt ở V17 (14/10); phải có run tên "final" = cấu hình DEFAULT
 ```
 
 - `python experiments/run_ablation.py --split dev --group E3` chạy một nhóm trên tập dev và gộp kết quả vào `experiments/results/dev/ablation_<nhóm>.csv`.
 - `python experiments/run_ablation.py --split test --final` chạy **toàn bộ `FROZEN_COMPARISONS` trên tập test trong một mẻ**, áp dụng khoá ở mục 7.4.
-- Giá trị chuỗi cho retrieval là `"jaccard"`; cho intent là `"majority"`, `"knn1"`, `"knn5"`.
-- `FROZEN_COMPARISONS` gồm: run `final`, baseline Jaccard + majority, các biến thể retrieval chính (word, char, hybrid tốt nhất, BM25 nếu có), và 5 cách phân loại intent (full và LODO). **Lựa chọn cuối cùng vẫn là cấu hình đã chọn trên dev**, kết quả test của các run so sánh chỉ để báo cáo.
+- Giá trị chuỗi cho retrieval là `"jaccard"` hoặc `"bm25"` (tham số mặc định); cho intent là `"majority"`, `"knn1"`, `"knn5"`.
+- `FROZEN_COMPARISONS` gồm: run `final`, baseline Jaccard + majority, các biến thể retrieval chính (word, char, hybrid tốt nhất, BM25), và 5 cách phân loại intent (full và LODO). **Lựa chọn cuối cùng vẫn là cấu hình đã chọn trên dev**, kết quả test của các run so sánh chỉ để báo cáo.
 
 ### 7.9 Đường cong suy giảm theo lỗi gõ — `noise_curve.py` (Việt Anh, E3b)
 
