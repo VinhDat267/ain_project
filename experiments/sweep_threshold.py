@@ -1,6 +1,6 @@
 """E6: sweep the abstention threshold for the selected retrieval config (dev split).
 
-Owner: Vinh (V14). Contract: INTERFACE.md section 7.5, step 2.
+Owner: Vinh (V15). Contract: INTERFACE.md section 7.5, step 2.
 Reads a dev ``per_query.csv``; a query abstains when ``top1_score < th`` or
 ``top1_score == 0``. Picks the threshold with the highest Balanced E2E
 (mean of the four per-type E2E Acc@1), ties going to the smaller threshold.

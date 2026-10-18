@@ -31,6 +31,7 @@
 | 23 | Vì sao câu gõ sai một chữ hầu như không làm TF-IDF tìm sai? Khi nào lỗi gõ mới thật sự gây hại? (Gợi ý: các từ còn lại vẫn khớp; xem đường cong E3b khi có 2–3 lỗi) | Việt Anh | |
 | 24 | Nhóm chọn cấu hình và ngưỡng thế nào mà không "nhìn trộm" tập test? Vì sao chọn theo 2 bước? | Vinh | |
 | 25 | Kết quả 5-fold cross-validation có khớp với kết quả trên câu hỏi dev không? Nếu khác thì vì sao? | Dương | |
+| 26 | BM25 khác TF-IDF + cosine ở đâu (bão hoà tần suất từ, chuẩn hoá độ dài tài liệu)? Vì sao sản phẩm vẫn dùng cosine dù BM25 có thể tốt hơn? | Vinh | |
 
 ## B. Câu thầy đã hỏi các nhóm khác
 
