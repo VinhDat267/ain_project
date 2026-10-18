@@ -265,10 +265,17 @@ def summarize(per_query: pd.DataFrame) -> pd.DataFrame:
 # ----------------------------------------------------------------------------- output
 
 def git_commit() -> str:
-    """Current commit hash, suffixed with ``+dirty`` when the tree has local changes."""
+    """Current commit hash, suffixed with ``+dirty`` when tracked code has local changes.
+
+    Experiment outputs under ``experiments/results`` are ignored, so writing
+    results does not mark the next run as dirty.
+    """
     try:
         sha = subprocess.run(["git", "rev-parse", "HEAD"], cwd=PROJECT_ROOT, capture_output=True, text=True, check=True).stdout.strip()
-        dirty = subprocess.run(["git", "status", "--porcelain"], cwd=PROJECT_ROOT, capture_output=True, text=True, check=True).stdout.strip()
+        dirty = subprocess.run(
+            ["git", "status", "--porcelain", "--untracked-files=no", "--", ".", ":(exclude)experiments/results"],
+            cwd=PROJECT_ROOT, capture_output=True, text=True, check=True,
+        ).stdout.strip()
         return sha + ("+dirty" if dirty else "")
     except (OSError, subprocess.CalledProcessError):
         return "unknown"
