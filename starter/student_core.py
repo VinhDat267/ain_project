@@ -1,5 +1,6 @@
 """Project 12 AI core — campus notice/FAQ assistant.
 
+Owner: Viet Anh (wiring A05). Contract: INTERFACE.md section 4.
 Fill in ``classify_intent`` and ``retrieve`` yourself using **classical**
 information retrieval / text classification techniques from CS50 AI's
 Language topic: tokenization, n-grams, Bag-of-Words, TF-IDF, Naive Bayes,
@@ -15,11 +16,31 @@ tests keep working even before you install a classical-ML library.
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
+
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+# Default configs — frozen at V16 (INTERFACE.md section 4)
+try:
+    from starter.retrieval import RetrievalConfig
+    DEFAULT_RETRIEVAL_CONFIG = RetrievalConfig()
+except Exception:
+    DEFAULT_RETRIEVAL_CONFIG = None
+
+try:
+    from starter.intent import IntentConfig
+    DEFAULT_INTENT_CONFIG = IntentConfig()
+except Exception:
+    DEFAULT_INTENT_CONFIG = None
+
+_RETRIEVER = None
+_CLASSIFIER = None
 
 
 def load_documents() -> list[dict[str, Any]]:
@@ -62,24 +83,68 @@ def load_documents() -> list[dict[str, Any]]:
     return documents
 
 
+def _get_retriever():
+    """Lazily instantiate the shared Retriever instance."""
+    global _RETRIEVER
+    if _RETRIEVER is None:
+        from starter.retrieval import RetrievalConfig, Retriever
+        docs = load_documents()
+        config = DEFAULT_RETRIEVAL_CONFIG if DEFAULT_RETRIEVAL_CONFIG is not None else RetrievalConfig()
+        _RETRIEVER = Retriever(docs, config)
+    return _RETRIEVER
+
+
+def _get_classifier():
+    """Lazily instantiate and fit the shared IntentClassifier instance."""
+    global _CLASSIFIER
+    if _CLASSIFIER is None:
+        try:
+            from starter.intent import IntentClassifier, IntentConfig, build_training_data
+            docs = load_documents()
+            texts, labels = build_training_data(docs)
+            config = DEFAULT_INTENT_CONFIG if DEFAULT_INTENT_CONFIG is not None else IntentConfig()
+            clf = IntentClassifier(config)
+            clf.fit(texts, labels)
+            _CLASSIFIER = clf
+        except Exception:
+            _CLASSIFIER = "fallback"
+    return _CLASSIFIER
+
+
+def _classify_intent_fallback(query: str) -> tuple[str, float]:
+    """Fallback classifier: use top-1 document intent and score."""
+    retriever = _get_retriever()
+    ranked = retriever.rank(query)
+    if ranked:
+        top_doc, top_score = ranked[0]
+        return str(top_doc["intent"]), float(top_score)
+    return "course_registration", 0.0
+
+
 def classify_intent(query: str) -> tuple[str, float]:
     """Return ``(intent_label, confidence)`` for ``query``.
 
-    Implement this with a classical classifier (Bag-of-Words + Naive
-    Bayes, TF-IDF + logistic regression, etc.) trained on
-    ``data/intents.csv`` and the labeled documents from
-    :func:`load_documents`. Do not call a hosted LLM.
+    Trained on ``data/intents.csv`` and the labeled documents from
+    :func:`load_documents`. Fallback to top-1 retrieved document intent
+    when ``starter/intent.py`` is not yet implemented (INTERFACE.md 4).
     """
-    raise NotImplementedError("Implement classify_intent() with your own classifier.")
+    if not isinstance(query, str):
+        query = ""
+    clf = _get_classifier()
+    if clf != "fallback" and hasattr(clf, "predict"):
+        try:
+            return clf.predict(query)
+        except Exception:
+            pass
+    return _classify_intent_fallback(query)
 
 
 def retrieve(query: str, top_k: int = 3) -> list[tuple[dict[str, Any], float]]:
     """Return up to ``top_k`` ``(document, score)`` pairs ranked by relevance.
 
-    Implement this with classical IR (TF-IDF + cosine similarity, BM25,
-    Bag-of-Words overlap, etc.) over :func:`load_documents`. If nothing is
-    relevant enough, return an **empty list** instead of fabricating a
-    match: the product must abstain (no document / low confidence) rather
-    than invent an answer for an out-of-corpus question.
+    Uses classical IR (TF-IDF + cosine similarity over :func:`load_documents`).
+    Returns an empty list when query is out-of-corpus or score is below threshold.
     """
-    raise NotImplementedError("Implement retrieve() with your own IR method.")
+    if not isinstance(query, str):
+        query = ""
+    return _get_retriever().search(query, top_k)
