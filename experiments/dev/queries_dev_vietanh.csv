@@ -1,1 +1,25 @@
 id,query,type,expected_intent,expected_doc_id,notes
+dev_a_01,Is it possible to change my current class time to a different slot for the same subject?,paraphrase,course_registration,faq_course_registration_06,Paraphrase for section swap
+dev_a_02,"The class I need is completely full, how can I obtain permission to enroll anyway?",paraphrase,course_registration,faq_course_registration_08,Paraphrase for closed course override code
+dev_a_03,Am I allowed to look over my marked test paper with the professor?,paraphrase,exam,faq_exam_07,Paraphrase for viewing graded exam
+dev_a_04,What time are test halls unlocked before the test begins?,paraphrase,exam,faq_exam_09,Paraphrase for early arrival at exam room
+dev_a_05,Do part-time learners get charged a lower rate if registered for under twelve credit hours?,paraphrase,tuition,faq_tuition_07,Paraphrase for tuition discount fewer than 12 credits
+dev_a_06,Which specific university services are covered by the compulsory semester fee?,paraphrase,tuition,faq_tuition_09,Paraphrase for mandatory campus fee coverage
+dev_a_07,Do different offerings of a class have varying weekly day and time setups?,paraphrase,class_schedule,faq_class_schedule_06,Paraphrase for differing section meeting patterns
+dev_a_08,When will the timetable for upcoming term courses be posted online?,paraphrase,class_schedule,faq_class_schedule_09,Paraphrase for publication of next semester schedule
+dev_a_09,Where can physical handicap obstacles around university facilities be reported?,paraphrase,student_services,faq_student_services_05,Paraphrase for accessibility barrier reporting
+dev_a_10,What is the procedure for obtaining special dorm arrangements due to health issues?,paraphrase,student_services,faq_student_services_10,Paraphrase for housing accommodations for medical condition
+dev_a_11,Will I be permitted to walk across the graduation stage if I still need a summer class?,paraphrase,graduation,faq_graduation_04,Paraphrase for commencement participation with summer course remaining
+dev_a_12,Is it permissible to complete two distinct degree programs simultaneously?,paraphrase,graduation,faq_graduation_08,Paraphrase for double major graduation
+dev_a_13,Where are the instructions to configure student inbox synchronization on mobile devices?,paraphrase,technical_support,faq_technical_support_05,Paraphrase for campus email phone setup
+dev_a_14,Can university students borrow a portable computer from library circulation services?,paraphrase,technical_support,faq_technical_support_09,Paraphrase for laptop loan from library
+dev_a_15,Where can students purchase parking permits for the campus north garage?,out_of_corpus,,,Campus parking permits not in corpus
+dev_a_16,Are university dining halls open during Thanksgiving holiday break?,out_of_corpus,,,Dining hall holiday hours not in corpus
+dev_a_17,Can students bring emotional support pets into campus dormitories?,out_of_corpus,,,Dormitory pet policy not in corpus
+dev_a_18,What are the operating hours for the campus swimming pool on weekends?,out_of_corpus,,,Swimming pool recreation hours not in corpus
+dev_a_19,How can undergraduate students apply for on-campus student union barista jobs?,out_of_corpus,,,Campus student union jobs not in corpus
+dev_a_20,Is there a campus lost and found department for missing student ID cards?,out_of_corpus,,,Lost and found service not in corpus
+dev_a_21,Which local pharmacy near campus can refill prescriptions for university students?,out_of_corpus,,,Local pharmacy near campus not in corpus
+dev_a_22,Where is the nearest laundromat to the south campus dormitory buildings?,out_of_corpus,,,Off-campus laundromat not in corpus
+dev_a_23,What is the best route to drive from downtown to the airport during rush hour?,out_of_corpus,,,General driving directions outside campus
+dev_a_24,Can you recommend a good Italian restaurant that delivers on Sunday evenings?,out_of_corpus,,,General restaurant recommendation outside campus
