@@ -1,0 +1,99 @@
+id,query,type,expected_intent,expected_doc_id,notes
+dev_auto_n_01,Can I request a schedule that avoids early morning classes?,normal,class_schedule,faq_class_schedule_03,auto: verbatim FAQ question
+dev_auto_n_02,Can two sections of the same course have different meeting patterns?,normal,class_schedule,faq_class_schedule_06,auto: verbatim FAQ question
+dev_auto_n_03,Does the class schedule change during university holidays?,normal,class_schedule,faq_class_schedule_08,auto: verbatim FAQ question
+dev_auto_n_04,How far in advance is next semester's class schedule published?,normal,class_schedule,faq_class_schedule_09,auto: verbatim FAQ question
+dev_auto_n_05,Can I see a professor's office hours from the class schedule page?,normal,class_schedule,faq_class_schedule_10,auto: verbatim FAQ question
+dev_auto_n_06,"What do the letters after a course number, like L or D, mean on my schedule?",normal,class_schedule,faq_class_schedule_11,auto: verbatim FAQ question
+dev_auto_n_07,How do I get a printable version of my weekly schedule?,normal,class_schedule,faq_class_schedule_12,auto: verbatim FAQ question
+dev_auto_n_08,How many credits can I register for as a first-year student?,normal,course_registration,faq_course_registration_04,auto: verbatim FAQ question
+dev_auto_n_09,How do I switch from one course section to another?,normal,course_registration,faq_course_registration_06,auto: verbatim FAQ question
+dev_auto_n_10,Can I audit a course instead of taking it for credit?,normal,course_registration,faq_course_registration_07,auto: verbatim FAQ question
+dev_auto_n_11,How do I request an override for a closed course?,normal,course_registration,faq_course_registration_08,auto: verbatim FAQ question
+dev_auto_n_12,When does registration open for returning students?,normal,course_registration,faq_course_registration_10,auto: verbatim FAQ question
+dev_auto_n_13,Can I take a class in another department if I am not majoring in it?,normal,course_registration,faq_course_registration_11,auto: verbatim FAQ question
+dev_auto_n_14,How do I withdraw from a single course after the semester has started?,normal,course_registration,faq_course_registration_12,auto: verbatim FAQ question
+dev_auto_n_15,Are calculators allowed during exams?,normal,exam,faq_exam_04,auto: verbatim FAQ question
+dev_auto_n_16,Can I see my exam paper after it is graded?,normal,exam,faq_exam_07,auto: verbatim FAQ question
+dev_auto_n_17,Is there a curve applied to final exam grades?,normal,exam,faq_exam_08,auto: verbatim FAQ question
+dev_auto_n_18,How early can I arrive to prepare for the exam room?,normal,exam,faq_exam_09,auto: verbatim FAQ question
+dev_auto_n_19,What identification do I need to bring to a final exam?,normal,exam,faq_exam_10,auto: verbatim FAQ question
+dev_auto_n_20,Can I take a final exam early if I have a travel conflict?,normal,exam,faq_exam_11,auto: verbatim FAQ question
+dev_auto_n_21,How do I dispute a final exam grade I believe was miscalculated?,normal,exam,faq_exam_12,auto: verbatim FAQ question
+dev_auto_n_22,Can I participate in commencement if I have one course left to finish over the summer?,normal,graduation,faq_graduation_04,auto: verbatim FAQ question
+dev_auto_n_23,How long does it take to receive my diploma after graduating?,normal,graduation,faq_graduation_06,auto: verbatim FAQ question
+dev_auto_n_24,What GPA do I need to graduate with honors?,normal,graduation,faq_graduation_07,auto: verbatim FAQ question
+dev_auto_n_25,Can I graduate with a double major?,normal,graduation,faq_graduation_08,auto: verbatim FAQ question
+dev_auto_n_26,What happens if I fail to apply for graduation by the deadline?,normal,graduation,faq_graduation_10,auto: verbatim FAQ question
+dev_auto_n_27,Can I change my degree conferral date after applying?,normal,graduation,faq_graduation_11,auto: verbatim FAQ question
+dev_auto_n_28,How do I make sure my name is pronounced correctly at commencement?,normal,graduation,faq_graduation_12,auto: verbatim FAQ question
+dev_auto_n_29,How do I request a letter confirming my enrollment status?,normal,student_services,faq_student_services_03,auto: verbatim FAQ question
+dev_auto_n_30,How do I report an accessibility barrier on campus?,normal,student_services,faq_student_services_05,auto: verbatim FAQ question
+dev_auto_n_31,Where can I find information about on-campus jobs?,normal,student_services,faq_student_services_07,auto: verbatim FAQ question
+dev_auto_n_32,How do I join a student club or organization?,normal,student_services,faq_student_services_08,auto: verbatim FAQ question
+dev_auto_n_33,How do I request housing accommodations for a medical condition?,normal,student_services,faq_student_services_10,auto: verbatim FAQ question
+dev_auto_n_34,Who do I contact about a dispute with a roommate?,normal,student_services,faq_student_services_11,auto: verbatim FAQ question
+dev_auto_n_35,How do I access legal advice as a student?,normal,student_services,faq_student_services_12,auto: verbatim FAQ question
+dev_auto_n_36,Who do I contact if my course website will not load?,normal,technical_support,faq_technical_support_04,auto: verbatim FAQ question
+dev_auto_n_37,How do I set up my campus email on my phone?,normal,technical_support,faq_technical_support_05,auto: verbatim FAQ question
+dev_auto_n_38,Why did my file upload fail on the course platform?,normal,technical_support,faq_technical_support_08,auto: verbatim FAQ question
+dev_auto_n_39,How do I request a laptop loan from the library?,normal,technical_support,faq_technical_support_09,auto: verbatim FAQ question
+dev_auto_n_40,What should I do if I suspect my account was compromised?,normal,technical_support,faq_technical_support_10,auto: verbatim FAQ question
+dev_auto_n_41,How do I print documents from a campus computer lab?,normal,technical_support,faq_technical_support_11,auto: verbatim FAQ question
+dev_auto_n_42,Why does the course platform log me out so quickly?,normal,technical_support,faq_technical_support_12,auto: verbatim FAQ question
+dev_auto_n_43,Does tuition cover textbooks and course materials?,normal,tuition,faq_tuition_05,auto: verbatim FAQ question
+dev_auto_n_44,Is there a tuition discount for taking fewer than 12 credits?,normal,tuition,faq_tuition_07,auto: verbatim FAQ question
+dev_auto_n_45,How do I set up a parent or sponsor to pay my tuition bill?,normal,tuition,faq_tuition_08,auto: verbatim FAQ question
+dev_auto_n_46,What fees are included in the mandatory campus fee?,normal,tuition,faq_tuition_09,auto: verbatim FAQ question
+dev_auto_n_47,Can international students pay tuition in a different currency?,normal,tuition,faq_tuition_10,auto: verbatim FAQ question
+dev_auto_n_48,How do I get a tuition statement for tax or reimbursement purposes?,normal,tuition,faq_tuition_11,auto: verbatim FAQ question
+dev_auto_n_49,What is the penalty for a returned or failed tuition payment?,normal,tuition,faq_tuition_12,auto: verbatim FAQ question
+dev_auto_t_01,Can I request a schedule that avoids earyl morning classes?,typo,class_schedule,faq_class_schedule_03,"auto: _make_typo, seed 42000"
+dev_auto_t_02,Can two sections of the same ocurse have different meeting patterns?,typo,class_schedule,faq_class_schedule_06,"auto: _make_typo, seed 42001"
+dev_auto_t_03,Does the class schedule change during university hloidays?,typo,class_schedule,faq_class_schedule_08,"auto: _make_typo, seed 42002"
+dev_auto_t_04,How far in avdance is next semester's class schedule published?,typo,class_schedule,faq_class_schedule_09,"auto: _make_typo, seed 42003"
+dev_auto_t_05,Can I see a rpofessor's office hours from the class schedule page?,typo,class_schedule,faq_class_schedule_10,"auto: _make_typo, seed 42004"
+dev_auto_t_06,"What do the letters after a course unmber, like L or D, mean on my schedule?",typo,class_schedule,faq_class_schedule_11,"auto: _make_typo, seed 42005"
+dev_auto_t_07,How do I get a pritnable version of my weekly schedule?,typo,class_schedule,faq_class_schedule_12,"auto: _make_typo, seed 42006"
+dev_auto_t_08,How many credist can I register for as a first-year student?,typo,course_registration,faq_course_registration_04,"auto: _make_typo, seed 42007"
+dev_auto_t_09,How do I switch from one cuorse section to another?,typo,course_registration,faq_course_registration_06,"auto: _make_typo, seed 42008"
+dev_auto_t_10,Can I audit a course instaed of taking it for credit?,typo,course_registration,faq_course_registration_07,"auto: _make_typo, seed 42009"
+dev_auto_t_11,How do I request an override for a clsoed course?,typo,course_registration,faq_course_registration_08,"auto: _make_typo, seed 42010"
+dev_auto_t_12,When does registartion open for returning students?,typo,course_registration,faq_course_registration_10,"auto: _make_typo, seed 42011"
+dev_auto_t_13,Can I take a class in naother department if I am not majoring in it?,typo,course_registration,faq_course_registration_11,"auto: _make_typo, seed 42012"
+dev_auto_t_14,How do I withdraw from a single course after the semester has startde?,typo,course_registration,faq_course_registration_12,"auto: _make_typo, seed 42013"
+dev_auto_t_15,Are calculators allowed during xeams?,typo,exam,faq_exam_04,"auto: _make_typo, seed 42014"
+dev_auto_t_16,Can I see my exam paper fater it is graded?,typo,exam,faq_exam_07,"auto: _make_typo, seed 42015"
+dev_auto_t_17,Is there a curve applied to ifnal exam grades?,typo,exam,faq_exam_08,"auto: _make_typo, seed 42016"
+dev_auto_t_18,How early can I arrive to preapre for the exam room?,typo,exam,faq_exam_09,"auto: _make_typo, seed 42017"
+dev_auto_t_19,What identification do I need to rbing to a final exam?,typo,exam,faq_exam_10,"auto: _make_typo, seed 42018"
+dev_auto_t_20,Can I take a fnial exam early if I have a travel conflict?,typo,exam,faq_exam_11,"auto: _make_typo, seed 42019"
+dev_auto_t_21,How do I idspute a final exam grade I believe was miscalculated?,typo,exam,faq_exam_12,"auto: _make_typo, seed 42020"
+dev_auto_t_22,Can I participate in commencement if I have one coruse left to finish over the summer?,typo,graduation,faq_graduation_04,"auto: _make_typo, seed 42021"
+dev_auto_t_23,How long does it take to receive my diploma after graduatign?,typo,graduation,faq_graduation_06,"auto: _make_typo, seed 42022"
+dev_auto_t_24,What GPA do I need to graduaet with honors?,typo,graduation,faq_graduation_07,"auto: _make_typo, seed 42023"
+dev_auto_t_25,Can I graduate with a double majro?,typo,graduation,faq_graduation_08,"auto: _make_typo, seed 42024"
+dev_auto_t_26,What happens if I fail to apply for graduation by the daedline?,typo,graduation,faq_graduation_10,"auto: _make_typo, seed 42025"
+dev_auto_t_27,Can I change my degree conferral date afetr applying?,typo,graduation,faq_graduation_11,"auto: _make_typo, seed 42026"
+dev_auto_t_28,How do I make sure my name is pronounced correctly at commencemnet?,typo,graduation,faq_graduation_12,"auto: _make_typo, seed 42027"
+dev_auto_t_29,How do I request a lteter confirming my enrollment status?,typo,student_services,faq_student_services_03,"auto: _make_typo, seed 42028"
+dev_auto_t_30,How do I reoprt an accessibility barrier on campus?,typo,student_services,faq_student_services_05,"auto: _make_typo, seed 42029"
+dev_auto_t_31,Where can I find infromation about on-campus jobs?,typo,student_services,faq_student_services_07,"auto: _make_typo, seed 42030"
+dev_auto_t_32,How do I join a stuednt club or organization?,typo,student_services,faq_student_services_08,"auto: _make_typo, seed 42031"
+dev_auto_t_33,How do I request housing acocmmodations for a medical condition?,typo,student_services,faq_student_services_10,"auto: _make_typo, seed 42032"
+dev_auto_t_34,Who do I contcat about a dispute with a roommate?,typo,student_services,faq_student_services_11,"auto: _make_typo, seed 42033"
+dev_auto_t_35,How do I access legal davice as a student?,typo,student_services,faq_student_services_12,"auto: _make_typo, seed 42034"
+dev_auto_t_36,Who do I contact if my course ewbsite will not load?,typo,technical_support,faq_technical_support_04,"auto: _make_typo, seed 42035"
+dev_auto_t_37,How do I set up my campus email on my phoen?,typo,technical_support,faq_technical_support_05,"auto: _make_typo, seed 42036"
+dev_auto_t_38,Why did my file upload fail on the course pltaform?,typo,technical_support,faq_technical_support_08,"auto: _make_typo, seed 42037"
+dev_auto_t_39,How do I request a alptop loan from the library?,typo,technical_support,faq_technical_support_09,"auto: _make_typo, seed 42038"
+dev_auto_t_40,What should I do if I usspect my account was compromised?,typo,technical_support,faq_technical_support_10,"auto: _make_typo, seed 42039"
+dev_auto_t_41,How do I print documents from a cmapus computer lab?,typo,technical_support,faq_technical_support_11,"auto: _make_typo, seed 42040"
+dev_auto_t_42,Why does the course paltform log me out so quickly?,typo,technical_support,faq_technical_support_12,"auto: _make_typo, seed 42041"
+dev_auto_t_43,Does tuition cover textbooks and course materiasl?,typo,tuition,faq_tuition_05,"auto: _make_typo, seed 42042"
+dev_auto_t_44,Is there a tuition discuont for taking fewer than 12 credits?,typo,tuition,faq_tuition_07,"auto: _make_typo, seed 42043"
+dev_auto_t_45,How do I set up a parent or sponsor to pay my tiution bill?,typo,tuition,faq_tuition_08,"auto: _make_typo, seed 42044"
+dev_auto_t_46,What fees are included in the mandatory campsu fee?,typo,tuition,faq_tuition_09,"auto: _make_typo, seed 42045"
+dev_auto_t_47,Can inetrnational students pay tuition in a different currency?,typo,tuition,faq_tuition_10,"auto: _make_typo, seed 42046"
+dev_auto_t_48,How do I get a tuition statement for tax or erimbursement purposes?,typo,tuition,faq_tuition_11,"auto: _make_typo, seed 42047"
+dev_auto_t_49,What is the penalty for a returned or falied tuition payment?,typo,tuition,faq_tuition_12,"auto: _make_typo, seed 42048"
