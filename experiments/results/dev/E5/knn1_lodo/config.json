@@ -1,0 +1,29 @@
+{
+  "split": "dev/E5",
+  "run_name": "knn1_lodo",
+  "retriever": {
+    "kind": "tfidf",
+    "analyzer": "word",
+    "index_field": "text",
+    "word_ngram_range": [
+      1,
+      1
+    ],
+    "char_ngram_range": [
+      3,
+      5
+    ],
+    "remove_stopwords": true,
+    "sublinear_tf": false,
+    "hybrid_alpha": 0.5,
+    "threshold": 0.0
+  },
+  "intent": {
+    "kind": "knn1"
+  },
+  "intent_mode": "lodo",
+  "n_queries": 122,
+  "query_files": [],
+  "commit": "1b2288e97508e92808b979a94195c4a2c4c39cea",
+  "created_at": "2026-10-18T13:45:41+00:00"
+}
