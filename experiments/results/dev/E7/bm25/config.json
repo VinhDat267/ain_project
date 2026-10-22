@@ -1,0 +1,15 @@
+{
+  "split": "dev/E7",
+  "run_name": "bm25",
+  "retriever": {
+    "kind": "bm25"
+  },
+  "intent": {
+    "kind": "knn1"
+  },
+  "intent_mode": "full",
+  "n_queries": 122,
+  "query_files": [],
+  "commit": "6ee4ccde93508a9108b942a59e36020af1db06e6",
+  "created_at": "2026-10-18T14:22:40+00:00"
+}

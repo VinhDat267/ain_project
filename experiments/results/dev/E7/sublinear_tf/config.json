@@ -1,0 +1,29 @@
+{
+  "split": "dev/E7",
+  "run_name": "sublinear_tf",
+  "retriever": {
+    "kind": "tfidf",
+    "analyzer": "word",
+    "index_field": "text",
+    "word_ngram_range": [
+      1,
+      1
+    ],
+    "char_ngram_range": [
+      3,
+      5
+    ],
+    "remove_stopwords": true,
+    "sublinear_tf": true,
+    "hybrid_alpha": 0.5,
+    "threshold": 0.0
+  },
+  "intent": {
+    "kind": "knn1"
+  },
+  "intent_mode": "full",
+  "n_queries": 122,
+  "query_files": [],
+  "commit": "6ee4ccde93508a9108b942a59e36020af1db06e6",
+  "created_at": "2026-10-18T14:22:40+00:00"
+}
