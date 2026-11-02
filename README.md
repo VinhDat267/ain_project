@@ -94,6 +94,7 @@ Xem [cách xuất PDF và nguồn số liệu](presentation/README.md).
 - [PLAN.md](PLAN.md): kế hoạch Midterm, phân vai, danh sách việc và hạn chót, dàn ý thuyết trình.
 - [INTERFACE.md](INTERFACE.md): hợp đồng kỹ thuật giữa các thành viên (chữ ký hàm, định dạng dữ liệu, cách đánh giá).
 - [ASSIGNMENT.md](ASSIGNMENT.md): đề bài gốc của môn học.
+- [notes/learning_path.md](notes/learning_path.md): lộ trình học cho từng thành viên, kèm link tài liệu.
 
 ## Nhóm
 

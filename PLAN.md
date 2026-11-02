@@ -1,7 +1,7 @@
 # PLAN — Project 12 · Campus Notice & FAQ Assistant
 
 > Môn Trí tuệ nhân tạo (AIN) · Nhóm: **Vinh** (nhóm trưởng), **Việt Anh**, **Dương**
-> Đề bài của thầy: [ASSIGNMENT.md](ASSIGNMENT.md) · Hợp đồng kỹ thuật: [INTERFACE.md](INTERFACE.md) · Câu hỏi vấn đáp: [notes/qa_bank.md](notes/qa_bank.md)
+> Đề bài của thầy: [ASSIGNMENT.md](ASSIGNMENT.md) · Hợp đồng kỹ thuật: [INTERFACE.md](INTERFACE.md) · Câu hỏi vấn đáp: [notes/qa_bank.md](notes/qa_bank.md) · Lộ trình học: [notes/learning_path.md](notes/learning_path.md)
 >
 > 🎯 **Midterm: thuyết trình thứ Bảy 31/10/2026** · Mục tiêu nội bộ: **sẵn sàng từ Chủ nhật 25/10**
 > Phiên bản **v2** (sau rà soát) · Cập nhật 01/10/2026
@@ -385,7 +385,7 @@ Gặp lỗi thì chụp màn hình và gửi vào nhóm chat.
 **Tài liệu đọc**
 - **Đợt 1 (D03, trước CN 04/10), đủ để làm D04:**
   1. [CS50 AI, Lecture 6 notes](https://cs50.harvard.edu/ai/notes/6/): phần *Bag-of-Words Model*, *Naive Bayes* (có additive smoothing).
-  2. scikit-learn tutorial [Working With Text Data](https://scikit-learn.org/stable/tutorial/text_analytics/working_with_text_data.html): `CountVectorizer`, `MultinomialNB`, `Pipeline`.
+  2. scikit-learn: [Naive Bayes](https://scikit-learn.org/stable/modules/naive_bayes.html) (mục *Multinomial Naive Bayes*), [Pipeline](https://scikit-learn.org/stable/modules/compose.html), và ví dụ [Classification of text documents using sparse features](https://scikit-learn.org/stable/auto_examples/text/plot_document_classification_20newsgroups.html).
 - **Đợt 2 (D07, trước CN 11/10), cho E5 và slide:**
   1. [CS50 AI, Lecture 2 notes](https://cs50.harvard.edu/ai/notes/2/): *Conditional Probability*, *Bayes' Rule*.
   2. [CS50 AI, Lecture 4 notes](https://cs50.harvard.edu/ai/notes/4/): *Nearest-Neighbor*, *Perceptron*, *Support Vector Machines*, *Overfitting*.
