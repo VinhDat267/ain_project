@@ -23,7 +23,7 @@ Ranked = list[tuple[Document, float]]
 class RetrievalConfig:
     """Every knob the experiments are allowed to turn (INTERFACE.md 5.2)."""
 
-    analyzer: Literal["word", "char", "hybrid"] = "word"
+    analyzer: Literal["word", "char", "char_wb", "hybrid"] = "word"
     index_field: Literal["question", "text"] = "text"
     word_ngram_range: tuple[int, int] = (1, 1)
     char_ngram_range: tuple[int, int] = (3, 5)
@@ -47,7 +47,7 @@ class Retriever:
 
         if self.config.analyzer == "word":
             self._init_word_index()
-        elif self.config.analyzer == "char":
+        elif self.config.analyzer in ("char", "char_wb"):
             self._init_char_index()
         elif self.config.analyzer == "hybrid":
             self._init_hybrid_index()
@@ -67,9 +67,19 @@ class Retriever:
         return tokens
 
     def _extract_char_tokens(self, text: str) -> list[str]:
-        words = tokenize(text, remove_stopwords=False)
         min_n, max_n = self.config.char_ngram_range
         tokens: list[str] = []
+        if self.config.analyzer == "char_wb":
+            # Match sklearn's lowercase, word padding and short-word handling.
+            for word in text.lower().split():
+                padded = f" {word} "
+                for n in range(min_n, max_n + 1):
+                    for start in range(max(len(padded) - n + 1, 1)):
+                        tokens.append(padded[start : start + n])
+                    if n >= len(padded):
+                        break
+            return tokens
+        words = tokenize(text, remove_stopwords=False)
         for word in words:
             w_len = len(word)
             for n in range(min_n, max_n + 1):
@@ -172,7 +182,7 @@ class Retriever:
             q_tokens = self._extract_word_tokens(query)
             q_vec = self._compute_query_vector(q_tokens, self._vocab, self._idf)
             scores = self._doc_matrix @ q_vec
-        elif self.config.analyzer == "char":
+        elif self.config.analyzer in ("char", "char_wb"):
             q_tokens = self._extract_char_tokens(query)
             q_vec = self._compute_query_vector(q_tokens, self._char_vocab, self._char_idf)
             scores = self._char_doc_matrix @ q_vec
@@ -237,7 +247,7 @@ class Retriever:
                 if contrib > 0.0:
                     contributions[term] += scale * float(contrib)
 
-        if self.config.analyzer in ("char", "hybrid"):
+        if self.config.analyzer in ("char", "char_wb", "hybrid"):
             scale = (1.0 - self.config.hybrid_alpha) if self.config.analyzer == "hybrid" else 1.0
             q_tokens = self._extract_char_tokens(query)
             q_vec = self._compute_query_vector(q_tokens, self._char_vocab, self._char_idf)

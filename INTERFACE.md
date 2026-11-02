@@ -1,5 +1,14 @@
 # INTERFACE — Project 12 · Campus Notice & FAQ Assistant
 
+## Cập nhật tích hợp code mẫu — 02/11/2026
+
+API công khai tiếp tục nhận các lời gọi cũ. Bản tích hợp bổ sung hai tham số
+tuỳ chọn cho `retrieve`: `threshold` và `intent_threshold`, để đo ranking khi
+tắt cổng từ chối. Mặc định dùng char_wb 3–5 + LR và hai cổng 0,15 / 0,34 theo
+code mẫu. Các thay đổi `IntentConfig`, `build_training_data` và chế độ đánh giá
+được ghi tại [notes/midterm_integration.md](notes/midterm_integration.md).
+Các cấu hình/mốc freeze phía dưới là kế hoạch trước lần tích hợp này.
+
 > Đây là hợp đồng kỹ thuật giữa 3 thành viên. Code đúng chữ ký hàm và định dạng dữ liệu ở đây thì cả nhóm làm song song được mà không phải chờ nhau.
 >
 > **Muốn đổi interface:** mở PR sửa file này trước, cả 3 người đồng ý rồi mới sửa code.

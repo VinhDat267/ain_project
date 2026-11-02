@@ -26,17 +26,37 @@ DATA_DIR = PROJECT_ROOT / "data"
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-# Default configs — frozen at V16 (INTERFACE.md section 4)
-try:
-    from starter.retrieval import RetrievalConfig
-    DEFAULT_RETRIEVAL_CONFIG = RetrievalConfig()
-except Exception:
-    DEFAULT_RETRIEVAL_CONFIG = None
+# Section 12 of Project12_Nghien_cuu_thuat_toan.md, integrated as supplied.
+# These defaults reproduce that sample, rather than a new dev-set selection.
+RETRIEVAL_THRESHOLD = 0.15
+INTENT_THRESHOLD = 0.34
 
-try:
+
+def _sample_retrieval_config():
+    from starter.retrieval import RetrievalConfig
+
+    return RetrievalConfig(
+        analyzer="char_wb", char_ngram_range=(3, 5), remove_stopwords=False,
+        sublinear_tf=True, threshold=RETRIEVAL_THRESHOLD,
+    )
+
+
+def _sample_intent_config():
     from starter.intent import IntentConfig
-    DEFAULT_INTENT_CONFIG = IntentConfig()
-except Exception:
+
+    return IntentConfig(
+        model="logreg", features="tfidf", lr_C=10,
+        include_descriptions=True, include_questions=True, sublinear_tf=True,
+    )
+
+
+# Infrastructure-only loading must work without ML dependencies, including when
+# the lecturer loads this file by path alongside another project's starter.
+try:
+    DEFAULT_RETRIEVAL_CONFIG = _sample_retrieval_config()
+    DEFAULT_INTENT_CONFIG = _sample_intent_config()
+except ImportError:
+    DEFAULT_RETRIEVAL_CONFIG = None
     DEFAULT_INTENT_CONFIG = None
 
 _RETRIEVER = None
@@ -87,9 +107,9 @@ def _get_retriever():
     """Lazily instantiate the shared Retriever instance."""
     global _RETRIEVER
     if _RETRIEVER is None:
-        from starter.retrieval import RetrievalConfig, Retriever
+        from starter.retrieval import Retriever
         docs = load_documents()
-        config = DEFAULT_RETRIEVAL_CONFIG if DEFAULT_RETRIEVAL_CONFIG is not None else RetrievalConfig()
+        config = DEFAULT_RETRIEVAL_CONFIG or _sample_retrieval_config()
         _RETRIEVER = Retriever(docs, config)
     return _RETRIEVER
 
@@ -98,53 +118,46 @@ def _get_classifier():
     """Lazily instantiate and fit the shared IntentClassifier instance."""
     global _CLASSIFIER
     if _CLASSIFIER is None:
-        try:
-            from starter.intent import IntentClassifier, IntentConfig, build_training_data
-            docs = load_documents()
-            texts, labels = build_training_data(docs)
-            config = DEFAULT_INTENT_CONFIG if DEFAULT_INTENT_CONFIG is not None else IntentConfig()
-            clf = IntentClassifier(config)
-            clf.fit(texts, labels)
-            _CLASSIFIER = clf
-        except Exception:
-            _CLASSIFIER = "fallback"
+        from starter.intent import IntentClassifier, build_training_data
+        config = DEFAULT_INTENT_CONFIG or _sample_intent_config()
+        texts, labels = build_training_data(
+            load_documents(), include_descriptions=config.include_descriptions,
+            include_questions=config.include_questions,
+        )
+        _CLASSIFIER = IntentClassifier(config).fit(texts, labels)
     return _CLASSIFIER
-
-
-def _classify_intent_fallback(query: str) -> tuple[str, float]:
-    """Fallback classifier: use top-1 document intent and score."""
-    retriever = _get_retriever()
-    ranked = retriever.rank(query)
-    if ranked:
-        top_doc, top_score = ranked[0]
-        return str(top_doc["intent"]), float(top_score)
-    return "course_registration", 0.0
 
 
 def classify_intent(query: str) -> tuple[str, float]:
     """Return ``(intent_label, confidence)`` for ``query``.
 
     Trained on ``data/intents.csv`` and the labeled documents from
-    :func:`load_documents`. Fallback to top-1 retrieved document intent
-    when ``starter/intent.py`` is not yet implemented (INTERFACE.md 4).
+    :func:`load_documents`. Confidence comes from Logistic Regression.
     """
     if not isinstance(query, str):
         query = ""
-    clf = _get_classifier()
-    if clf != "fallback" and hasattr(clf, "predict"):
-        try:
-            return clf.predict(query)
-        except Exception:
-            pass
-    return _classify_intent_fallback(query)
+    return _get_classifier().predict(query)
 
 
-def retrieve(query: str, top_k: int = 3) -> list[tuple[dict[str, Any], float]]:
+def retrieve(
+    query: str, top_k: int = 3, threshold: float | None = None,
+    intent_threshold: float | None = INTENT_THRESHOLD,
+) -> list[tuple[dict[str, Any], float]]:
     """Return up to ``top_k`` ``(document, score)`` pairs ranked by relevance.
 
     Uses classical IR (TF-IDF + cosine similarity over :func:`load_documents`).
-    Returns an empty list when query is out-of-corpus or score is below threshold.
+    Applies the sample's cosine floor and intent-confidence gate. For ranking
+    evaluation, use ``threshold=-1, intent_threshold=None`` to disable both.
     """
     if not isinstance(query, str):
         query = ""
-    return _get_retriever().search(query, top_k)
+    if top_k <= 0:
+        return []
+    retriever = _get_retriever()
+    ranked = retriever.rank(query)
+    cutoff = retriever.config.threshold if threshold is None else threshold
+    if not ranked or ranked[0][1] < cutoff:
+        return []
+    if intent_threshold is not None and classify_intent(query)[1] < intent_threshold:
+        return []
+    return ranked[:top_k]

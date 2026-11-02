@@ -1,11 +1,4 @@
-"""Streamlit starter — Project 12 campus notice/FAQ assistant.
-
-This page lists the available documents and takes a question as input. It
-must not answer: ``classify_intent`` and ``retrieve`` are empty stubs
-until you implement them yourself with classical IR/classification (see
-``README.md``). A hosted ChatGPT-style API may not replace this
-core.
-"""
+"""Offline Streamlit demo for the integrated Project 12 midterm sample."""
 from __future__ import annotations
 
 import sys
@@ -18,13 +11,11 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from starter.student_core import classify_intent, load_documents, retrieve  # noqa: E402
 
-st.set_page_config(page_title="Campus Notice and FAQ Assistant — starter", layout="wide")
-st.title("Campus Notice and FAQ Assistant — starter")
+st.set_page_config(page_title="Campus Notice and FAQ Assistant", layout="wide")
+st.title("Campus Notice and FAQ Assistant")
 st.markdown(
-    "The **AI core is student work**. This page only lists documents and "
-    "takes a question; it must not classify, retrieve, or call a hosted "
-    "model. A hosted ChatGPT-style API may not replace this core — see "
-    "`README.md`."
+    "Ask a question about campus services. Answers are retrieved from the "
+    "provided FAQs and notices, with source and similarity scores."
 )
 
 documents = load_documents()
@@ -45,17 +36,19 @@ query = st.text_input("Ask a campus question")
 
 col1, col2 = st.columns(2)
 with col1:
-    if st.button("Classify intent"):
-        try:
-            classify_intent(query)
-        except NotImplementedError as exc:
-            st.warning(f"Core not implemented yet: {exc}")
+    if st.button("Classify intent") and query.strip():
+        intent, confidence = classify_intent(query)
+        st.success(f"Intent: {intent} · confidence {confidence:.0%}")
 with col2:
-    if st.button("Retrieve documents"):
-        try:
-            retrieve(query)
-        except NotImplementedError as exc:
-            st.warning(f"Core not implemented yet: {exc}")
+    if st.button("Retrieve documents") and query.strip():
+        intent, confidence = classify_intent(query)
+        st.success(f"Intent: {intent} · confidence {confidence:.0%}")
+        results = retrieve(query)
+        if not results:
+            st.error("Information not found — please contact the administrative office.")
+        for doc, score in results:
+            st.markdown(f"**{doc['question']}** · `{doc['id']}` · {doc['source']} · cosine {score:.2f}")
+            st.caption(doc["answer"])
 
 st.info(
     "If no document is relevant enough, the correct behavior is to say so "
