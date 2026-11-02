@@ -1,0 +1,59 @@
+{
+  "split": "reused_benchmark",
+  "run_name": "midterm-sample",
+  "retriever": {
+    "kind": "tfidf",
+    "analyzer": "char_wb",
+    "index_field": "text",
+    "word_ngram_range": [
+      1,
+      1
+    ],
+    "char_ngram_range": [
+      3,
+      5
+    ],
+    "remove_stopwords": false,
+    "sublinear_tf": true,
+    "hybrid_alpha": 0.5,
+    "threshold": 0.15
+  },
+  "intent": {
+    "kind": "model",
+    "model": "logreg",
+    "features": "tfidf",
+    "ngram_range": [
+      1,
+      1
+    ],
+    "nb_alpha": 1.0,
+    "lr_C": 10,
+    "svm_C": 1.0,
+    "include_descriptions": true,
+    "include_questions": true,
+    "sublinear_tf": true
+  },
+  "intent_mode": "full",
+  "n_queries": 120,
+  "query_files": [
+    "data/queries_test.csv"
+  ],
+  "commit": "097d83c9be252ab950c9d18daebec5bb78839183",
+  "created_at": "2026-11-02T16:45:20+00:00",
+  "evaluation": "fixed sample reproduction; benchmark previously inspected; not cross-validation",
+  "intent_threshold": 0.34,
+  "training_samples": 231,
+  "normal_queries_overlap_training_questions": 35,
+  "versions": {
+    "python": "3.11.16",
+    "numpy": "1.26.4",
+    "scikit-learn": "1.5.2"
+  },
+  "source_sha256": {
+    "starter/student_core.py": "e36f4903b3cb8f2c2343eac38193a781f0d9e37c25f665535af3a7921934c385",
+    "starter/retrieval.py": "62148c2628a661fc0f4d30fccf4eff241b7881bdc5aaf23c5de8fecc816b3fac",
+    "starter/intent.py": "a9ab3b59a20fe162abe90e98feceaa03e1b12620b9512ffc7206c6635d1fcc67",
+    "experiments/evaluate.py": "46d25bc16d9a9fd19a92b73dc0f40a12af27848a106e8ba52e37665986d33ae8",
+    "scripts/evaluate.py": "2eba2535a4afd6b0dd37f5c0068df8a339647f05a2b543c242cf7f202d0a6264"
+  }
+}

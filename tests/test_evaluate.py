@@ -90,3 +90,19 @@ def test_load_queries_concatenates_dev_files_and_rejects_duplicates(tmp_path):
 
 def test_cli_refuses_the_test_split():
     assert main(["--split", "test", "--run-name", "x"]) == 2
+
+
+def test_optional_intent_gate_matches_the_integrated_sample():
+    from starter import student_core as core
+    from starter.retrieval import Retriever
+
+    query = _q("kayak", "Can I rent a kayak from the campus recreation center?", "out_of_corpus")
+    documents = core.load_documents()
+    retriever = Retriever(documents, core.DEFAULT_RETRIEVAL_CONFIG)
+    row = evaluate_run(
+        [query], documents, retriever, core.DEFAULT_INTENT_CONFIG,
+        intent_threshold=core.INTENT_THRESHOLD,
+    ).iloc[0]
+    assert row["top1_score"] > core.RETRIEVAL_THRESHOLD
+    assert row["intent_conf"] < core.INTENT_THRESHOLD
+    assert row["abstained"] == 1

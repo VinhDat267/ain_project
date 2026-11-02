@@ -131,7 +131,11 @@ def make_intent_predictor(intent: IntentSpec, documents: list[dict[str, Any]], i
 
         def fit(exclude: tuple[str, ...]):
             try:
-                texts, labels = build_training_data(documents, exclude_ids=exclude, include_descriptions=intent.include_descriptions)
+                texts, labels = build_training_data(
+                    documents, exclude_ids=exclude,
+                    include_descriptions=intent.include_descriptions,
+                    include_questions=intent.include_questions,
+                )
                 return IntentClassifier(intent).fit(texts, labels)
             except NotImplementedError as exc:
                 raise IntentNotReady("starter/intent.py is not implemented yet (D04); use --intent knn1") from exc
@@ -155,6 +159,7 @@ def evaluate_run(
     retriever: Any,
     intent: IntentSpec,
     intent_mode: Literal["full", "lodo"] = "full",
+    intent_threshold: float | None = None,
 ) -> pd.DataFrame:
     """Return one row per query with exactly ``PER_QUERY_COLUMNS``.
 
@@ -163,6 +168,8 @@ def evaluate_run(
     baseline; ``"knn1"`` / ``"knn5"`` vote over the retriever ranking
     (``knn1`` == top1_doc). ``intent_mode="lodo"`` refits the classifier
     without ``expected_doc_id``, or excludes it from the k-NN neighbours.
+    ``intent_threshold`` optionally enables the sample's second abstention gate;
+    the default keeps the original cosine-only comparison protocol.
     """
     if intent_mode not in ("full", "lodo"):
         raise ValueError(f"Unknown intent_mode {intent_mode!r}")
@@ -173,6 +180,8 @@ def evaluate_run(
         ranked = retriever.rank(q["query"])
         abstained = int(retriever.search(q["query"], 3) == [])
         pred_intent, intent_conf = predict_intent(q["query"], ranked, q["expected_doc_id"])
+        if intent_threshold is not None and intent_conf < intent_threshold:
+            abstained = 1
         latency_ms = (time.perf_counter() - started) * 1000.0
 
         ids = [doc["id"] for doc, _ in ranked]

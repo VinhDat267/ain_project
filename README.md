@@ -30,7 +30,7 @@ python3.11 -m venv .venv
 
 Trên Windows (PowerShell), tạo venv bằng `py -3.11 -m venv .venv` và thay `.venv/bin/python` bằng `.\.venv\Scripts\python.exe` ở mọi lệnh.
 
-Chạy kiểm thử (kết quả chuẩn hiện tại: `15 passed, 2 deselected`):
+Chạy kiểm thử (hai test kiểm tra stub của đề được deselect trong `pytest.ini`):
 
 ```bash
 .venv/bin/python -m pytest -q
@@ -42,6 +42,42 @@ Mở ứng dụng demo:
 .venv/bin/python -m streamlit run starter/app.py
 ```
 
+## Bản midterm tích hợp từ tài liệu của nhóm
+
+Phần code mẫu ở mục 12 của `Project12_Nghien_cuu_thuat_toan.md` đã được ghép
+vào cấu trúc module hiện có:
+
+- Retrieval: **TF-IDF char_wb 3–5, sublinear TF, L2 + cosine**, tự viết bằng numpy;
+  được đối chiếu điểm số với scikit-learn.
+- Intent: **TF-IDF từ + Logistic Regression, C = 10**, train trên 112 text,
+  112 question/title và 7 mô tả intent. NB/SVM vẫn có thể dùng để so sánh.
+- Trả kết quả khi **cosine >= 0,15 và max posterior intent >= 0,34**.
+- App hiển thị intent/confidence, nội dung top-k, nguồn và cosine; có banner từ chối.
+
+Tái lập số liệu của code đã ghép trên 120 câu benchmark:
+
+```powershell
+.\.venv\Scripts\python.exe scripts/evaluate.py
+```
+
+Kết quả: full MRR **0,943**, intent accuracy **97,1%**, end-to-end **108/120**,
+từ chối **15/15 OOC**. Script lưu `config.json`, `per_query.csv`, `summary.csv` và `ablation.csv`
+vào `experiments/results/midterm-sample/`.
+
+Đây là **tái lập cấu hình cố định trên benchmark đã được xem**, không phải kết quả
+CV hay ước lượng trên tập test chưa đụng đến. Script báo cáo riêng full MRR của
+slide và MRR@10 của bộ thí nghiệm cũ. Các bài so sánh cũ trong `experiments/`
+vẫn giữ quy trình riêng; hai stub `intent_cv.py` và `noise_curve.py` không được
+coi là đã hoàn thành bởi lần tích hợp này.
+
+Chi tiết cấu hình và thay đổi API tương thích: [notes/midterm_integration.md](notes/midterm_integration.md).
+
+Slide đã rà soát: [HTML tiếng Việt](presentation/presentation.html),
+[HTML tiếng Anh](presentation/presentation_en.html),
+[PDF tiếng Việt](presentation/presentation.pdf),
+[PDF tiếng Anh](presentation/presentation_en.pdf).
+Xem [cách xuất PDF và nguồn số liệu](presentation/README.md).
+
 ## Cấu trúc repo
 
 | Đường dẫn | Nội dung |
@@ -51,7 +87,7 @@ Mở ứng dụng demo:
 | `data/` | Kho tài liệu (84 FAQ, 28 thông báo) và 120 câu hỏi đánh giá của môn học, giữ nguyên bản gốc |
 | `tests/` | Kiểm thử, gồm bộ sanity test của môn học |
 | `notes/` | Tính tay, phân tích lỗi, ngân hàng câu hỏi vấn đáp |
-| `scripts/` | Script sinh dữ liệu tổng hợp của môn học |
+| `scripts/` | Sinh dữ liệu của môn học và `evaluate.py` tái lập code mẫu midterm |
 
 ## Tài liệu của nhóm
 

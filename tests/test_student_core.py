@@ -1,5 +1,8 @@
 import sys
+import subprocess
 from pathlib import Path
+
+import pytest
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(PROJECT_ROOT) not in sys.path:
@@ -50,3 +53,27 @@ def test_classify_intent_empty_never_raises():
     intent, conf = classify_intent("")
     assert isinstance(intent, str)
     assert isinstance(conf, float)
+
+
+@pytest.mark.parametrize("foreign_starter", [False, True])
+def test_document_loader_works_without_ml_dependencies_or_owning_the_starter_namespace(foreign_starter):
+    # The lecturer can load this file by path alongside other projects' starters.
+    script = f"""
+import importlib.util, sys, types
+from pathlib import Path
+if {foreign_starter!r}:
+    other = types.ModuleType('starter')
+    other.__path__ = []
+    sys.modules['starter'] = other
+path = Path('starter/student_core.py').resolve()
+spec = importlib.util.spec_from_file_location('campus_core', path)
+core = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(core)
+print(len(core.load_documents()))
+"""
+    result = subprocess.run(
+        [sys.executable, "-B", "-S", "-c", script], cwd=PROJECT_ROOT,
+        capture_output=True, text=True, timeout=15,
+    )
+    assert result.returncode == 0, result.stderr
+    assert result.stdout.strip() == "112"
