@@ -63,6 +63,12 @@ EXPERIMENTS: dict[str, dict[str, Run]] = {
         "sublinear_tf": (RetrievalConfig(sublinear_tf=True), "knn1", "full"),
     },
     # E3, E4: char n-grams and hybrid — Viet Anh adds them (A08).
+    # E7: BM25 (outside the course) vs word TF-IDF + cosine (V13).
+    "E7": {
+        "bm25": ("bm25", "knn1", "full"),
+        "word_text": (WORD, "knn1", "full"),
+        "sublinear_tf": (RetrievalConfig(sublinear_tf=True), "knn1", "full"),
+    },
     # E5: five ways to classify intent, full training and leave-one-document-out.
     "E5": {
         f"{name}_{mode}": (WORD, intent, mode)

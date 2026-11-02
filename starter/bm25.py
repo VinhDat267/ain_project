@@ -6,7 +6,11 @@ BM25 scores are not bounded to [0, 1], so it is compared on ranking metrics only
 """
 from __future__ import annotations
 
+import math
+from collections import Counter
 from typing import Any, Literal
+
+from .preprocess import tokenize
 
 Document = dict[str, Any]
 Ranked = list[tuple[Document, float]]
@@ -23,17 +27,50 @@ class BM25Retriever:
         index_field: Literal["question", "text"] = "text",
         threshold: float = 0.0,
     ) -> None:
-        self.documents = documents
+        self.documents = list(documents)
         self.k1 = k1
         self.b = b
         self.index_field = index_field
         self.threshold = threshold
-        raise NotImplementedError("Build the BM25 index in BM25Retriever.__init__")
+
+        doc_tokens = [tokenize(doc[index_field], remove_stopwords=True) for doc in self.documents]
+        self._term_freqs = [Counter(tokens) for tokens in doc_tokens]
+        self._doc_lengths = [len(tokens) for tokens in doc_tokens]
+        n_docs = len(self.documents)
+        self._avg_length = sum(self._doc_lengths) / n_docs if n_docs else 0.0
+
+        doc_freq = Counter(term for term_freq in self._term_freqs for term in term_freq)
+        self._idf = {
+            term: math.log((n_docs - df + 0.5) / (df + 0.5) + 1.0)
+            for term, df in doc_freq.items()
+        }
+
+    def score(self, query: str) -> list[float]:
+        """BM25 score of every document for ``query``, in document order."""
+        terms = sorted(set(tokenize(query if isinstance(query, str) else "", remove_stopwords=True)))
+        scores = []
+        for term_freq, length in zip(self._term_freqs, self._doc_lengths):
+            length_ratio = length / self._avg_length if self._avg_length else 1.0
+            saturation = self.k1 * (1.0 - self.b + self.b * length_ratio)
+            total = 0.0
+            for term in terms:
+                f = term_freq.get(term, 0)
+                if f:
+                    total += self._idf[term] * f * (self.k1 + 1.0) / (f + saturation)
+            scores.append(total)
+        return scores
 
     def rank(self, query: str) -> Ranked:
         """All documents with their BM25 score, highest first; ties broken by ``id`` ascending."""
-        raise NotImplementedError("Implement BM25Retriever.rank()")
+        results = list(zip(self.documents, self.score(query)))
+        results.sort(key=lambda item: (-item[1], item[0]["id"]))
+        return results
 
     def search(self, query: str, top_k: int = 3) -> Ranked:
         """``rank(query)[:top_k]``, or ``[]`` when ``top_k <= 0``, the top score is 0, or below ``threshold``."""
-        raise NotImplementedError("Implement BM25Retriever.search()")
+        if top_k <= 0:
+            return []
+        ranked = self.rank(query)
+        if not ranked or ranked[0][1] <= 0.0 or ranked[0][1] < self.threshold:
+            return []
+        return ranked[:top_k]
