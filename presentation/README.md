@@ -8,6 +8,12 @@ giữ thiết kế 1280 × 720 px và font nhúng từ HTML nhóm cung cấp.
 | Tiếng Việt | [presentation.html](presentation.html) | [presentation.pdf](presentation.pdf) |
 | English | [presentation_en.html](presentation_en.html) | [presentation_en.pdf](presentation_en.pdf) |
 
+## Tài liệu hỗ trợ trình bày
+
+- [speaker_notes_vi_10min.md](speaker_notes_vi_10min.md): Lời dẫn thuyết trình tiếng Việt 10 phút chi tiết theo từng slide kèm phân bổ thời gian.
+- [LIVE_DEMO.md](LIVE_DEMO.md): Kịch bản và các bước chạy demo thực tế trên Streamlit trong 90 giây.
+- [demo_queries.txt](demo_queries.txt): Danh sách 6 câu truy vấn mẫu copy-paste khi thuyết trình.
+
 ## Xuất lại PDF
 
 Mở HTML bằng Chrome hoặc Edge, chờ biểu đồ hiển thị, nhấn Ctrl+P và chọn

@@ -76,7 +76,7 @@ Slide đã rà soát: [HTML tiếng Việt](presentation/presentation.html),
 [HTML tiếng Anh](presentation/presentation_en.html),
 [PDF tiếng Việt](presentation/presentation.pdf),
 [PDF tiếng Anh](presentation/presentation_en.pdf).
-Xem [cách xuất PDF và nguồn số liệu](presentation/README.md).
+Xem [cách xuất PDF và nguồn số liệu](presentation/README.md), [lời dẫn thuyết trình 10 phút](presentation/speaker_notes_vi_10min.md), cùng [kịch bản live demo 90s](presentation/LIVE_DEMO.md) ([danh sách câu hỏi demo](presentation/demo_queries.txt)).
 
 ## Cấu trúc repo
 

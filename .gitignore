@@ -18,3 +18,8 @@ dist/
 
 # Local Streamlit settings
 .streamlit/secrets.toml
+
+# Tool caches and MCP logs
+.playwright-mcp/
+
+output/playwright/audit-*/
