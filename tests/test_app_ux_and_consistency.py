@@ -70,7 +70,7 @@ def test_explain_mathematical_invariant_sums_to_cosine():
 def test_manifest_and_business_metrics_consistency():
     """Verify that the manifest and business summary are quantitatively consistent with raw CSVs."""
     manifest = build_manifest()
-    summary_df, per_intent_df = compute_business_metrics()
+    summary_df, per_intent_df, sensitivity_df = compute_business_metrics()
 
     b_dict = dict(zip(summary_df["metric"], summary_df["value"]))
 

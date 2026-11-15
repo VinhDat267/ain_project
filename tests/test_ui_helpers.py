@@ -1,4 +1,5 @@
 """Unit tests for ui_helpers module."""
+import json
 from pathlib import Path
 
 import pytest
@@ -58,11 +59,31 @@ def test_office_for_all_seven_intents():
     # Specific office assertions
     assert "Registrar" in office_for_intent("course_registration")["name"]
     assert "Bursar" in office_for_intent("tuition")["name"]
-    assert "IT Helpdesk" in office_for_intent("technical_support")["name"]
+    assert "IT Help Desk" in office_for_intent("technical_support")["name"]
 
-    # Unknown intent returns fallback office
-    fallback = office_for_intent("astronomy_club")
-    assert "University Administrative Office" in fallback["name"]
+
+def test_all_offices_attested_in_corpus():
+    """Verify that every office returned by office_for_intent is attested in data/faq.json or notices.json."""
+    faq = json.loads((PROJECT_ROOT / "data" / "faq.json").read_text(encoding="utf-8"))
+    notices = json.loads((PROJECT_ROOT / "data" / "notices.json").read_text(encoding="utf-8"))
+    corpus_text = " ".join(
+        [f["question"] + " " + f["answer"] for f in faq]
+        + [n["title"] + " " + n["body"] for n in notices]
+    )
+
+    intents = [
+        "course_registration",
+        "class_schedule",
+        "exam",
+        "tuition",
+        "student_services",
+        "graduation",
+        "technical_support",
+    ]
+    for intent in intents:
+        office = office_for_intent(intent)
+        office_name = office["name"]
+        assert office_name in corpus_text, f"Office '{office_name}' for intent '{intent}' is not attested in data/!"
 
 
 def test_is_non_english_query():

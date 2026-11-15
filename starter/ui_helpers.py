@@ -29,6 +29,7 @@ HIGHLIGHT_STOPWORDS = {
     "this", "that", "these", "those",
 }
 
+# Administrative office registry: ONLY using authentic office names attested in data/faq.json and data/notices.json
 OFFICE_REGISTRY: dict[str, dict[str, str]] = {
     "course_registration": {
         "name": "Registrar's Office",
@@ -43,31 +44,31 @@ OFFICE_REGISTRY: dict[str, dict[str, str]] = {
         "contact": "Student Portal > Class Schedule",
     },
     "exam": {
-        "name": "Registrar's Office & Examination Board",
+        "name": "Registrar's Office",
         "role": "Final exam schedules, room assignments, exam conflict rescheduling, and accommodations.",
         "location": "Administration Building, Room 102",
         "contact": "Student Portal > Examinations",
     },
     "tuition": {
-        "name": "Bursar's Office & Student Accounts",
+        "name": "Bursar's Office",
         "role": "Tuition billing statements, installment plans, refund processing, and financial holds.",
         "location": "Finance Hall, Room 204",
         "contact": "Student Portal > Tuition & Fees",
     },
     "student_services": {
-        "name": "Academic Advising & Dean of Students",
+        "name": "Advising Center",
         "role": "Academic advising, tutoring centers, student counseling, accessibility services, and health.",
         "location": "Student Union Building, 2nd Floor",
         "contact": "Student Portal > Student Services",
     },
     "graduation": {
-        "name": "Career & Graduation Services",
+        "name": "Registrar's Office",
         "role": "Graduation applications, degree audits, Latin honors cutoffs, and commencement ceremonies.",
         "location": "Administration Building, Room 105",
         "contact": "Student Portal > Graduation",
     },
     "technical_support": {
-        "name": "Campus IT Helpdesk",
+        "name": "IT Help Desk",
         "role": "Student portal logins, password resets, campus Wi-Fi, VPN setup, and software licenses.",
         "location": "Library Building, Ground Floor IT Center",
         "contact": "IT Helpdesk Portal",
@@ -75,7 +76,7 @@ OFFICE_REGISTRY: dict[str, dict[str, str]] = {
 }
 
 DEFAULT_OFFICE: dict[str, str] = {
-    "name": "University Administrative Office",
+    "name": "Registrar's Office",
     "role": "General student inquiries, document authentication, and inter-department routing.",
     "location": "Administration Building, Main Desk",
     "contact": "HANU Information Desk",
