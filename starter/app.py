@@ -24,6 +24,11 @@ from starter.student_core import (  # noqa: E402
     retrieve,
 )
 
+
+def show_table(df: pd.DataFrame) -> None:
+    """Render dataframe as a clean HTML table without triggering pyarrow serialization."""
+    st.markdown(df.to_html(index=False), unsafe_allow_html=True)
+
 st.set_page_config(
     page_title="Campus Notice & FAQ Assistant",
     page_icon="🎓",
@@ -134,7 +139,7 @@ with tab_search:
                         contribs = retriever.explain(query, doc["id"], top_n=5)
                         if contribs:
                             df_contrib = pd.DataFrame(contribs, columns=["Feature (Word / Sub-word n-gram)", "Cosine Contribution Score"])
-                            st.dataframe(df_contrib, use_container_width=True)
+                            show_table(df_contrib)
                         else:
                             st.caption("No overlapping features found.")
 
@@ -164,7 +169,7 @@ with tab_eval:
         ablation_file = PROJECT_ROOT / "experiments" / "results" / "midterm-sample" / "ablation.csv"
         if ablation_file.exists():
             df_ab = pd.read_csv(ablation_file)
-            st.dataframe(df_ab, use_container_width=True)
+            show_table(df_ab)
         else:
             st.info("Ablation file not found.")
 
@@ -172,7 +177,7 @@ with tab_eval:
         cv_file = PROJECT_ROOT / "experiments" / "results" / "dev" / "intent_cv.csv"
         if cv_file.exists():
             df_cv = pd.read_csv(cv_file)
-            st.dataframe(df_cv, use_container_width=True)
+            show_table(df_cv)
         else:
             st.info("Intent CV results pending.")
 
