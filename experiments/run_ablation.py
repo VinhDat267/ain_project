@@ -63,6 +63,17 @@ EXPERIMENTS: dict[str, dict[str, Run]] = {
         "sublinear_tf": (RetrievalConfig(sublinear_tf=True), "knn1", "full"),
     },
     # E3, E4: char n-grams and hybrid — Viet Anh adds them (A08).
+    "E3": {
+        "char_3_5": (RetrievalConfig(analyzer="char", char_ngram_range=(3, 5)), "knn1", "full"),
+        "char_2_4": (RetrievalConfig(analyzer="char", char_ngram_range=(2, 4)), "knn1", "full"),
+        "char_wb_3_5": (RetrievalConfig(analyzer="char_wb", char_ngram_range=(3, 5)), "knn1", "full"),
+        "char_wb_2_4": (RetrievalConfig(analyzer="char_wb", char_ngram_range=(2, 4)), "knn1", "full"),
+    },
+    "E4": {
+        "hybrid_03": (RetrievalConfig(analyzer="hybrid", hybrid_alpha=0.3, char_ngram_range=(3, 5)), "knn1", "full"),
+        "hybrid_05": (RetrievalConfig(analyzer="hybrid", hybrid_alpha=0.5, char_ngram_range=(3, 5)), "knn1", "full"),
+        "hybrid_07": (RetrievalConfig(analyzer="hybrid", hybrid_alpha=0.7, char_ngram_range=(3, 5)), "knn1", "full"),
+    },
     # E7: BM25 (outside the course) vs word TF-IDF + cosine (V13).
     "E7": {
         "bm25": ("bm25", "knn1", "full"),
@@ -85,7 +96,31 @@ EXPERIMENTS: dict[str, dict[str, Run]] = {
 }
 
 # Frozen at V17 (14/10). Must contain a run named "final" (the DEFAULT configs).
-FROZEN_COMPARISONS: dict[str, Run] = {}
+from starter.student_core import DEFAULT_INTENT_CONFIG, DEFAULT_RETRIEVAL_CONFIG  # noqa: E402
+
+FROZEN_COMPARISONS: dict[str, Run] = {
+    "final": (
+        DEFAULT_RETRIEVAL_CONFIG
+        if DEFAULT_RETRIEVAL_CONFIG is not None
+        else RetrievalConfig(analyzer="char_wb", char_ngram_range=(3, 5), sublinear_tf=True, threshold=0.15),
+        DEFAULT_INTENT_CONFIG
+        if DEFAULT_INTENT_CONFIG is not None
+        else IntentConfig(model="logreg", features="tfidf", lr_C=10),
+        "full",
+    ),
+    "baseline_jaccard_majority": ("jaccard", "majority", "full"),
+    "word_default_knn1": (WORD, "knn1", "full"),
+    "word_sublinear": (RetrievalConfig(sublinear_tf=True), "knn1", "full"),
+    "bm25": ("bm25", "knn1", "full"),
+    "char_wb_3_5": (RetrievalConfig(analyzer="char_wb", char_ngram_range=(3, 5), sublinear_tf=True), "knn1", "full"),
+    "hybrid_05": (RetrievalConfig(analyzer="hybrid", hybrid_alpha=0.5, char_ngram_range=(3, 5)), "knn1", "full"),
+    "nb_bow_full": (WORD, IntentConfig(model="nb", features="bow"), "full"),
+    "nb_bow_lodo": (WORD, IntentConfig(model="nb", features="bow"), "lodo"),
+    "logreg_tfidf_full": (WORD, IntentConfig(model="logreg", features="tfidf"), "full"),
+    "logreg_tfidf_lodo": (WORD, IntentConfig(model="logreg", features="tfidf"), "lodo"),
+    "svm_tfidf_full": (WORD, IntentConfig(model="svm", features="tfidf"), "full"),
+    "svm_tfidf_lodo": (WORD, IntentConfig(model="svm", features="tfidf"), "lodo"),
+}
 
 TEST_LOCK = RESULTS_DIR / "test" / "LOCK"
 RERUN_LOG = RESULTS_DIR / "test" / "RERUN_LOG.md"

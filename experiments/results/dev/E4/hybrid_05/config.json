@@ -1,0 +1,29 @@
+{
+  "split": "dev/E4",
+  "run_name": "hybrid_05",
+  "retriever": {
+    "kind": "tfidf",
+    "analyzer": "hybrid",
+    "index_field": "text",
+    "word_ngram_range": [
+      1,
+      1
+    ],
+    "char_ngram_range": [
+      3,
+      5
+    ],
+    "remove_stopwords": true,
+    "sublinear_tf": false,
+    "hybrid_alpha": 0.5,
+    "threshold": 0.0
+  },
+  "intent": {
+    "kind": "knn1"
+  },
+  "intent_mode": "full",
+  "n_queries": 146,
+  "query_files": [],
+  "commit": "f36d4c5fbe1d9e1dc10c4b03f40d664683729031+dirty",
+  "created_at": "2026-11-15T14:28:54+00:00"
+}
