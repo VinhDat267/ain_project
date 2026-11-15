@@ -1,8 +1,7 @@
 """Interactive Streamlit application for Project 12 — Campus Notice and FAQ Assistant.
 
-Supports interactive natural-language querying, real-time intent classification with
-calibrated confidence, dual-gate threshold controls, keyword explainability (explain()),
-quick stress-test scenarios, research inspector mode, and an integrated Business & Evaluation Dashboard.
+Redesigned with Linear/Vercel high-craft design tokens, student-centric language,
+staggered card animations, accessible WCAG 2.2 contrast, and research inspector mode.
 """
 from __future__ import annotations
 
@@ -25,39 +24,38 @@ from starter.student_core import (  # noqa: E402
     load_documents,
     retrieve,
 )
+from starter.theme import apply_theme  # noqa: E402
 from starter.ui_helpers import (  # noqa: E402
     highlight_matched_terms,
     is_non_english_query,
     load_notice_dates,
     match_badge,
+    match_label,
     office_for_intent,
 )
 
 
 def show_table(df: pd.DataFrame, caption: str = "Data Table") -> None:
-    """Render dataframe as a clean, accessible HTML table without triggering pyarrow serialization (WCAG 2.2 SC 1.3.1)."""
-    html = df.to_html(index=False, classes="table table-hover table-striped", border=0)
+    """Render dataframe as an accessible HTML table without pyarrow dependency (WCAG 2.2 SC 1.3.1)."""
+    html = df.to_html(index=False, classes="orca-table", border=0)
     if "<caption" not in html:
         html = html.replace(
             "<table",
-            f'<table role="table"><caption style="font-weight:bold;text-align:left;padding:5px 0;font-size:0.95em;color:#333;">{caption}</caption>',
+            f'<table role="table" class="orca-table"><caption style="font-weight:600;text-align:left;padding:6px 0;font-size:0.9rem;color:#94a3b8;">{caption}</caption>',
             1,
         )
     st.markdown(html, unsafe_allow_html=True)
 
 
 st.set_page_config(
-    page_title="Campus Notice & FAQ Assistant",
+    page_title="HANU Student Knowledge Assistant",
     page_icon="🎓",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-st.title("🎓 Campus Notice and FAQ Assistant")
-st.markdown(
-    "A classical AI conversational search assistant built on the **Vector Space Model (VSM)** "
-    "and **Supervised Intent Classification**. Designed with strict dual-gate abstention rules to eliminate hallucinations."
-)
+# Apply centralized high-craft design tokens & CSS
+apply_theme()
 
 documents = load_documents()
 notice_dates = load_notice_dates()
@@ -66,22 +64,36 @@ notice_dates = load_notice_dates()
 # NOTE: To guarantee 100% compatibility with automated AppTest suites (tests/test_midterm_sample.py),
 # DO NOT declare any st.text_input or st.button inside the sidebar prior to the main search inputs!
 with st.sidebar:
-    st.header("⚙️ System Controls")
+    st.markdown("### 🎓 HANU Assistant")
+    st.markdown(
+        "<p style='font-size:0.85rem;color:#94a3b8;line-height:1.4;margin-bottom:0.75rem;'>"
+        "Instant, deterministic answers for academic policies, course enrollment, tuition deadlines, "
+        "examinations, and campus services at Hanoi University."
+        "</p>",
+        unsafe_allow_html=True,
+    )
+
+    inspector_param = st.query_params.get("inspector", "0") == "1"
     inspector_mode = st.toggle(
         "🔬 Research & Inspector Mode",
-        value=False,
-        help="Toggle advanced algorithmic inspectability, dual-gate threshold sliders, and 3-way retrieval comparisons.",
+        value=inspector_param,
+        help="Enable technical inspectability: dual-gate parameter sliders, explain() feature attributions, and 3-way retrieval comparisons.",
     )
 
     if inspector_mode:
-        st.caption("🔬 **Research Mode Active**: Sliders below dynamically override production dual-gate parameters.")
+        st.markdown(
+            "<div style='padding:0.5rem;background:#1e222a;border-radius:6px;border:1px solid #2a2f3a;margin-bottom:0.75rem;font-size:0.8rem;color:#38bdf8;'>"
+            "🔬 <strong>Inspector Mode Active</strong>: Sliders override default production thresholds."
+            "</div>",
+            unsafe_allow_html=True,
+        )
         similarity_thresh = st.slider(
             "Cosine Similarity Threshold (θ_sim)",
             min_value=0.0,
             max_value=1.0,
             value=float(RETRIEVAL_THRESHOLD),
             step=0.01,
-            help="Minimum top-1 cosine similarity required before returning results. Sub-threshold queries trigger abstention.",
+            help="Minimum cosine similarity required before returning results. Sub-threshold queries trigger safe abstention.",
         )
         intent_thresh = st.slider(
             "Intent Confidence Gate (θ_intent)",
@@ -92,12 +104,12 @@ with st.sidebar:
             help="Minimum posterior confidence required from the calibrated intent classifier.",
         )
         top_k_val = st.slider(
-            "Top-K Results",
+            "Top-K Cards",
             min_value=1,
             max_value=10,
             value=3,
             step=1,
-            help="Number of candidate document cards to retrieve.",
+            help="Number of document cards to present to the user.",
         )
     else:
         similarity_thresh = float(RETRIEVAL_THRESHOLD)
@@ -105,45 +117,68 @@ with st.sidebar:
         top_k_val = 3
 
     st.markdown("---")
-    st.header("⚡ Question Presets")
+    st.markdown("#### ⚡ Sample Inquiries")
     presets = {
-        "(Select preset to fill question)": "",
-        "1. Normal (Tuition deadline)": "When is tuition due for the semester?",
-        "2. Normal (Portal password reset)": "How do I reset my Student Portal password?",
-        "3. Paraphrase (Class times conflict) [q_056]": "How can I tell if my class times conflict with each other?",
-        "4. Paraphrase (Registration hold) [q_111]": "My account has a registration hold - what does that mean and how do I remove it?",
-        "5. Paraphrase (Boundary case) [q_064]": "Where do I go to see my current classes and times?",
-        "6. Multi-Typo (Noisy query)": "tution dedline paymnt for upcomng semster",
-        "7. Typo (Wi-Fi access)": "I conncet to Wi-Fi!",
-        "8. Adversarial OOC (Kayak rental)": "Can I rent a kayak from the campus recreation center?",
-        "9. Adversarial OOC (Helicopter on lawn)": "Can I park my helicopter on the campus lawn?",
+        "(Type your own question or select)": "",
+        "1. Tuition payment deadline": "When is tuition due for the semester?",
+        "2. Student Portal login & password": "How do I reset my Student Portal password?",
+        "3. Timetable schedule conflict [q_056]": "How can I tell if my class times conflict with each other?",
+        "4. Registration account hold [q_111]": "My account has a registration hold - what does that mean and how do I remove it?",
+        "5. Checking class times [q_064]": "Where do I go to see my current classes and times?",
+        "6. Noisy query with typos": "tution dedline paymnt for upcomng semster",
+        "7. Wi-Fi connection issue": "I conncet to Wi-Fi!",
+        "8. Out-of-scope query (Recreation kayak)": "Can I rent a kayak from the campus recreation center?",
+        "9. Out-of-scope query (Campus dining)": "What's the best restaurant near campus for vegan food?",
     }
-    selected_preset = st.selectbox("Load benchmark archetypes:", list(presets.keys()))
+    selected_preset = st.selectbox("Quick-load sample questions:", list(presets.keys()))
 
     st.markdown("---")
-    st.header("📚 Corpus Explorer")
+    st.markdown("#### 📚 Regulatory Archive")
     n_faqs = sum(1 for d in documents if d["source"] == "faq.json" or d["id"].startswith("faq_"))
     n_notices = sum(1 for d in documents if d["source"] == "notices.json" or d["id"].startswith("notice_"))
-    st.caption(f"Showing **{len(documents)}** total entries ({n_faqs} FAQs, {n_notices} Notices).")
+    st.markdown(
+        f"<p style='font-size:0.8rem;color:#94a3b8;margin-bottom:0.5rem;'>"
+        f"Archive contains <strong>{len(documents)}</strong> verified university documents ({n_faqs} FAQs, {n_notices} Notices)."
+        f"</p>",
+        unsafe_allow_html=True,
+    )
 
     intents = sorted({doc["intent"] for doc in documents})
-    chosen_intent = st.selectbox("Filter corpus by intent:", ["(all)"] + intents)
+    chosen_intent = st.selectbox("Browse archive by topic:", ["(all)"] + intents)
     filtered_docs = documents if chosen_intent == "(all)" else [d for d in documents if d["intent"] == chosen_intent]
-    with st.expander(f"View documents ({len(filtered_docs)} of {len(documents)})", expanded=False):
+    with st.expander(f"View archive documents ({len(filtered_docs)})", expanded=False):
         for doc in filtered_docs[:30]:
             doc_date = notice_dates.get(doc["id"], "")
             date_label = f" · 📅 {doc_date}" if doc_date else ""
             st.markdown(f"**`{doc['id']}`**{date_label} — {doc['question']}")
-            st.caption(f"Source: {doc['source']} | Intent: `{doc['intent']}`")
+            st.caption(f"Source: {doc['source']} | Topic: `{doc['intent']}`")
 
 # ----------------- MAIN TABS -----------------
-tab_search, tab_eval = st.tabs(["🔍 Assistant & Search", "📊 Evaluation & Business Dashboard"])
+tab_search, tab_eval = st.tabs(["🔍 Student Assistant", "📊 Operational & Research Dashboard"])
 
 # ----------------- TAB 1: ASSISTANT -----------------
 with tab_search:
-    default_text = presets[selected_preset] if selected_preset and presets[selected_preset] else ""
+    # Student-friendly hero header (clean, zero academic jargon)
+    st.markdown(
+        "<div style='margin-bottom:1.5rem;'>"
+        "<h1 style='font-size:1.75rem;font-weight:700;color:#f1f5f9;margin-bottom:0.25rem;'>HANU Student Knowledge Assistant</h1>"
+        "<p style='font-size:1.0rem;color:#94a3b8;line-height:1.5;max-width:70ch;margin-bottom:0;'>"
+        "Find official university answers on course registration, tuition deadlines, final exams, "
+        "graduation criteria, and campus IT services."
+        "</p>"
+        "</div>",
+        unsafe_allow_html=True,
+    )
+
+    query_param_q = st.query_params.get("q", "")
+    auto_retrieve = st.query_params.get("auto_retrieve", "0") == "1"
+    default_text = query_param_q if query_param_q else (presets[selected_preset] if selected_preset and presets[selected_preset] else "")
     # CRITICAL: app.text_input[0] MUST be the search query input!
-    query = st.text_input("Ask a campus question", value=default_text, placeholder="e.g., When is tuition due for the semester?")
+    query = st.text_input(
+        "Ask a question about university regulations",
+        value=default_text,
+        placeholder="e.g., When is tuition due for the semester?",
+    )
 
     # CRITICAL: app.button[0] = "Classify intent", app.button[1] = "Retrieve documents"
     col1, col2 = st.columns(2)
@@ -152,15 +187,18 @@ with tab_search:
     with col2:
         retrieve_clicked = st.button("Retrieve documents")
 
+    if auto_retrieve and query.strip():
+        retrieve_clicked = True
+
     if classify_clicked and query.strip():
         intent, confidence = classify_intent(query)
         office = office_for_intent(intent)
         st.success(f"Intent: {intent} · confidence {confidence:.0%}")
         st.info(
             f"🏛️ **Responsible Administrative Office**: **{office['name']}**\n\n"
-            f"- **Core Responsibilities**: {office['role']}\n"
-            f"- **Physical Location**: {office['location']}\n"
-            f"- **Portal Access**: `{office['contact']}`"
+            f"- **Responsibilities**: {office['role']}\n"
+            f"- **Location**: {office['location']}\n"
+            f"- **Online Portal**: `{office['contact']}`"
         )
 
     if retrieve_clicked and query.strip():
@@ -174,39 +212,30 @@ with tab_search:
         intent, confidence = classify_intent(query)
         office = office_for_intent(intent)
 
-        # Non-English detection
+        # Non-English detection warning
         if is_non_english_query(query):
             st.warning(
-                "🌐 **Language Advisory**: The HANU campus knowledge base is standardized in English. "
+                "🌐 **Language Advisory**: The HANU regulatory knowledge base is indexed in English. "
                 "Questions in Vietnamese or other languages may experience lower retrieval recall. "
-                "(Quý sinh viên vui lòng đặt câu hỏi bằng tiếng Anh để nhận kết quả chính xác nhất)."
+                "(Quý sinh viên vui lòng đặt câu hỏi bằng tiếng Anh để nhận câu trả lời chính xác nhất)."
             )
 
         if not results:
             # STRICT GUARDRAIL: When abstained, only display st.error with the exact required string.
             # Never display conflicting green st.success banner!
             st.error("Information not found — please contact the administrative office.")
-            st.markdown(
-                r"🛡️ **Safe Abstention Enforced**: The system could not find official policy documents "
-                r"meeting both the required similarity threshold ($\ge "
-                f"{similarity_thresh:.2f}"
-                r"$) and intent posterior confidence ($\ge "
-                f"{intent_thresh:.2f}"
-                r"$). In academic governance, abstention prevents stochastic misinformation and regulatory liability."
-            )
 
-            # Actionable escalation guidance (U3)
-            with st.container():
-                st.info(
-                    f"🏛️ **Suggested Administrative Routing**: **{office['name']}**\n\n"
-                    f"* **Office Duties:** {office['role']}\n"
-                    f"* **Location:** {office['location']}\n"
-                    f"* **Student Portal:** `{office['contact']}`\n\n"
-                    f"**💡 Recommended Actions to Refine Your Query:**\n"
-                    f"1. Use official terminology (e.g., *'course registration'*, *'tuition payment'*, *'final exam'*, *'graduation application'*).\n"
-                    f"2. Avoid slang or vague colloquial expressions.\n"
-                    f"3. If this concerns extracurricular or personal matters, consult the Student Union directly."
-                )
+            # Neutral, high-craft escalation frame (U3 & B3: neutral frame, no screaming red block)
+            st.info(
+                f"🏛️ **Suggested Administrative Routing**: **{office['name']}**\n\n"
+                f"- **Office Responsibilities**: {office['role']}\n"
+                f"- **Physical Location**: {office['location']}\n"
+                f"- **Student Portal**: `{office['contact']}`\n\n"
+                f"**💡 Tips for Refining Your Inquiry:**\n"
+                f"1. Use formal campus terms (e.g., *'tuition payment'*, *'course add/drop'*, *'final exam'*).\n"
+                f"2. Avoid slang or personal non-academic questions.\n"
+                f"3. Check spelling if your question contains abbreviations."
+            )
         else:
             # Successful retrieval: Render green success banner with intent, confidence, and office routing
             st.success(f"Intent: {intent} · confidence {confidence:.0%} · Routed to {office['name']}")
@@ -214,38 +243,62 @@ with tab_search:
 
             retriever = _get_retriever()
             for rank_idx, (doc, score) in enumerate(results, start=1):
+                label_text = match_label(score)
                 badge_str = match_badge(score)
+                badge_class = "orca-badge-strong" if label_text == "Strong match" else ("orca-badge-possible" if label_text == "Possible match" else "orca-badge-weak")
+
                 doc_date = notice_dates.get(doc["id"], "")
                 if doc["id"].startswith("notice_") or doc.get("source") == "notices.json":
-                    src_tag = f"📋 [Official Notice · Published: {doc_date}]" if doc_date else "📋 [Official Notice]"
+                    src_tag = f"📋 Official Notice · Published {doc_date}" if doc_date else "📋 Official Notice"
+                    src_class = "orca-badge-notice"
                 else:
-                    src_tag = "📘 [FAQ]"
+                    src_tag = "📘 FAQ Entry"
+                    src_class = "orca-badge-faq"
 
-                with st.container():
-                    st.markdown(f"#### #{rank_idx} · {doc['question']}")
-                    st.markdown(f"**`{doc['id']}`** · {src_tag} · {badge_str} · Cosine: `{score:.3f}`")
+                highlighted_answer = highlight_matched_terms(doc["answer"], query)
 
-                    # Highlighting matched terms in the answer (U4 & highlight_matched_terms)
-                    highlighted_answer = highlight_matched_terms(doc["answer"], query)
-                    st.markdown(highlighted_answer)
+                # High-craft Card with CSS class, badges, structured typography and Details section
+                card_html = f"""
+                <div class="orca-card">
+                    <div class="orca-meta-row">
+                        <span class="orca-badge {src_class}">{src_tag}</span>
+                        <span class="orca-badge {badge_class}">{badge_str}</span>
+                    </div>
+                    <div class="orca-question">#{rank_idx} · {doc['question']}</div>
+                    <div class="orca-answer">{highlighted_answer}</div>
+                    <details>
+                        <summary>Technical Details & Document Provenance</summary>
+                        <p style="font-size:0.8rem;color:#94a3b8;margin:0.35rem 0 0 0;">
+                            Document ID: <code>{doc['id']}</code> | Relevance Cosine: <strong>{score:.4f}</strong> | Topic Intent: <code>{doc['intent']}</code>
+                        </p>
+                    </details>
+                </div>
+                """
+                st.markdown(card_html, unsafe_allow_html=True)
 
-                    # Feature attribution explain() (U8)
-                    if inspector_mode:
-                        with st.expander(f"🔬 Feature Attribution (`explain()`) for `{doc['id']}`", expanded=False):
-                            contribs = retriever.explain(query, doc["id"], top_n=6)
-                            if contribs:
-                                df_contrib = pd.DataFrame(
-                                    contribs,
-                                    columns=["Feature (Word / Sub-word n-gram)", "Cosine Contribution Score"],
-                                )
-                                show_table(df_contrib, caption=f"Top Features Attributed to {doc['id']}")
-                            else:
-                                st.caption("No overlapping subword features found.")
+                # Ensure doc['id'] is present in markdown stream for AppTest inspection compatibility
+                st.markdown(f"<!-- doc_id:{doc['id']} -->", unsafe_allow_html=True)
 
-                    st.markdown("---")
+                # Feature attribution explain() (U8 / Inspector Mode)
+                if inspector_mode:
+                    with st.expander(f"🔬 Feature Attribution (`explain()`) for `{doc['id']}`", expanded=False):
+                        contribs = retriever.explain(query, doc["id"], top_n=6)
+                        if contribs:
+                            df_contrib = pd.DataFrame(
+                                contribs,
+                                columns=["Feature (Word / Sub-word n-gram)", "Cosine Contribution Score"],
+                            )
+                            show_table(df_contrib, caption=f"Top Overlapping Features Attributed to {doc['id']}")
+                        else:
+                            st.caption("No overlapping subword features found.")
+
+                st.markdown("---")
 
             # Feedback mechanism (U11)
-            st.caption("Was this information helpful for your administrative inquiry?")
+            st.markdown(
+                "<p style='font-size:0.85rem;color:#94a3b8;margin-bottom:0.5rem;'>Was this answer helpful for your inquiry?</p>",
+                unsafe_allow_html=True,
+            )
             fb_col1, fb_col2, _ = st.columns([1, 1, 6])
             with fb_col1:
                 if st.button("👍 Helpful", key="fb_yes"):
@@ -279,11 +332,6 @@ with tab_search:
                     show_table(pd.DataFrame(comp_rows), caption="Top-3 Retrieval Comparison across Distinct Vector Spaces")
                 except Exception as e:
                     st.caption(f"Comparison view unavailable: {e}")
-
-    st.info(
-        "💡 **Academic AI Guardrail**: If no document is relevant enough, the correct behavior is to abstain "
-        "(low confidence / no match) rather than inventing an answer. Commercial LLM APIs are completely prohibited."
-    )
 
 # ----------------- TAB 2: EVALUATION DASHBOARD -----------------
 with tab_eval:
@@ -344,6 +392,14 @@ with tab_eval:
         else:
             st.info("Run `python experiments/business_metrics.py` to generate segment metrics.")
 
+        st.markdown("#### ⚖️ Cost Sensitivity Analysis across Penalty Ratios")
+        sensitivity_file = PROJECT_ROOT / "experiments" / "results" / "business" / "cost_sensitivity.csv"
+        if sensitivity_file.exists():
+            df_sens = pd.read_csv(sensitivity_file)
+            show_table(df_sens, caption="Cost Sensitivity under 1:1, 3:1, 5:1, and 10:1 Penalty Ratios")
+        else:
+            st.info("Run `python experiments/business_metrics.py` to generate sensitivity table.")
+
         st.markdown("#### 🎯 Dual-Gate Ablation Study")
         ablation_file = PROJECT_ROOT / "experiments" / "results" / "midterm-sample" / "ablation.csv"
         if not ablation_file.exists():
@@ -362,12 +418,12 @@ with tab_eval:
         else:
             st.info("Intent CV results pending.")
 
+    with dash_col2:
         st.markdown("#### 🧭 Intent Confusion Matrix (7x7)")
         cm_img = PROJECT_ROOT / "experiments" / "results" / "figures" / "intent_confusion.png"
         if cm_img.exists():
             st.image(str(cm_img), caption="7x7 Intent Confusion Matrix (102/105 Correct, 97.1%)", use_column_width=True)
 
-    with dash_col2:
         st.markdown("#### 📉 Noise Degradation Curve (E3b: 0..3 Typo Swaps)")
         noise_img = PROJECT_ROOT / "experiments" / "results" / "figures" / "noise_curve.png"
         if noise_img.exists():
