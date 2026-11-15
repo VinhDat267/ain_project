@@ -1,11 +1,13 @@
-# Ví dụ tính tay TF-IDF và Cosine Similarity
+# Ví dụ tính tay TF-IDF, Cosine Similarity và Naive Bayes
 
-> Tài liệu thực hiện: **Lương Việt Anh** (Việc **A01**, hạn T7 03/10/2026).  
-> Phục vụ: **Slide 8**, **Phụ lục P1**, và trả lời vấn đáp câu hỏi 1, 2, 3 trong `notes/qa_bank.md`.
+> Tài liệu thực hiện: **Lương Việt Anh** (Việc **A01**) & **Nguyễn Ánh Dương** (Việc **D04**).  
+> Phục vụ: **Slide 8, 11**, **Phụ lục P1, P2**, và trả lời vấn đáp câu hỏi 1, 2, 3, 4 trong `notes/qa_bank.md`.
 
 ---
 
-## 1. Dữ liệu mẫu (3 tài liệu ngắn và 1 truy vấn)
+## PHẦN I: TÍNH TAY TF-IDF VÀ COSINE SIMILARITY (VIỆT ANH — A01)
+
+### 1. Dữ liệu mẫu (3 tài liệu ngắn và 1 truy vấn)
 
 Xét kho tài liệu gồm $N = 3$ tài liệu ngắn sau khi tiền xử lý (lowercase, bỏ dấu câu và stopwords):
 
@@ -17,7 +19,7 @@ Xét kho tài liệu gồm $N = 3$ tài liệu ngắn sau khi tiền xử lý (l
 
 ---
 
-## 2. Bộ từ vựng và Document Frequency ($df$)
+### 2. Bộ từ vựng và Document Frequency ($df$)
 
 Tập hợp tất cả các từ phân biệt tạo thành bộ từ vựng $V$ gồm 9 từ (sắp xếp theo bảng chữ cái):
 
@@ -39,7 +41,7 @@ Tần số xuất hiện trong tài liệu ($df(t)$ là số lượng tài liệ
 
 ---
 
-## 3. Công thức tính IDF (Chuẩn scikit-learn & Hợp đồng kỹ thuật)
+### 3. Công thức tính IDF (Chuẩn scikit-learn & Hợp đồng kỹ thuật)
 
 Áp dụng công thức Smooth IDF với $N = 3$:
 
@@ -55,13 +57,13 @@ $$\text{idf}(t) = \ln\left(\frac{1 + N}{1 + df(t)}\right) + 1.0 = \ln\left(\frac
 
 ---
 
-## 4. Vector trọng số TF-IDF thô và Chuẩn hóa $L_2$
+### 4. Vector trọng số TF-IDF thô và Chuẩn hóa $L_2$
 
 Với tần số xuất hiện $tf(t, d)$ (đếm số lần từ xuất hiện trong văn bản), trọng số thô là $w(t) = tf(t) \times idf(t)$.  
 Độ dài vector theo chuẩn Euclid: $\|w\|_2 = \sqrt{\sum w(t)^2}$.  
 Vector đơn vị sau khi chuẩn hóa: $\hat{w}(t) = \frac{w(t)}{\|w\|_2}$.
 
-### Tài liệu $D_1$: `"tuition fees due semester"`
+#### Tài liệu $D_1$: `"tuition fees due semester"`
 - $w(\text{due}) = 1 \times 1.6931 = 1.6931$
 - $w(\text{fees}) = 1 \times 1.6931 = 1.6931$
 - $w(\text{semester}) = 1 \times 1.2877 = 1.2877$
@@ -73,7 +75,7 @@ Vector đơn vị sau khi chuẩn hóa: $\hat{w}(t) = \frac{w(t)}{\|w\|_2}$.
   - $\hat{D}_1(\text{semester}) = 1.2877 / 3.0083 \approx \mathbf{0.4280}$
   - $\hat{D}_1(\text{tuition}) = 1.2877 / 3.0083 \approx \mathbf{0.4280}$
 
-### Tài liệu $D_2$: `"exam schedule posted semester"`
+#### Tài liệu $D_2$: `"exam schedule posted semester"`
 - $w(\text{exam}) = w(\text{posted}) = w(\text{schedule}) = 1.6931$
 - $w(\text{semester}) = 1.2877$
 - Độ dài: $\|D_2\|_2 = \sqrt{3 \times 1.6931^2 + 1.2877^2} = \sqrt{10.2587} \approx 3.2029$
@@ -81,7 +83,7 @@ Vector đơn vị sau khi chuẩn hóa: $\hat{w}(t) = \frac{w(t)}{\|w\|_2}$.
   - $\hat{D}_2(\text{exam}) = \hat{D}_2(\text{posted}) = \hat{D}_2(\text{schedule}) = 1.6931 / 3.2029 \approx \mathbf{0.5286}$
   - $\hat{D}_2(\text{semester}) = 1.2877 / 3.2029 \approx \mathbf{0.4020}$
 
-### Tài liệu $D_3$: `"tuition payment deadline"`
+#### Tài liệu $D_3$: `"tuition payment deadline"`
 - $w(\text{deadline}) = w(\text{payment}) = 1.6931$
 - $w(\text{tuition}) = 1.2877$
 - Độ dài: $\|D_3\|_2 = \sqrt{2 \times 1.6931^2 + 1.2877^2} = \sqrt{7.3917} \approx 2.7188$
@@ -89,7 +91,7 @@ Vector đơn vị sau khi chuẩn hóa: $\hat{w}(t) = \frac{w(t)}{\|w\|_2}$.
   - $\hat{D}_3(\text{deadline}) = \hat{D}_3(\text{payment}) = 1.6931 / 2.7188 \approx \mathbf{0.6228}$
   - $\hat{D}_3(\text{tuition}) = 1.2877 / 2.7188 \approx \mathbf{0.4736}$
 
-### Câu hỏi truy vấn $Q$: `"tuition semester deadline"`
+#### Câu hỏi truy vấn $Q$: `"tuition semester deadline"`
 - $w(\text{deadline}) = 1.6931$
 - $w(\text{semester}) = 1.2877$
 - $w(\text{tuition}) = 1.2877$
@@ -101,42 +103,109 @@ Vector đơn vị sau khi chuẩn hóa: $\hat{w}(t) = \frac{w(t)}{\|w\|_2}$.
 
 ---
 
-## 5. Tính Cosine Similarity (Tích vô hướng)
+### 5. Tính Cosine Similarity (Tích vô hướng)
 
 Vì các vector đã được chuẩn hóa $L_2$ về độ dài bằng $1$, Cosine Similarity chính là tích vô hướng:
 
 $$\cos(Q, D) = \hat{Q} \cdot \hat{D} = \sum_{t \in \mathcal{V}} \hat{Q}(t) \times \hat{D}(t)$$
 
-### Tính $\cos(Q, D_1)$:
-- Từ chung: `semester`, `tuition`
-- $\cos(Q, D_1) = \hat{Q}(\text{semester})\hat{D}_1(\text{semester}) + \hat{Q}(\text{tuition})\hat{D}_1(\text{tuition})$
-- $\cos(Q, D_1) = (0.5179 \times 0.4280) + (0.5179 \times 0.4280) = 0.2217 + 0.2217 = \mathbf{0.4433}$
+- **$\cos(Q, D_1)$:**  
+  Từ chung: `semester`, `tuition`  
+  $\cos(Q, D_1) = (0.5179 \times 0.4280) + (0.5179 \times 0.4280) = 0.2217 + 0.2217 = \mathbf{0.4433}$
 
-### Tính $\cos(Q, D_2)$:
-- Từ chung: `semester`
-- $\cos(Q, D_2) = \hat{Q}(\text{semester})\hat{D}_2(\text{semester})$
-- $\cos(Q, D_2) = 0.5179 \times 0.4020 = \mathbf{0.2082}$
+- **$\cos(Q, D_2)$:**  
+  Từ chung: `semester`  
+  $\cos(Q, D_2) = 0.5179 \times 0.4020 = \mathbf{0.2082}$
 
-### Tính $\cos(Q, D_3)$:
-- Từ chung: `deadline`, `tuition`
-- $\cos(Q, D_3) = \hat{Q}(\text{deadline})\hat{D}_3(\text{deadline}) + \hat{Q}(\text{tuition})\hat{D}_3(\text{tuition})$
-- $\cos(Q, D_3) = (0.6809 \times 0.6228) + (0.5179 \times 0.4736) = 0.4241 + 0.2453 = \mathbf{0.6693}$
+- **$\cos(Q, D_3)$:**  
+  Từ chung: `deadline`, `tuition`  
+  $\cos(Q, D_3) = (0.6809 \times 0.6228) + (0.5179 \times 0.4736) = 0.4241 + 0.2453 = \mathbf{0.6693}$
+
+**Bảng xếp hạng cuối cùng:**
+1. Top 1: **$D_3$** (Cosine = **0.6693**)
+2. Top 2: **$D_1$** (Cosine = **0.4433**)
+3. Top 3: **$D_2$** (Cosine = **0.2082**)
 
 ---
 
-## 6. Kết quả Xếp hạng (Ranking) và Phân tích bản chất
+## PHẦN II: TÍNH TAY NAIVE BAYES VÀ LAPLACE SMOOTHING (DƯƠNG — D04 / PHỤ LỤC P2)
 
-| Thứ hạng | Tài liệu | Điểm tương đồng $\cos(Q, D)$ | Các từ khớp |
-|---|---|---|---|
-| **Top 1** | **$D_3$** | **0.6693** | `deadline`, `tuition` |
-| **Top 2** | **$D_1$** | **0.4433** | `semester`, `tuition` |
-| **Top 3** | **$D_2$** | **0.2082** | `semester` |
+### 6. Bài toán Phân loại Ý định mẫu
 
-### 💡 Bài học rút ra (Dùng để thuyết trình Slide 8 & Vấn đáp):
-1. **Vì sao $D_3$ xếp trên $D_1$ dù cả hai đều khớp đúng 2 từ?**  
-   - $D_1$ khớp `tuition` và `semester` (đều có $df = 2$, từ phổ biến hơn trong kho, $IDF = 1.2877$).
-   - $D_3$ khớp `tuition` ($IDF = 1.2877$) và `deadline` ($df = 1$, từ hiếm và đặc thù hơn, $IDF = 1.6931$).  
-   $\to$ **Cơ chế IDF giúp hệ thống đánh giá cao tài liệu khớp các từ khóa hiếm và mang nhiều thông tin định danh hơn.**
-2. **Vì sao dùng Cosine Similarity thay cho Khoảng cách Euclid?**  
-   - Khoảng cách Euclid bị phụ thuộc nặng vào độ dài văn bản (văn bản dài chứa nhiều từ sẽ bị đẩy ra xa trong không gian vector).
-   - Cosine Similarity chia độ dài cho chuẩn $L_2$, chỉ đo góc giữa hai vector $\to$ **so sánh độ tương đồng ngữ nghĩa bất kể câu hỏi ngắn hay văn bản dài**.
+Xét bài toán phân loại câu hỏi vào $K = 2$ chủ đề: $c_1 = \text{tuition}$ và $c_2 = \text{exam}$.  
+Tập dữ liệu huấn luyện gồm 4 văn bản ngắn:
+
+- **Lớp $c_1$ (`tuition`) có 2 câu:**
+  - $T_1$: `"pay tuition fee"` (3 từ)
+  - $T_2$: `"tuition deadline payment"` (3 từ)
+  $\implies$ Tổng số từ của lớp $c_1$: $N_{c_1} = 6$ từ.
+- **Lớp $c_2$ (`exam`) có 2 câu:**
+  - $T_3$: `"exam schedule room"` (3 từ)
+  - $T_4$: `"final exam schedule"` (3 từ)
+  $\implies$ Tổng số từ của lớp $c_2$: $N_{c_2} = 6$ từ.
+
+**Kích thước tập huấn luyện:** $N = 4$ câu.  
+**Bộ từ vựng chung:**
+$$\mathcal{V} = \{\text{deadline}, \text{exam}, \text{fee}, \text{final}, \text{pay}, \text{payment}, \text{room}, \text{schedule}, \text{tuition}\} \implies |\mathcal{V}| = 9$$
+
+**Câu truy vấn kiểm thử:** $Q =$ `"exam fee deadline"` (3 từ)
+
+---
+
+### 7. Tính Xác suất Tiên nghiệm (Prior Probability)
+
+Vì mỗi lớp có 2 trên tổng số 4 câu:
+$$P(c_1) = \frac{2}{4} = 0.5, \quad P(c_2) = \frac{2}{4} = 0.5$$
+
+---
+
+### 8. Tính Xác suất Có điều kiện với Làm mượt Laplace (Additive Smoothing, $\alpha = 1$)
+
+Công thức Multinomial Naive Bayes với Laplace smoothing:
+$$P(w \mid c) = \frac{\text{count}(w, c) + \alpha}{\sum_{w' \in \mathcal{V}} \text{count}(w', c) + \alpha \cdot |\mathcal{V}|} = \frac{\text{count}(w, c) + 1}{N_c + 9}$$
+
+Với $N_{c_1} = 6$ và $N_{c_2} = 6$, mẫu số cho cả hai lớp là: $6 + 9 = 15$.
+
+#### Tần số xuất hiện của các từ trong $Q$ theo từng lớp:
+- Từ `"exam"`:
+  - Trong $c_1$: xuất hiện 0 lần $\implies P(\text{exam} \mid c_1) = \frac{0 + 1}{15} = \frac{1}{15}$
+  - Trong $c_2$: xuất hiện 2 lần $\implies P(\text{exam} \mid c_2) = \frac{2 + 1}{15} = \frac{3}{15}$
+
+- Từ `"fee"`:
+  - Trong $c_1$: xuất hiện 1 lần $\implies P(\text{fee} \mid c_1) = \frac{1 + 1}{15} = \frac{2}{15}$
+  - Trong $c_2$: xuất hiện 0 lần $\implies P(\text{fee} \mid c_2) = \frac{0 + 1}{15} = \frac{1}{15}$
+
+- Từ `"deadline"`:
+  - Trong $c_1$: xuất hiện 1 lần $\implies P(\text{deadline} \mid c_1) = \frac{1 + 1}{15} = \frac{2}{15}$
+  - Trong $c_2$: xuất hiện 0 lần $\implies P(\text{deadline} \mid c_2) = \frac{0 + 1}{15} = \frac{1}{15}$
+
+---
+
+### 9. Tính Xác suất Hậu nghiệm (Posterior Probability)
+
+Theo định lý Bayes và giả định độc lập có điều kiện của Naive Bayes:
+$$P(c \mid Q) \propto P(c) \times \prod_{w \in Q} P(w \mid c)$$
+
+#### Điểm chưa chuẩn hóa cho lớp $c_1$ (`tuition`):
+$$\text{Score}(c_1) = P(c_1) \times P(\text{exam} \mid c_1) \times P(\text{fee} \mid c_1) \times P(\text{deadline} \mid c_1)$$
+$$\text{Score}(c_1) = 0.5 \times \frac{1}{15} \times \frac{2}{15} \times \frac{2}{15} = 0.5 \times \frac{4}{3375} = \frac{2}{3375} \approx \mathbf{0.0005926}$$
+
+#### Điểm chưa chuẩn hóa cho lớp $c_2$ (`exam`):
+$$\text{Score}(c_2) = P(c_2) \times P(\text{exam} \mid c_2) \times P(\text{fee} \mid c_2) \times P(\text{deadline} \mid c_2)$$
+$$\text{Score}(c_2) = 0.5 \times \frac{3}{15} \times \frac{1}{15} \times \frac{1}{15} = 0.5 \times \frac{3}{3375} = \frac{1.5}{3375} \approx \mathbf{0.0004444}$$
+
+#### Chuẩn hóa Softmax/Tổng xác suất bằng 1:
+$$\text{Tổng} = \text{Score}(c_1) + \text{Score}(c_2) = \frac{2 + 1.5}{3375} = \frac{3.5}{3375}$$
+$$P(c_1 = \text{tuition} \mid Q) = \frac{2}{3.5} = \frac{4}{7} \approx \mathbf{57.14\%}$$
+$$P(c_2 = \text{exam} \mid Q) = \frac{1.5}{3.5} = \frac{3}{7} \approx \mathbf{42.86\%}$$
+
+---
+
+### 10. Quyết định Dự đoán và Ý nghĩa của Laplace Smoothing
+
+1. **Kết quả:** Mô hình dự đoán câu hỏi $Q$ thuộc nhãn **`tuition`** với độ tin cậy **$57.1\%$**.
+2. **Vai trò cốt tử của Laplace Smoothing ($\alpha = 1$):**
+   - Nếu không có Laplace smoothing ($\alpha = 0$), từ `"exam"` không xuất hiện trong $c_1$ sẽ làm $P(\text{exam} \mid c_1) = 0 \implies \text{Score}(c_1) = 0$.
+   - Tương tự, từ `"fee"` và `"deadline"` không có trong $c_2$ làm $\text{Score}(c_2) = 0$.
+   - Cả hai lớp đều nhận điểm 0, khiến mô hình hoàn toàn bất lực!
+   - Laplace smoothing gán một phần xác suất nhỏ (pseudo-counts) cho mọi từ chưa thấy, bảo vệ tích xác suất không bị triệt tiêu và cho phép các từ còn lại đưa ra quyết định dựa trên bằng chứng thống kê.

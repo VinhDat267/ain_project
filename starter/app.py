@@ -181,6 +181,11 @@ with tab_eval:
         else:
             st.info("Intent CV results pending.")
 
+        st.markdown("#### 🧭 Intent Confusion Matrix (7x7)")
+        cm_img = PROJECT_ROOT / "experiments" / "results" / "figures" / "intent_confusion.png"
+        if cm_img.exists():
+            st.image(str(cm_img), caption="7x7 Intent Confusion Matrix (102/105 Correct, 97.1%)", use_column_width=True)
+
     with dash_col2:
         st.markdown("#### 📉 Noise Degradation Curve (E3b: 0..3 Typo Swaps)")
         noise_img = PROJECT_ROOT / "experiments" / "results" / "figures" / "noise_curve.png"
