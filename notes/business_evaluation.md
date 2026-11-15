@@ -60,6 +60,27 @@ Hệ thống thiết lập thang nhãn 3 mức trực quan cho sinh viên:
 
 ---
 
+### C. Phân tích Độ nhạy Chi phí (Cost Sensitivity Analysis across Penalty Ratios)
+
+> [!IMPORTANT]
+> **Tuyên bố Giả định Nghiệp vụ (Operational Research Assumption):**
+> Trọng số phạt sai sót ngầm $w_{\text{silent\_wrong}} = 5.0$ và chuyển tiếp $w_{\text{false\_abstain}} = 1.0$ là một **giả định nghiên cứu vận hành** dựa trên lý thuyết chi phí dịch tễ học và quản trị rủi ro hành chính (chi phí khắc phục hậu quả một thông tin sai lệch về học phí/tốt nghiệp luôn cao gấp nhiều lần so với chi phí hướng dẫn lại một sinh viên bị từ chối chuyển tiếp sang văn phòng). Hiện tại, nhà trường chưa tiến hành khảo sát thời gian lao động thực tế (time-motion survey) của cán bộ các phòng ban.
+>
+> Để kiểm chứng tính ổn định của mô hình khi trọng số thay đổi, bảng độ nhạy dưới đây được trích xuất tự động từ `experiments/results/business/cost_sensitivity.csv` cho 4 kịch bản tỷ lệ phạt:
+
+| Kịch bản Tỷ lệ ($w_{\text{wrong}} : w_{\text{abstain}}$) | $w_{\text{wrong}}$ | $w_{\text{abstain}}$ | Số ca sai ngầm | Số ca từ chối nhầm | Tổng điểm phạt | Chi phí kỳ vọng / Truy vấn | Chi phí / 1.000 Truy vấn | Tỷ trọng tổn thất do sai ngầm (%) |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **1:1** (Phạt ngang giá) | 1.0 | 1.0 | 10 | 2 | 12.0 | **0.1000** | 100.00 | 83.33% |
+| **3:1** (Phạt vừa phải) | 3.0 | 1.0 | 10 | 2 | 32.0 | **0.2667** | 266.67 | 93.75% |
+| **5:1** (Kịch bản cơ sở) | 5.0 | 1.0 | 10 | 2 | 52.0 | **0.4333** | 433.33 | 96.15% |
+| **10:1** (Phạt nghiêm ngặt) | 10.0 | 1.0 | 10 | 2 | 102.0 | **0.8500** | 850.00 | 98.04% |
+
+**Kết luận đánh đổi và độ ổn định quyết định (Invariance Conclusion):**
+1. **Kết luận thiết kế KHÔNG thay đổi theo tỷ lệ:** Trong mọi kịch bản từ 1:1 đến 10:1, việc kích hoạt Cổng Kép từ chối (Abstention Gate) vẫn là quyết định tối ưu tuyệt đối. Lý do: 15 câu ngoài kho (OOC) nếu không bị chặn sẽ tạo ra thêm 15 ca sai ngầm cực kỳ nghiêm trọng, làm tổng chi phí kỳ vọng bùng nổ (tăng thêm từ $+125\%$ ở tỷ lệ 1:1 đến $+147\%$ ở tỷ lệ 10:1).
+2. **Chi phí do sai ngầm chiếm ưu thế áp đảo:** Ngay cả ở tỷ lệ 1:1, 10 ca sai ngầm vẫn đóng góp tới 83.33% tổng tổn thất (ở 5:1 là 96.15%). Do đó, mục tiêu giảm thiểu sai ngầm bằng cách hiển thị 3 thẻ kết quả là đúng đắn trên toàn dải nhạy cảm.
+
+---
+
 ## 4. Đánh giá 8 Tiêu chí Quản trị Nghiệp vụ & Rủi ro Vận hành
 
 ### 1. Độ phủ Nội dung (Content Coverage & Institutional Context)

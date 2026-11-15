@@ -76,3 +76,26 @@ Thang điểm mức độ nghiêm trọng (Nielsen Severity Scale):
 3. **SC 1.3.1 Info and Relationships (Level A):** Các bảng HTML render qua `show_table(df)` được cấu trúc với thẻ `<table role="table">`, `<thead>`, `<tbody>` và caption mô tả ngữ nghĩa rõ ràng cho thiết bị đọc màn hình (Screen Reader).
 4. **SC 2.1.1 Keyboard Navigation (Level A):** Mọi thành phần tương tác (ô tìm kiếm, nút bấm, expander, toggle) đều có thể tiếp cận và kích hoạt hoàn toàn bằng phím `Tab` và `Enter`.
 5. **SC 2.4.7 Focus Visible (Level AA):** Vùng chọn và tiêu điểm phím được giữ nguyên theo chuẩn thiết kế trình duyệt, không bị che khuất bởi CSS tùy biến.
+
+---
+
+## 4. Quan sát Định tính Trải nghiệm Thử nghiệm (Qualitative Observations, n=1–2)
+
+> [!NOTE]
+> **Giới hạn Phương pháp luận Học thuật:**
+> Mục này ghi lại các quan sát định tính ban đầu khi cho 1–2 sinh viên trải nghiệm bản thử nghiệm nội bộ để phát hiện nhanh các rào cản thao tác.
+> - **KHÔNG** phải là kiểm thử khả năng sử dụng (formal usability test) trên tập mẫu đại diện thống kê.
+> - **KHÔNG** tính chỉ số hài lòng SUS (System Usability Scale) do cỡ mẫu không đủ ý nghĩa thống kê.
+> - **KHÔNG** báo cáo tỷ lệ hoàn thành tác vụ dạng phần trăm (percentage completion rate).
+> - Các ô chưa có kiểm chứng thực tế được giữ nguyên trạng, không tự suy diễn số liệu.
+
+### Bảng Quan sát 5 Nhiệm vụ Cốt lõi (Task Walkthrough Log)
+
+| STT | Nhiệm vụ Yêu cầu | Làm được không? | Vướng mắc / Trở ngại gặp phải | Ghi chú Hành vi & Đề xuất Cải tiến |
+|:---:|---|:---:|---|---|
+| **T1** | **Tìm hạn đóng học phí** học kỳ Fall (*"When is tuition due?"*) | Hoàn thành | Ban đầu nhìn vào thanh bên thấy nhiều tham số kỹ thuật gây phân tâm trước khi tìm thấy ô nhập câu hỏi. | Sau khi ẩn tham số vào `Inspector Mode`, người thử nghiệm gõ câu hỏi và đọc được câu trả lời ở Thẻ 1 ngay lập tức. |
+| **T2** | **Xin hoãn thi / trùng lịch thi** (*"I have two exams overlapping"*) | Hoàn thành | Nhầm lẫn giữa nút *"Classify intent"* và *"Retrieve documents"*, tự hỏi có cần bấm phân loại trước khi tìm kiếm không. | Hỗ trợ nhấn `Enter` trực tiếp ở ô tìm kiếm giúp người dùng hoàn thành tác vụ mà không cần bận tâm về 2 nút bấm riêng biệt. |
+| **T3** | **Gõ sai chính tả vội vã** (*"tution dedline paymnt"*) | Hoàn thành | Người thử hơi bất ngờ khi hệ thống vẫn trả về đúng hạn nộp học phí dù gõ sai 3 từ trong câu ngắn. | Cần tô đậm từ khóa trùng khớp (`highlight_matched_terms`) để người dùng an tâm nhận diện rằng hệ thống đã sửa lỗi ngầm. |
+| **T4** | **Hỏi ngoài phạm vi** (*"Quán cà phê mở cửa mấy giờ?"* hoặc *"Rent kayak"*) | Hoàn thành | Không nhận được câu trả lời tài liệu (đúng theo thiết kế từ chối an toàn). | Người thử đánh giá cao việc có thông tin văn phòng tiếp nhận và 3 gợi ý cách đặt lại câu hỏi thay vì chỉ có thông báo lỗi cộc lốc. |
+| **T5** | **Tìm thông tin liên hệ phòng ban** khi thắc mắc | Hoàn thành | Trước đây thông tin phòng ban chỉ nằm rải rác trong các câu trả lời FAQ. | Hộp gợi ý văn phòng (`office_for_intent`) hiển thị rõ tên phòng, địa điểm và kênh portal trực quan, giúp sinh viên biết cần đi đến đâu. |
+

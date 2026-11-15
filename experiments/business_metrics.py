@@ -1,7 +1,8 @@
 """Compute operational and business metrics for campus FAQ assistant.
 
 Evaluates self-service deflection rate, top-1 resolution, top-3 rescue,
-safe escalation, silent failure rate, and expected cost per query.
+safe escalation, silent failure rate, cost sensitivity across penalty ratios,
+and expected cost per query under operational assumptions.
 """
 from __future__ import annotations
 
@@ -19,7 +20,7 @@ def compute_business_metrics(
     output_dir: Path | None = None,
     w_silent_wrong: float = 5.0,
     w_false_abstain: float = 1.0,
-) -> tuple[pd.DataFrame, pd.DataFrame]:
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     pq_file = per_query_path or (PROJECT_ROOT / "experiments" / "results" / "midterm-sample" / "per_query.csv")
     out_dir = output_dir or (PROJECT_ROOT / "experiments" / "results" / "business")
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -86,7 +87,7 @@ def compute_business_metrics(
         {"metric": "safe_escalation_rate", "value": round(safe_escalation_rate, 4), "description": "Queries safely routed to administrative office (17/120)"},
         {"metric": "false_abstention_rate", "value": round(false_abstention_rate, 4), "description": "Legitimate queries mistakenly abstained (2/105)"},
         {"metric": "unsafe_ooc_answer_rate", "value": round(unsafe_ooc_answer_rate, 4), "description": "Out-of-corpus queries mistakenly answered (0/15)"},
-        {"metric": "expected_cost_per_query", "value": round(expected_cost_per_query, 4), "description": "Expected operational penalty per query (w_wrong=5.0, w_abstain=1.0)"},
+        {"metric": "expected_cost_per_query", "value": round(expected_cost_per_query, 4), "description": "Expected operational penalty per query (w_wrong=5.0, w_abstain=1.0 assumption)"},
     ]
     summary_df = pd.DataFrame(summary_data)
     summary_csv_path = out_dir / "business_summary.csv"
@@ -161,7 +162,29 @@ def compute_business_metrics(
     per_intent_csv_path = out_dir / "per_intent_business.csv"
     per_intent_df.to_csv(per_intent_csv_path, index=False)
 
-    return summary_df, per_intent_df
+    # 3. Cost Sensitivity Analysis across penalty ratios: 1:1, 3:1, 5:1, 10:1
+    # Note: These weights are an operational research assumption, not empirical office labor telemetry.
+    sensitivity_ratios = [(1.0, 1.0), (3.0, 1.0), (5.0, 1.0), (10.0, 1.0)]
+    sensitivity_records: list[dict[str, Any]] = []
+    for w_wrong_val, w_abstain_val in sensitivity_ratios:
+        total_penalty = (w_wrong_val * n_silent_wrong) + (w_abstain_val * n_false_abstentions)
+        cost_per_q = total_penalty / total_queries
+        sensitivity_records.append({
+            "penalty_ratio": f"{int(w_wrong_val)}:1",
+            "w_silent_wrong": w_wrong_val,
+            "w_false_abstain": w_abstain_val,
+            "n_silent_wrong": n_silent_wrong,
+            "n_false_abstentions": n_false_abstentions,
+            "total_penalty_units": round(total_penalty, 4),
+            "expected_cost_per_query": round(cost_per_q, 4),
+            "cost_per_1000_queries": round(cost_per_q * 1000, 2),
+            "silent_wrong_share_pct": round((w_wrong_val * n_silent_wrong / total_penalty) * 100, 2) if total_penalty > 0 else 0.0,
+        })
+    sensitivity_df = pd.DataFrame(sensitivity_records)
+    sensitivity_csv_path = out_dir / "cost_sensitivity.csv"
+    sensitivity_df.to_csv(sensitivity_csv_path, index=False)
+
+    return summary_df, per_intent_df, sensitivity_df
 
 
 if __name__ == "__main__":
@@ -170,7 +193,7 @@ if __name__ == "__main__":
     parser.add_argument("--w-false-abstain", type=float, default=1.0)
     args = parser.parse_args()
 
-    s_df, pi_df = compute_business_metrics(
+    s_df, pi_df, cs_df = compute_business_metrics(
         w_silent_wrong=args.w_silent_wrong,
         w_false_abstain=args.w_false_abstain,
     )
@@ -178,3 +201,5 @@ if __name__ == "__main__":
     print(s_df.to_string(index=False))
     print("\n=== SEGMENT BREAKDOWN ===")
     print(pi_df.to_string(index=False))
+    print("\n=== COST SENSITIVITY TABLE ===")
+    print(cs_df.to_string(index=False))

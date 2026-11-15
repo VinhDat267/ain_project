@@ -9,7 +9,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 
 def test_business_metrics_summary_values():
-    summary_df, per_intent_df = compute_business_metrics()
+    summary_df, per_intent_df, sensitivity_df = compute_business_metrics()
 
     metrics = dict(zip(summary_df["metric"], summary_df["value"]))
 
@@ -29,7 +29,7 @@ def test_business_metrics_summary_values():
 
 
 def test_business_metrics_invariants():
-    summary_df, per_intent_df = compute_business_metrics()
+    summary_df, per_intent_df, sensitivity_df = compute_business_metrics()
     metrics = dict(zip(summary_df["metric"], summary_df["value"]))
 
     # In-corpus partition invariant: resolution + silent_wrong + false_abstain = 1.0
@@ -50,3 +50,16 @@ def test_business_metrics_invariants():
         assert row["resolution_rate_top1"] == 1.0
         assert row["top3_rescue_rate"] == 1.0
         assert row["abstained"] == 0
+
+
+def test_cost_sensitivity_ratios():
+    summary_df, per_intent_df, sensitivity_df = compute_business_metrics()
+
+    assert len(sensitivity_df) == 4
+    ratios = dict(zip(sensitivity_df["penalty_ratio"], sensitivity_df["expected_cost_per_query"]))
+
+    # (w_wrong*10 + w_abstain*2) / 120
+    assert ratios["1:1"] == pytest.approx(12.0 / 120.0, abs=1e-4)   # 0.1000
+    assert ratios["3:1"] == pytest.approx(32.0 / 120.0, abs=1e-4)   # 0.2667
+    assert ratios["5:1"] == pytest.approx(52.0 / 120.0, abs=1e-4)   # 0.4333
+    assert ratios["10:1"] == pytest.approx(102.0 / 120.0, abs=1e-4) # 0.8500
