@@ -1,32 +1,32 @@
 """Centralized Theme, Design Tokens, and CSS for the Campus FAQ Assistant.
 
-Provides disciplined Linear/Vercel dark surface hierarchy, accessible color tokens,
-fluid typography, staggered fade-in animations, and prefers-reduced-motion compliance.
+Provides disciplined Claude/Editorial Warm Light surface hierarchy, accessible color tokens,
+literary typography (Serif display), staggered fade-in animations, and prefers-reduced-motion compliance.
 """
 from __future__ import annotations
 
 import streamlit as st
 
 TOKENS: dict[str, str] = {
-    # 3-tier Surface Hierarchy (Dark Charcoal / Slate, never pure #000000)
-    "surface_0": "#0d0f12",  # Base page background
-    "surface_1": "#16191f",  # Cards, containers, elevation 1
-    "surface_2": "#1e222a",  # Inputs, elevated buttons, badges
-    "surface_border": "#2a2f3a",  # Subtle borders
+    # 3-tier Surface Hierarchy (Claude Warm Light Parchment / Ivory / Warm Sand)
+    "surface_0": "#f5f4ed",  # Base page canvas (Parchment, never pure white)
+    "surface_1": "#faf9f5",  # Cards, containers, elevation 1 (Ivory)
+    "surface_2": "#e8e6dc",  # Inputs, elevated buttons, badges (Warm Sand)
+    "surface_border": "#d6d3c4",  # Subtle warm border
 
-    # Typography Tiers
-    "text_primary": "#f1f5f9",    # Primary text (Slate-100)
-    "text_secondary": "#94a3b8",  # Secondary metadata (Slate-400)
-    "text_muted": "#64748b",      # Helper text (Slate-500)
+    # Typography Tiers (Anthropic Near-Black and Warm Grays)
+    "text_primary": "#141413",    # Primary text (Warm near-black ink)
+    "text_secondary": "#5e5d59",  # Secondary metadata (Olive Gray)
+    "text_muted": "#87867f",      # Helper text (Stone Gray)
 
-    # Accent & Brand (Teal/Cyan)
-    "accent_teal": "#0ea5e9",     # Action and focus ring
+    # Accent & Brand (Terracotta / Warm Amber)
+    "accent_teal": "#b45309",     # Action and focus ring (WCAG AA >= 4.5:1 on #faf9f5)
 
-    # Semantic Match Colors (WCAG 2.2 AA compliant >= 4.5:1)
-    "match_strong": "#10b981",    # Emerald green (Score >= 0.35)
-    "match_possible": "#f59e0b",  # Amber gold (0.22 <= Score < 0.35)
-    "match_weak": "#94a3b8",      # Slate gray (Score < 0.22)
-    "status_error": "#ef4444",    # Error and abstention
+    # Semantic Match Colors (WCAG 2.2 AA compliant >= 4.5:1 on light surface #faf9f5)
+    "match_strong": "#166534",    # Forest green (Score >= 0.35, contrast ~6.7:1)
+    "match_possible": "#b45309",  # Warm Amber (0.22 <= Score < 0.35, contrast ~4.8:1)
+    "match_weak": "#5e5d59",      # Slate/Olive gray (Score < 0.22, contrast ~6.3:1)
+    "status_error": "#b91c1c",    # Deep Crimson error (contrast ~6.1:1)
 }
 
 
@@ -55,37 +55,74 @@ def contrast_ratio(hex1: str, hex2: str) -> float:
 
 CUSTOM_CSS = """
 /* ==========================================================================
-   Campus Notice & FAQ Assistant — Linear/Vercel High-Craft CSS Theme
+   Campus Notice & FAQ Assistant — Claude/Editorial Warm Light CSS Theme
    ========================================================================== */
 
-/* Main App Container Styling */
+/* Main App Canvas Styling */
 .stApp {
-    background-color: #0d0f12 !important;
-    color: #f1f5f9 !important;
+    background-color: #f5f4ed !important;
+    color: #141413 !important;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 /* Sidebar Styling */
 [data-testid="stSidebar"] {
-    background-color: #13161c !important;
-    border-right: 1px solid #2a2f3a !important;
+    background-color: #e8e6dc !important;
+    border-right: 1px solid #d6d3c4 !important;
 }
 
-/* Card Container */
+[data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {
+    font-family: Georgia, "Times New Roman", serif !important;
+    color: #141413 !important;
+}
+
+/* Streamlit Native Input Overrides */
+.stTextInput > div > div > input {
+    background-color: #faf9f5 !important;
+    color: #141413 !important;
+    border: 1px solid #d6d3c4 !important;
+    border-radius: 8px !important;
+    font-size: 1rem !important;
+    padding: 0.65rem 1rem !important;
+}
+
+.stTextInput > div > div > input:focus {
+    border-color: #c96442 !important;
+    box-shadow: 0 0 0 2px rgba(201, 100, 66, 0.2) !important;
+}
+
+/* Streamlit Button Overrides */
+.stButton > button {
+    background-color: #faf9f5 !important;
+    color: #141413 !important;
+    border: 1px solid #d6d3c4 !important;
+    border-radius: 6px !important;
+    font-weight: 500 !important;
+    transition: all 120ms ease !important;
+}
+
+.stButton > button:hover {
+    background-color: #f3f2ee !important;
+    border-color: #c96442 !important;
+    color: #a84b2c !important;
+}
+
+/* Primary Document Card */
 .orca-card {
-    background-color: #16191f;
-    border: 1px solid #2a2f3a;
+    background-color: #faf9f5;
+    border: 1px solid #e8e6dc;
     border-radius: 8px;
-    padding: 1.25rem 1.5rem;
-    margin-bottom: 1rem;
+    padding: 1.35rem 1.5rem;
+    margin-bottom: 1.15rem;
+    box-shadow: 0 1px 3px rgba(20, 20, 19, 0.04);
     transition: transform 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
     animation: orcaFadeIn 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .orca-card:hover {
-    border-color: #3b4252;
+    border-color: #d6d3c4;
     transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 4px 14px rgba(20, 20, 19, 0.07);
 }
 
 /* Staggered Entrance Animation for 3 Cards */
@@ -104,97 +141,168 @@ CUSTOM_CSS = """
     }
 }
 
-/* Card Question Title */
+/* Card Question Title (Serif Editorial Gravitas) */
 .orca-question {
-    font-size: 1.0625rem;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.15rem;
     font-weight: 600;
-    color: #f1f5f9;
-    line-height: 1.45;
+    color: #141413;
+    line-height: 1.4;
     margin-bottom: 0.5rem;
 }
 
-/* Card Body Answer — Disciplined width <= 68ch, line-height 1.6 */
+/* Card Body Answer — Disciplined width <= 68ch, line-height 1.65 */
 .orca-answer {
     font-size: 1.0rem;
-    line-height: 1.6;
-    color: #e2e8f0;
+    line-height: 1.65;
+    color: #2d2c2a;
     max-width: 68ch;
     margin-top: 0.5rem;
     margin-bottom: 0.75rem;
 }
 
-/* Subtle Meta Tags */
+/* Meta Tags & Rows */
 .orca-meta-row {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 0.5rem;
     font-size: 0.8125rem;
-    color: #94a3b8;
+    color: #5e5d59;
     margin-bottom: 0.5rem;
 }
 
 .orca-badge {
     display: inline-flex;
     align-items: center;
-    padding: 0.15rem 0.5rem;
+    padding: 0.2rem 0.55rem;
     border-radius: 4px;
     font-size: 0.75rem;
-    font-weight: 500;
+    font-weight: 600;
+    letter-spacing: 0.02em;
 }
 
 .orca-badge-strong {
-    background-color: rgba(16, 185, 129, 0.12);
-    color: #10b981;
-    border: 1px solid rgba(16, 185, 129, 0.25);
+    background-color: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
 }
 
 .orca-badge-possible {
-    background-color: rgba(245, 158, 11, 0.12);
-    color: #f59e0b;
-    border: 1px solid rgba(245, 158, 11, 0.25);
+    background-color: #fef3c7;
+    color: #b45309;
+    border: 1px solid #fde68a;
 }
 
 .orca-badge-weak {
-    background-color: rgba(148, 163, 184, 0.12);
-    color: #94a3b8;
-    border: 1px solid rgba(148, 163, 184, 0.25);
+    background-color: #f3f2ee;
+    color: #5e5d59;
+    border: 1px solid #e8e6dc;
 }
 
 .orca-badge-notice {
-    background-color: rgba(14, 165, 233, 0.12);
-    color: #38bdf8;
-    border: 1px solid rgba(14, 165, 233, 0.25);
+    background-color: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
 }
 
 .orca-badge-faq {
-    background-color: rgba(100, 116, 139, 0.15);
-    color: #cbd5e1;
-    border: 1px solid rgba(100, 116, 139, 0.25);
+    background-color: #f3f2ee;
+    color: #44403c;
+    border: 1px solid #e7e5e4;
 }
 
-/* Abstention Escalation Box (Neutral frame, no screaming red banner) */
+/* Matched Term Highlight */
+.orca-highlight {
+    background-color: #fef08a;
+    color: #854d0e;
+    padding: 0.05rem 0.25rem;
+    border-radius: 3px;
+    font-weight: 600;
+}
+
+/* Academic Directory (Bento Grid) */
+.orca-directory-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    margin: 1.25rem 0;
+}
+
+.orca-directory-card {
+    background-color: #faf9f5;
+    border: 1px solid #e8e6dc;
+    border-radius: 8px;
+    padding: 1.15rem 1.25rem;
+    box-shadow: 0 1px 3px rgba(20, 20, 19, 0.03);
+    transition: all 140ms ease;
+}
+
+.orca-directory-card:hover {
+    border-color: #c96442;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(20, 20, 19, 0.07);
+}
+
+.orca-directory-title {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #141413;
+    margin-bottom: 0.25rem;
+}
+
+.orca-directory-office {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #c96442;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.4rem;
+}
+
+.orca-directory-desc {
+    font-size: 0.875rem;
+    color: #5e5d59;
+    line-height: 1.45;
+}
+
+/* Recent Notice Mini-Card */
+.orca-notice-card {
+    background-color: #faf9f5;
+    border: 1px solid #e8e6dc;
+    border-radius: 6px;
+    padding: 0.85rem 1.15rem;
+    margin-bottom: 0.65rem;
+    box-shadow: 0 1px 2px rgba(20, 20, 19, 0.02);
+}
+
+.orca-notice-card:hover {
+    border-color: #d6d3c4;
+}
+
+/* Abstention Escalation Box (Compliant with Anti-AI-Slop Sin #5: clean card, no left border) */
 .orca-abstain-box {
-    background-color: #16191f;
-    border: 1px solid #2a2f3a;
-    border-left: 3px solid #f59e0b;
+    background-color: #faf9f5;
+    border: 1px solid #e8e6dc;
     border-radius: 8px;
     padding: 1.25rem 1.5rem;
     margin-top: 1rem;
     margin-bottom: 1rem;
+    box-shadow: 0 1px 3px rgba(20, 20, 19, 0.04);
 }
 
 /* Accessible Details / Expandable */
 details summary {
     cursor: pointer;
-    color: #94a3b8;
+    color: #5e5d59;
     font-size: 0.8125rem;
     font-weight: 500;
     transition: color 100ms ease;
 }
 
 details summary:hover {
-    color: #f1f5f9;
+    color: #141413;
 }
 
 /* HTML Table Styling */
@@ -203,18 +311,23 @@ table.orca-table {
     border-collapse: collapse;
     margin: 0.75rem 0;
     font-size: 0.875rem;
+    background-color: #faf9f5;
 }
 
 table.orca-table th, table.orca-table td {
-    border: 1px solid #2a2f3a;
-    padding: 0.5rem 0.75rem;
+    border: 1px solid #e8e6dc;
+    padding: 0.55rem 0.75rem;
     text-align: left;
 }
 
 table.orca-table th {
-    background-color: #1e222a;
-    color: #f1f5f9;
+    background-color: #e8e6dc;
+    color: #141413;
     font-weight: 600;
+}
+
+table.orca-table td {
+    color: #2d2c2a;
 }
 
 /* Reduced Motion Discipline (WCAG 2.2 SC 2.3.3) */
