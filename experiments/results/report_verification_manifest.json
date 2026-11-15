@@ -1,0 +1,214 @@
+{
+  "metadata": {
+    "description": "Ground-truth quantitative manifest for IEEE report and UI calibration",
+    "total_documents": 112,
+    "total_faq": 84,
+    "total_notices": 28,
+    "total_queries": 120,
+    "total_intents": 7
+  },
+  "vocabulary_sizes": {
+    "word_1_1": 845,
+    "word_1_2": 3210,
+    "char_wb_3_5": 8398
+  },
+  "corpus_stats": {
+    "faq": {
+      "total_items": 84,
+      "question": {
+        "count": 84,
+        "mean_words": 10.261904761904763,
+        "std_words": 2.48863630480558,
+        "min_words": 5,
+        "max_words": 17,
+        "mean_chars": 53.51190476190476,
+        "std_chars": 10.783026838529779,
+        "min_chars": 27,
+        "max_chars": 86
+      },
+      "answer": {
+        "count": 84,
+        "mean_words": 23.035714285714285,
+        "std_words": 3.623489598542861,
+        "min_words": 15,
+        "max_words": 33,
+        "mean_chars": 145.70238095238096,
+        "std_chars": 20.15994364239144,
+        "min_chars": 103,
+        "max_chars": 216
+      },
+      "full_text": {
+        "count": 84,
+        "mean_words": 33.29761904761905,
+        "std_words": 4.582003517657714,
+        "min_words": 25,
+        "max_words": 44,
+        "mean_chars": 200.21428571428572,
+        "std_chars": 22.16930064653512,
+        "min_chars": 150,
+        "max_chars": 267
+      }
+    },
+    "notices": {
+      "total_items": 28,
+      "title": {
+        "count": 28,
+        "mean_words": 4.892857142857143,
+        "std_words": 1.0803202473038696,
+        "min_words": 3,
+        "max_words": 8,
+        "mean_chars": 35.67857142857143,
+        "std_chars": 5.175861359844034,
+        "min_chars": 26,
+        "max_chars": 47
+      },
+      "body": {
+        "count": 28,
+        "mean_words": 22.107142857142858,
+        "std_words": 3.7639197436628073,
+        "min_words": 14,
+        "max_words": 32,
+        "mean_chars": 139.25,
+        "std_chars": 24.591846790581396,
+        "min_chars": 109,
+        "max_chars": 222
+      },
+      "full_text": {
+        "count": 28,
+        "mean_words": 27.0,
+        "std_words": 3.4121631178560534,
+        "min_words": 19,
+        "max_words": 36,
+        "mean_chars": 175.92857142857142,
+        "std_chars": 24.048950929641954,
+        "min_chars": 143,
+        "max_chars": 254
+      }
+    },
+    "all_documents": {
+      "total_items": 112,
+      "full_text": {
+        "count": 112,
+        "mean_words": 31.723214285714285,
+        "std_words": 5.108133957279332,
+        "min_words": 19,
+        "max_words": 44,
+        "mean_chars": 194.14285714285714,
+        "std_chars": 24.975651408227698,
+        "min_chars": 143,
+        "max_chars": 267
+      }
+    },
+    "intents": {
+      "total_items": 7,
+      "description": {
+        "count": 7,
+        "mean_words": 7.714285714285714,
+        "std_words": 0.6998542122237652,
+        "min_words": 7,
+        "max_words": 9,
+        "mean_chars": 56.57142857142857,
+        "std_chars": 4.06578556307363,
+        "min_chars": 51,
+        "max_chars": 63
+      }
+    },
+    "queries": {
+      "total_items": 120,
+      "query": {
+        "count": 120,
+        "mean_words": 10.266666666666667,
+        "std_words": 2.7438820836342237,
+        "min_words": 5,
+        "max_words": 17,
+        "mean_chars": 52.65,
+        "std_chars": 11.362694809477782,
+        "min_chars": 27,
+        "max_chars": 86
+      },
+      "by_type": {
+        "normal": {
+          "count": 35,
+          "mean_words": 9.971428571428572,
+          "std_words": 2.90305961048698,
+          "min_words": 5,
+          "max_words": 17,
+          "mean_chars": 50.25714285714286,
+          "std_chars": 11.284231367311662,
+          "min_chars": 27,
+          "max_chars": 75
+        },
+        "out_of_corpus": {
+          "count": 15,
+          "mean_words": 8.866666666666667,
+          "std_words": 1.5434449203720302,
+          "min_words": 6,
+          "max_words": 12,
+          "mean_chars": 50.2,
+          "std_chars": 7.807688518377255,
+          "min_chars": 33,
+          "max_chars": 63
+        },
+        "paraphrase": {
+          "count": 35,
+          "mean_words": 11.457142857142857,
+          "std_words": 2.3463388763026067,
+          "min_words": 6,
+          "max_words": 17,
+          "mean_chars": 58.48571428571429,
+          "std_chars": 10.667363922789196,
+          "min_chars": 33,
+          "max_chars": 86
+        },
+        "typo": {
+          "count": 35,
+          "mean_words": 9.971428571428572,
+          "std_words": 2.90305961048698,
+          "min_words": 5,
+          "max_words": 17,
+          "mean_chars": 50.25714285714286,
+          "std_chars": 11.284231367311662,
+          "min_chars": 27,
+          "max_chars": 75
+        }
+      }
+    }
+  },
+  "ooc_score_distribution": {
+    "count": 15,
+    "min": 0.1462860802948207,
+    "median": 0.2406416879416604,
+    "max": 0.39386673878206,
+    "mean": 0.25042784772812543,
+    "std": 0.06739137278329976,
+    "p25": 0.2043143886137299,
+    "p75": 0.28105719059006284
+  },
+  "match_calibration": {
+    "hit1_equal_1": {
+      "count": 95,
+      "min": 0.1743783768696254,
+      "median": 0.5343442593641293,
+      "max": 0.7707191127449646,
+      "mean": 0.5195872853740986,
+      "std": 0.1280228726338615,
+      "p25": 0.43785658436609914,
+      "p75": 0.6081194679363323
+    },
+    "hit1_equal_0": {
+      "count": 10,
+      "min": 0.1907841009049674,
+      "median": 0.2765655591577857,
+      "max": 0.4381095961619047,
+      "mean": 0.2788884435949483,
+      "std": 0.0687285704069667,
+      "p25": 0.2253264899293455,
+      "p75": 0.30080687007103235
+    },
+    "threshold_calibration_rationale": {
+      "strong_match": ">= 0.35 (captures 85/95 of Hit@1==1 queries; only 1/10 of Hit@1==0 queries exceeds 0.35)",
+      "possible_match": "0.22 - 0.35 (covers majority of ambiguity and low-overlap paraphrases)",
+      "weak_match": "< 0.22 (below 0.15 triggers safety abstention)"
+    }
+  }
+}

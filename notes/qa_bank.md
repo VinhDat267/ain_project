@@ -1,6 +1,6 @@
 # Ngân hàng câu hỏi vấn đáp — Project 12
 
-> Mỗi người tự viết câu trả lời bằng lời của mình (việc **N08**, hạn T6 23/10). Phần B ghi lại sau mỗi buổi trinh sát thứ Bảy.
+> Mỗi người tự viết câu trả lời bằng lời của mình (việc **N08**, hạn T6 23/10). Phần B là biểu mẫu ghi chép sau mỗi buổi trinh sát thứ Bảy (Reconnaissance Log Template).
 
 ## A. Câu hỏi dự đoán
 
@@ -33,28 +33,42 @@
 | 25 | Kết quả 5-fold cross-validation có khớp với kết quả trên câu hỏi dev không? Nếu khác thì vì sao? | Dương | Xu hướng tổng thể hoàn toàn nhất quán: Logistic Regression và SVM luôn vượt trội so với Naive Bayes và k-NN. Tuy nhiên, giá trị F1 tuyệt đối trên 5-Fold CV (E5b) thường cao hơn một chút so với tập câu hỏi `dev` vì: Tập 5-Fold CV được huấn luyện và kiểm thử trực tiếp trên các văn bản FAQ chính quy đầy đủ câu chữ, trong khi tập `dev` bao gồm các câu hỏi thực tế ngắn gọn, có cấu trúc ngữ pháp biến thể, câu hỏi mấp mé ranh giới (boundary) và câu hỏi nhiễu gõ sai chính tả. |
 | 26 | BM25 khác TF-IDF + cosine ở đâu (bão hoà tần suất từ, chuẩn hoá độ dài tài liệu)? Vì sao sản phẩm vẫn dùng cosine dù BM25 có thể tốt hơn? | Vinh | BM25 sở hữu 2 cải tiến lý thuyết lớn: (1) Đường cong bão hòa tần suất phi tuyến với tham số $k_1$ (ngăn một từ lặp lại nhiều lần làm tăng điểm vô hạn); (2) Cơ chế phạt độ dài tài liệu thích nghi mềm dẻo với tham số $b$ dựa trên tỷ lệ độ dài so với độ dài trung bình toàn kho ($L_d / L_{avg}$). Sản phẩm cuối cùng vẫn dùng TF-IDF + Cosine vì: (1) Thể hiện trực tiếp và thuần khiết vẻ đẹp hình học của Vector Space Model (chiếu chuẩn tắc lên mặt cầu đơn vị); (2) Kết hợp tối ưu với cơ chế sublinear TF ($1 + \ln(tf)$) và `char_wb`; (3) Cho phép phân rã trực quan thành phần đóng góp của từng đặc trưng (Feature Attribution `explain()`) trong giao diện người dùng. |
 
-## B. Câu thầy đã hỏi các nhóm khác
+---
 
-### T7 10/10 — P01, P02, P03
+## B. Nhật ký Trinh sát Vấn đáp Thực tế (Reconnaissance Log Template)
 
-| Nhóm | Câu hỏi của thầy | Nhóm mình rút ra được gì |
-|---|---|---|
-| P01 | Thầy hỏi: *"Nếu tài liệu dài gấp 10 lần tài liệu ngắn mà chứa cùng số lần từ khóa, hệ thống của em xếp hạng thế nào?"* | Khẳng định tầm quan trọng của chuẩn hóa độ dài ($L_2$-normalization) trong VSM để không thiên vị tài liệu dài. |
-| P02 | Thầy yêu cầu: *"Mở code lên và chỉ cho thầy chỗ nào chặn không cho mô hình nhìn thấy tập test."* | Nhóm đã chủ động bổ sung split-guard kiểm tra tên tập dữ liệu trong CLI và mã hóa ablation lock chống rò rỉ tập test. |
-| P03 | Thầy hỏi: *"Tại sao em lại dùng accuracy để đánh giá khi các class intent có số lượng mẫu không đều nhau?"* | Nhóm sử dụng Macro-averaged F1-Score và Balanced E2E thay vì Accuracy thuần túy để đánh giá công bằng giữa các lớp. |
+> [!NOTE]
+> Bảng mẫu chuẩn phục vụ việc ghi chép trung thực các câu hỏi thực tế từ giảng viên và hội đồng trong các buổi báo cáo/trinh sát. Được chuẩn hóa theo chuẩn mực học thuật, không tự tạo nội dung giả định.
 
-### T7 17/10 — P04, P05, P06
+### Buổi Trinh sát 1 (Thứ Bảy Tuần 1)
+- **Thời gian:** `[Điền ngày/tháng/năm]`
+- **Địa điểm / Phòng:** `[Điền phòng hội đồng]`
+- **Thành viên tham dự:** `[Ghi rõ thành viên tham dự]`
 
-| Nhóm | Câu hỏi của thầy | Nhóm mình rút ra được gì |
-|---|---|---|
-| P04 | Thầy hỏi: *"Giải thích ý nghĩa toán học của Laplace smoothing. Nếu $\alpha = 0.5$ hay $\alpha = 2$ thì chuyện gì xảy ra?"* | Cần nắm vững bản chất Dirichlet Prior: $\alpha < 1$ ưu tiên xác suất thực nghiệm, $\alpha > 1$ tăng cường kéo về phân phối đều; nhóm dùng $\alpha = 1$ (Add-one standard). |
-| P05 | Thầy hỏi: *"Khi người dùng gõ sai 2-3 chữ trong câu hỏi ngắn, hệ thống có sập không?"* | Nhóm đã tiến hành thí nghiệm độ nhạy nhiễu E3b và vẽ đồ thị suy thoái (noise degradation curve) chứng minh hệ thống vẫn duy trì độ chính xác cao. |
-| P06 | Thầy hỏi: *"Làm sao biết được từ nào trong câu hỏi đóng góp nhiều nhất vào điểm số tài liệu được trả về?"* | Nhóm xây dựng hàm `explain()` bóc tách tích thành phần $(q_i \cdot d_i)$ và hiển thị trực quan tỷ lệ % đóng góp trên giao diện Streamlit. |
+| Nhóm được hỏi | Câu hỏi của Giảng viên / Hội đồng | Bài học rút ra cho Project 12 | Hành động cải tiến trong mã nguồn |
+|---|---|---|---|
+| *[Ví dụ: P01]* | *[Ghi lại nguyên văn câu hỏi]* | *[Phân tích phản hồi]* | *[Commit / Script cập nhật tương ứng]* |
+| *[Ví dụ: P02]* | *[Ghi lại nguyên văn câu hỏi]* | *[Phân tích phản hồi]* | *[Commit / Script cập nhật tương ứng]* |
+| *[Ví dụ: P03]* | *[Ghi lại nguyên văn câu hỏi]* | *[Phân tích phản hồi]* | *[Commit / Script cập nhật tương ứng]* |
 
-### T7 24/10 — P07, P08, P09
+### Buổi Trinh sát 2 (Thứ Bảy Tuần 2)
+- **Thời gian:** `[Điền ngày/tháng/năm]`
+- **Địa điểm / Phòng:** `[Điền phòng hội đồng]`
+- **Thành viên tham dự:** `[Ghi rõ thành viên tham dự]`
 
-| Nhóm | Câu hỏi của thầy | Nhóm mình rút ra được gì |
-|---|---|---|
-| P07 | Thầy hỏi: *"Nếu có một câu hỏi hoàn toàn vô nghĩa như 'asdasd qweqwe', hệ thống sẽ trả lời gì?"* | Cần cơ chế Abstention vững chắc: điểm cosine $= 0.0 < T_{\text{sim}}$ lập tức kích hoạt từ chối trả lời và hiển thị thông báo hướng dẫn. |
-| P08 | Thầy hỏi: *"Tại sao các em không dùng BM25 mà lại dùng Cosine Similarity?"* | Phải chuẩn bị sẵn bảng đối chiếu lý thuyết và thực nghiệm giữa BM25 và TF-IDF Cosine, nêu bật tính minh bạch, hình học và khả năng phân rã đặc trưng của VSM. |
-| P09 | Thầy hỏi: *"Khi phân loại Intent, các em dùng cơ chế gì để tránh gán nhãn sai cho câu hỏi ngoài kho tri thức?"* | Phải làm rõ cơ chế Dual-Gate: kết hợp cả ngưỡng khoảng cách cosine của retrieval và ngưỡng xác suất tin cậy của intent classifier để tạo hàng rào phòng thủ kép. |
+| Nhóm được hỏi | Câu hỏi của Giảng viên / Hội đồng | Bài học rút ra cho Project 12 | Hành động cải tiến trong mã nguồn |
+|---|---|---|---|
+| *[Nhóm ...]* | *[Ghi lại nguyên văn câu hỏi]* | *[Phân tích phản hồi]* | *[Commit / Script cập nhật tương ứng]* |
+| *[Nhóm ...]* | *[Ghi lại nguyên văn câu hỏi]* | *[Phân tích phản hồi]* | *[Commit / Script cập nhật tương ứng]* |
+| *[Nhóm ...]* | *[Ghi lại nguyên văn câu hỏi]* | *[Phân tích phản hồi]* | *[Commit / Script cập nhật tương ứng]* |
+
+### Buổi Trinh sát 3 (Thứ Bảy Tuần 3)
+- **Thời gian:** `[Điền ngày/tháng/năm]`
+- **Địa điểm / Phòng:** `[Điền phòng hội đồng]`
+- **Thành viên tham dự:** `[Ghi rõ thành viên tham dự]`
+
+| Nhóm được hỏi | Câu hỏi của Giảng viên / Hội đồng | Bài học rút ra cho Project 12 | Hành động cải tiến trong mã nguồn |
+|---|---|---|---|
+| *[Nhóm ...]* | *[Ghi lại nguyên văn câu hỏi]* | *[Phân tích phản hồi]* | *[Commit / Script cập nhật tương ứng]* |
+| *[Nhóm ...]* | *[Ghi lại nguyên văn câu hỏi]* | *[Phân tích phản hồi]* | *[Commit / Script cập nhật tương ứng]* |
+| *[Nhóm ...]* | *[Ghi lại nguyên văn câu hỏi]* | *[Phân tích phản hồi]* | *[Commit / Script cập nhật tương ứng]* |
