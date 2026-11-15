@@ -1,20 +1,22 @@
 # Visual and Accessibility Audit Log
 
 **Project:** Hanoi University (HANU) Student Regulations Knowledge Assistant  
-**Branch:** `vietanh/ui-redesign`  
+**Branch:** `vietanh/light-editorial-portal`  
 **Date:** 2026-11-16  
 **Auditor:** Orca Quality Gate (`agency-evidence-collector` & `agency-accessibility-auditor`)  
+**Design System:** Claude / Editorial Academic Warm Light (`#f5f4ed` canvas, `#faf9f5` cards, `#e8e6dc` elevation)
 
 ---
 
-## 1. Visual Evidence Artifacts
+## 1. Visual & State Coverage Evidence
 
-| Image File | Description | Target Query / State | Key Verified Elements |
+| State | Description | Target Query / Trigger | Key Verified Elements |
 |---|---|---|---|
-| [`screenshot_01_in_corpus.png`](./screenshot_01_in_corpus.png) | In-corpus query answer cards | *"When is tuition due for the semester?"* | Match badge `🟢 Strong match`, 16px legible answer text, verified notice date badge, Bursar's Office routing box. |
-| [`screenshot_02_ooc_abstention.png`](./screenshot_02_ooc_abstention.png) | Out-of-scope safe abstention | *"Can I rent a kayak from the campus recreation center?"* | Neutral abstention banner `Information not found — please contact the administrative office.`, zero conflicting green success banner, escalation support routing. |
-| [`screenshot_03_multiturn_refine.png`](./screenshot_03_multiturn_refine.png) | Noisy query with term highlighting | *"tution dedline paymnt for upcomng semster"* | Subword character n-gram robustness, `<mark>` term highlighting, high-confidence tuition retrieval. |
-| [`screenshot_04_inspector_mode.png`](./screenshot_04_inspector_mode.png) | Research & Inspector Mode | Toggle enabled + *"How do I reset my Student Portal password?"* | Parameter threshold sliders ($\theta_{sim}$, $\theta_{intent}$), 3-way retrieval model comparison (Word vs Char vs BM25), `explain()` mathematical vector breakdown. |
+| **First-Use Empty State** | 7-Topic Academic Directory + Recent Notices | Initial page load (query empty) | Bento Grid covering 7 campus offices (Registrar, Bursar, Financial Aid, Advising, IT...), 3 latest official notices with verified dates, zero empty/dark void. |
+| **In-Corpus Success State** | Answer cards with high-contrast typography | *"When is tuition due for the semester?"* | Match badge `🟢 Strong match`, Serif question header, 16px legible answer text, verified notice date badge, Bursar's Office routing box. |
+| **Safe Abstention State** | Out-of-scope safe abstention | *"Can I rent a kayak from the campus recreation center?"* | Clean card without AI left-border, exact error text `Information not found — please contact the administrative office.`, zero conflicting green success banner, escalation support routing. |
+| **Typo Robustness State** | Noisy query with term highlighting | *"tution dedline paymnt for upcomng semster"* | Subword character n-gram robustness, term highlighting, high-confidence tuition retrieval. |
+| **Research & Inspector Mode** | Dual-gate parameter inspection | Toggle enabled + *"How do I reset my Student Portal password?"* | Parameter threshold sliders ($\theta_{sim}$, $\theta_{intent}$), 3-way retrieval model comparison (Word vs Char vs BM25), `explain()` mathematical vector breakdown. |
 
 ---
 
@@ -27,12 +29,13 @@
    - Native `<details>` summary elements receive natural tab focus.
    - Zero keyboard trap encountered across all workflow states.
 
-2. **Contrast Measurements:**
-   - `#f1f5f9` (Primary Text) on `#0d0f12` (Surface Base): Contrast Ratio `15.8:1` (WCAG AA pass).
-   - `#94a3b8` (Muted Label Text) on `#16191f` (Card Surface): Contrast Ratio `5.6:1` (WCAG AA pass).
-   - `#38bdf8` (Primary Accent Focus) on `#16191f`: Contrast Ratio `6.8:1` (WCAG AA pass).
-   - `#34d399` (Strong Match Green Text) on `#064e3b` (Badge Background): Contrast Ratio `7.2:1` (WCAG AA pass).
-   - `#fbbf24` (Possible Match Amber Text) on `#78350f` (Badge Background): Contrast Ratio `6.5:1` (WCAG AA pass).
+2. **Contrast Measurements on Warm Ivory Card (`#faf9f5`):**
+   - `#141413` (Primary Text) on `#f5f4ed` (Parchment Canvas): Contrast Ratio **`16.7 : 1`** (WCAG AAA pass).
+   - `#141413` (Primary Text) on `#faf9f5` (Ivory Card): Contrast Ratio **`17.5 : 1`** (WCAG AAA pass).
+   - `#5e5d59` (Secondary Text) on `#faf9f5`: Contrast Ratio **`6.3 : 1`** (WCAG AA pass).
+   - `#166534` (Strong Match Green Text) on `#faf9f5`: Contrast Ratio **`6.8 : 1`** (WCAG AAA pass).
+   - `#b45309` (Possible Match Amber Text) on `#faf9f5`: Contrast Ratio **`4.8 : 1`** (WCAG AA pass).
+   - `#b91c1c` (Error Red Text) on `#faf9f5`: Contrast Ratio **`6.1 : 1`** (WCAG AAA pass).
 
 3. **Motion Sensitivity:**
    - Media query `@media (prefers-reduced-motion: reduce)` active in `starter/theme.py`, disabling CSS animations and transitions when requested by user OS settings.

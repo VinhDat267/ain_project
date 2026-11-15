@@ -84,3 +84,14 @@ def test_manifest_and_business_metrics_consistency():
     assert b_dict["ooc_queries"] == 15
     assert b_dict["top3_rescue_rate"] == pytest.approx(0.9810, abs=1e-4)
     assert b_dict["self_service_deflection_rate_overall"] == pytest.approx(0.7750, abs=1e-4)
+
+
+def test_app_empty_state_renders_academic_directory():
+    """Verify that the initial empty state presents the 7-domain directory and recent notices."""
+    app = AppTest.from_file(str(Path(student_core.__file__).with_name("app.py")), default_timeout=30).run()
+    assert not app.exception
+    # When initial query is empty, it should render directory and recent notices
+    assert any("Academic Regulations & Student Services Directory" in item.value for item in app.markdown)
+    assert any("Recent Official Campus Notices" in item.value for item in app.markdown)
+    assert any("Bursar's Office" in item.value for item in app.markdown)
+
