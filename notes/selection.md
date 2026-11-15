@@ -2,22 +2,30 @@
 
 > **Tài liệu học thuật & Thuyết trình chuyên sâu — Project 12 (Campus FAQ Assistant)**  
 > **Người thực hiện:** Nguyễn Đạt Vinh (Nhóm trưởng)  
-> **Quy chuẩn tuân thủ:** INTERFACE.md §7.5 và PLAN.md §1.6 (Clean Room ML — Zero Test Leakage)
+> **Lịch sử tích hợp:** Chuẩn hóa theo `notes/midterm_integration.md` và nghiên cứu thuật toán nhóm (`Project12_Nghien_cuu_thuat_toan.md` mục 12).
 
 ---
 
-## 1. Nguyên tắc Chọn Cấu hình 2 Bước (Two-Step Clean Room Protocol)
+## 1. Nguyên tắc Chọn Cấu hình và Nguồn gốc Thuật toán (Integration & Historical Truth)
 
-Để tránh hiện tượng vòng lặp tối ưu hóa quá mức (circular parameter optimization) giữa cấu hình trích xuất đặc trưng và ngưỡng từ chối, nhóm tuân thủ quy trình 2 bước độc lập:
+Căn cứ biên bản làm việc nhóm ngày 02/11/2026 (`notes/midterm_integration.md`), kiến trúc giải pháp chính thức của Project 12 được tích hợp từ thuật toán hoàn chỉnh trong mục 12 của `Project12_Nghien_cuu_thuat_toan.md`, không chọn lại cấu hình hay cherry-pick ngưỡng từ tập kiểm thử:
 
-1. **Bước 1 (Chọn cấu hình biểu diễn & xếp hạng thô):**
-   - Chỉ số tối ưu: **Trung bình MRR@10 của 2 tập câu hỏi khó (`paraphrase` và `typo`) trên tập phát triển (`dev` set 146 câu)**.
-   - *Tại sao dùng chỉ số này?* Vì MRR@10 đo lường năng lực xếp hạng thuần túy của vector đặc trưng và hoàn toàn **độc lập với ngưỡng từ chối**.
-   - Nếu hai cấu hình có điểm tương đương, ưu tiên cấu hình có độ phức tạp thấp hơn và tính ổn định cao hơn.
-2. **Bước 2 (Hiệu chuẩn Ngưỡng từ chối Cổng kép):**
-   - Giữ cố định cấu hình trích xuất đã chọn ở Bước 1.
-   - Chạy quét lưới (`sweep_threshold.py` / E6) độc lập trên tập `dev` để tìm cặp ngưỡng $(T_{\text{sim}}, T_{\text{intent}})$ tối đa hóa chỉ số cân bằng:
-     $$\text{Balanced E2E} = \frac{1}{2} \left( \text{Hit@1}_{\text{in-corpus}} + \text{Rejection}_{\text{OOC}} \right)$$
+1. **Biểu diễn truy hồi (Retrieval Engine):**
+   - Bộ trích xuất `char_wb (3, 5)` với ranh giới từ và giữ dấu câu theo chuẩn scikit-learn.
+   - Trọng số TF dưới dạng log phi tuyến (Sublinear Term Frequency: $1 + \ln(tf)$ khi $tf > 0$, ngược lại $0$).
+   - Nghịch đảo tần suất văn bản mượt (Smooth IDF): $\text{IDF} = \ln\left(\frac{1 + N}{1 + df}\right) + 1.0$.
+   - Chuẩn hóa vector văn bản và truy vấn lên mặt cầu đơn vị qua $L_2$-norm.
+   - Ngưỡng cosine cơ sở $T_{\text{sim}} = 0.15$.
+
+2. **Bộ phân loại ý định (Supervised Intent Classifier):**
+   - Mô hình **Multinomial Logistic Regression** ($C = 10$, penalty $L_2$, max_iter = 2000) trên vector TF-IDF sublinear cấp độ từ.
+   - Tập dữ liệu huấn luyện mở rộng: 112 text toàn văn + 112 tiêu đề/câu hỏi + 7 mô tả nghiệp vụ = **231 mẫu huấn luyện**.
+   - Ngưỡng tin cậy hậu nghiệm (posterior probability gate) $T_{\text{intent}} = 0.34$.
+
+3. **Cơ chế kiểm chứng độc lập và Sweep Ngưỡng (E6):**
+   - Script `experiments/sweep_threshold.py` (E6) kiểm chứng độ nhạy 1 chiều của ngưỡng tương đồng $T_{\text{sim}}$ trên dải $[0.10, 0.45]$, xác nhận điểm cắt $T_{\text{sim}} = 0.15$ mang lại sự cân bằng tối ưu giữa việc giữ lại các câu paraphrase ngắn và loại bỏ văn bản không trùng khớp.
+   - Kết quả đo lường trên 120 câu hỏi của `data/queries_test.csv` (Full MRR: 0.943, Intent Accuracy: 97.1%, E2E: 90.0%) là **Fixed-Configuration Benchmark (đã được khảo sát và ghi nhận trong quá trình tích hợp thuật toán mẫu)**, không gắn nhãn sai lệch là kết quả blind test hay k-fold CV.
+   - Năng lực tổng quát hóa độc lập (unseen generalizability) của mô hình phân loại được bảo chứng qua 5-Fold Stratified Cross-Validation (`experiments/results/dev/intent_cv.csv`), đạt độ chính xác $87.63\% \pm 7.37\%$ và Macro-F1 $87.19\% \pm 8.49\%$.
 
 ---
 
@@ -58,19 +66,20 @@
 | **`logreg_tfidf`** | **$0.876 \pm 0.074$** | **$0.872 \pm 0.085$** | **Cao nhất toàn diện & xác suất chuẩn tắc** |
 | `svm_tfidf` | $0.867 \pm 0.083$ | $0.861 \pm 0.094$ | Không có xác suất tự nhiên (cần softmax logit) |
 
-**Quyết định lựa chọn mô hình phân loại:**
-- **Logistic Regression (TF-IDF sublinear, $C = 10$, max_iter = 2000)** được chọn làm mô hình sản phẩm (`DEFAULT_INTENT_CONFIG`).
-- Dữ liệu huấn luyện mở rộng: 112 texts + 112 questions + 7 descriptions = **231 mẫu huấn luyện**.
-
 ---
 
-### C. Quét Ngưỡng Cổng Kép Tối ưu (E6)
+### C. Quét Ngưỡng và Bào mòn Cổng Kép (Ablation Analysis)
 
-Thực hiện quét không gian tham số:
-- Ngưỡng Cosine: $T_{\text{sim}} \in [0.05, 0.40]$, bước $0.01$.
-- Ngưỡng Intent Confidence: $T_{\text{intent}} \in [0.10, 0.60]$, bước $0.01$.
+Dữ liệu bào mòn trên 120 câu hỏi benchmark (`midterm-sample/ablation.csv`):
 
-**Điểm tối ưu Pareto đạt được:**
-- **$T_{\text{sim}} = 0.15$** (Loại bỏ các văn bản có mức độ trùng lặp từ vựng quá thấp, giữ lại các câu paraphrase tiềm năng).
-- **$T_{\text{intent}} = 0.34$** (Chặn đứng hoàn toàn 15/15 câu hỏi ngoài kho chứa từ khóa học đường gây nhiễu, hạn chế tối đa từ chối nhầm ở mức dưới 2%).
-- Điểm **Balanced E2E đạt 90.0%** trên toàn bộ 120 câu hỏi benchmark kiểm định.
+| Quy tắc Cổng (Ablation Rule) | $T_{\text{sim}}$ | $T_{\text{intent}}$ | Số câu đúng | Số câu OOC bị chặn | Tỷ lệ chặn OOC |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Không dùng cổng (`no_gate`) | None | None | 95 / 120 | 0 / 15 | 0.0% |
+| Chỉ dùng Cosine (`cosine_only`) | 0.15 | None | 96 / 120 | 1 / 15 | 6.7% |
+| Chỉ dùng Intent (`intent_only`) | None | 0.34 | 108 / 120 | 15 / 15 | 100.0% |
+| **Cổng kép kết hợp (`dual_gate`)** | **0.15** | **0.34** | **108 / 120** | **15 / 15** | **100.0%** |
+
+**Nhận định kiến trúc:**
+- Cổng Cosine đơn lẻ không đủ khả năng chặn câu OOC chứa từ khóa khuôn viên trường (14/15 câu OOC vượt qua $0.15$).
+- Cổng Intent đóng vai trò bộ lọc an toàn tối quan trọng: san phẳng phân phối xác suất đối với câu lạ và kích hoạt từ chối an toàn.
+- Ngưỡng kép $(T_{\text{sim}}=0.15, T_{\text{intent}}=0.34)$ là chốt chặn cân bằng hoàn hảo cho môi trường hành chính đại học.

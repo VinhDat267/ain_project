@@ -1,0 +1,12 @@
+metric,value,description
+total_queries,120.0,Total benchmark evaluation queries
+in_corpus_queries,105.0,Queries with target document in corpus
+ooc_queries,15.0,Out-of-corpus queries requiring abstention
+self_service_deflection_rate_overall,0.775,Fraction of all queries resolved correctly at Top-1 (93/120)
+in_corpus_resolution_rate_top1,0.8857,In-corpus queries resolved correctly at Top-1 (93/105)
+top3_rescue_rate,0.981,In-corpus queries with correct document in Top-3 cards (103/105)
+silent_wrong_answer_rate,0.0952,Queries answered incorrectly without abstaining (10/105)
+safe_escalation_rate,0.1417,Queries safely routed to administrative office (17/120)
+false_abstention_rate,0.019,Legitimate queries mistakenly abstained (2/105)
+unsafe_ooc_answer_rate,0.0,Out-of-corpus queries mistakenly answered (0/15)
+expected_cost_per_query,0.4333,"Expected operational penalty per query (w_wrong=5.0, w_abstain=1.0)"
