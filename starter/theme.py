@@ -1,7 +1,7 @@
 """Centralized Theme, Design Tokens, and CSS for the Campus FAQ Assistant.
 
-Provides disciplined Claude/Editorial Warm Light surface hierarchy, accessible color tokens,
-literary typography (Serif display), staggered fade-in animations, and prefers-reduced-motion compliance.
+Provides disciplined Oxford Navy & Claude Warm Light surface hierarchy, accessible color tokens,
+literary typography (Serif display), domain chromatic palettes, visual meters, and prefers-reduced-motion compliance.
 """
 from __future__ import annotations
 
@@ -55,7 +55,7 @@ def contrast_ratio(hex1: str, hex2: str) -> float:
 
 CUSTOM_CSS = """
 /* ==========================================================================
-   Campus Notice & FAQ Assistant — Claude/Editorial Warm Light CSS Theme
+   Campus Notice & FAQ Assistant — Oxford Navy & Daylight Chromatic CSS Theme
    ========================================================================== */
 
 /* Main App Canvas Styling */
@@ -76,19 +76,76 @@ CUSTOM_CSS = """
     color: #141413 !important;
 }
 
+/* Oxford Navy Hero Masthead Banner */
+.orca-hero-banner {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 1.75rem 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.12);
+}
+
+.orca-hero-overline {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #fbbf24;
+    margin-bottom: 0.4rem;
+}
+
+.orca-hero-title {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 2.1rem;
+    font-weight: 600;
+    color: #f8fafc;
+    line-height: 1.25;
+    margin-bottom: 0.4rem;
+}
+
+.orca-hero-subtitle {
+    font-size: 0.975rem;
+    color: #cbd5e1;
+    line-height: 1.5;
+    max-width: 74ch;
+    margin-bottom: 1rem;
+}
+
+.orca-stat-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.orca-stat-pill {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #f1f5f9;
+    padding: 0.25rem 0.65rem;
+    border-radius: 9999px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    backdrop-filter: blur(4px);
+}
+
+.orca-stat-pill strong {
+    color: #38bdf8;
+}
+
 /* Streamlit Native Input Overrides */
 .stTextInput > div > div > input {
     background-color: #faf9f5 !important;
     color: #141413 !important;
-    border: 1px solid #d6d3c4 !important;
+    border: 1.5px solid #d6d3c4 !important;
     border-radius: 8px !important;
     font-size: 1rem !important;
     padding: 0.65rem 1rem !important;
 }
 
 .stTextInput > div > div > input:focus {
-    border-color: #c96442 !important;
-    box-shadow: 0 0 0 2px rgba(201, 100, 66, 0.2) !important;
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
 }
 
 /* Streamlit Button Overrides */
@@ -97,14 +154,14 @@ CUSTOM_CSS = """
     color: #141413 !important;
     border: 1px solid #d6d3c4 !important;
     border-radius: 6px !important;
-    font-weight: 500 !important;
+    font-weight: 600 !important;
     transition: all 120ms ease !important;
 }
 
 .stButton > button:hover {
-    background-color: #f3f2ee !important;
-    border-color: #c96442 !important;
-    color: #a84b2c !important;
+    background-color: #f1f5f9 !important;
+    border-color: #2563eb !important;
+    color: #1d4ed8 !important;
 }
 
 /* Primary Document Card */
@@ -120,15 +177,40 @@ CUSTOM_CSS = """
 }
 
 .orca-card:hover {
-    border-color: #d6d3c4;
+    border-color: #cbd5e1;
     transform: translateY(-1px);
     box-shadow: 0 4px 14px rgba(20, 20, 19, 0.07);
 }
 
-/* Staggered Entrance Animation for 3 Cards */
-.orca-card:nth-of-type(1) { animation-delay: 50ms; }
-.orca-card:nth-of-type(2) { animation-delay: 150ms; }
-.orca-card:nth-of-type(3) { animation-delay: 250ms; }
+/* Top #1 Featured Card */
+.orca-card-featured {
+    background-color: #ffffff;
+    border: 2px solid #0f172a;
+    border-radius: 10px;
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 1.25rem;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+    animation: orcaFadeIn 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.orca-featured-badge {
+    background: #0f172a;
+    color: #fbbf24;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+/* Staggered Entrance Animation for Cards */
+.orca-card:nth-of-type(1), .orca-card-featured { animation-delay: 40ms; }
+.orca-card:nth-of-type(2) { animation-delay: 120ms; }
+.orca-card:nth-of-type(3) { animation-delay: 200ms; }
 
 @keyframes orcaFadeIn {
     from {
@@ -159,6 +241,29 @@ CUSTOM_CSS = """
     max-width: 68ch;
     margin-top: 0.5rem;
     margin-bottom: 0.75rem;
+}
+
+/* Relevance Score Meter Bar */
+.orca-meter-container {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-size: 0.8125rem;
+    color: #5e5d59;
+    margin-bottom: 0.5rem;
+}
+
+.orca-meter-track {
+    width: 140px;
+    height: 6px;
+    background: #e8e6dc;
+    border-radius: 9999px;
+    overflow: hidden;
+}
+
+.orca-meter-fill {
+    height: 100%;
+    border-radius: 9999px;
 }
 
 /* Meta Tags & Rows */
@@ -212,20 +317,29 @@ CUSTOM_CSS = """
     border: 1px solid #e7e5e4;
 }
 
-/* Matched Term Highlight */
-.orca-highlight {
-    background-color: #fef08a;
-    color: #854d0e;
-    padding: 0.05rem 0.25rem;
-    border-radius: 3px;
-    font-weight: 600;
+/* Matched Term Highlight with <mark> (Fixes BE-1) */
+mark.orca-highlight, .orca-highlight {
+    background-color: #fef08a !important;
+    color: #854d0e !important;
+    padding: 0.1rem 0.3rem !important;
+    border-radius: 3px !important;
+    font-weight: 600 !important;
 }
+
+/* 7-Domain Chromatic Top Bars */
+.domain-course_registration { border-top: 3.5px solid #2563eb !important; }
+.domain-tuition { border-top: 3.5px solid #059669 !important; }
+.domain-exam { border-top: 3.5px solid #e11d48 !important; }
+.domain-class_schedule { border-top: 3.5px solid #4f46e5 !important; }
+.domain-student_services { border-top: 3.5px solid #d97706 !important; }
+.domain-graduation { border-top: 3.5px solid #9333ea !important; }
+.domain-technical_support { border-top: 3.5px solid #0284c7 !important; }
 
 /* Academic Directory (Bento Grid) */
 .orca-directory-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 1.15rem;
     margin: 1.25rem 0;
 }
 
@@ -233,38 +347,51 @@ CUSTOM_CSS = """
     background-color: #faf9f5;
     border: 1px solid #e8e6dc;
     border-radius: 8px;
-    padding: 1.15rem 1.25rem;
+    padding: 1.25rem 1.35rem;
     box-shadow: 0 1px 3px rgba(20, 20, 19, 0.03);
     transition: all 140ms ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .orca-directory-card:hover {
-    border-color: #c96442;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(20, 20, 19, 0.07);
+    box-shadow: 0 6px 16px rgba(20, 20, 19, 0.08);
 }
 
 .orca-directory-title {
     font-family: Georgia, "Times New Roman", serif;
-    font-size: 1.05rem;
+    font-size: 1.1rem;
     font-weight: 600;
     color: #141413;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.3rem;
 }
 
 .orca-directory-office {
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: #c96442;
+    font-size: 0.75rem;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
     margin-bottom: 0.4rem;
 }
 
 .orca-directory-desc {
     font-size: 0.875rem;
     color: #5e5d59;
-    line-height: 1.45;
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+}
+
+.orca-directory-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.78rem;
+    color: #87867f;
+    border-top: 1px solid #f0eee6;
+    padding-top: 0.5rem;
+    margin-top: auto;
 }
 
 /* Recent Notice Mini-Card */
@@ -272,8 +399,8 @@ CUSTOM_CSS = """
     background-color: #faf9f5;
     border: 1px solid #e8e6dc;
     border-radius: 6px;
-    padding: 0.85rem 1.15rem;
-    margin-bottom: 0.65rem;
+    padding: 0.95rem 1.25rem;
+    margin-bottom: 0.75rem;
     box-shadow: 0 1px 2px rgba(20, 20, 19, 0.02);
 }
 
@@ -281,7 +408,23 @@ CUSTOM_CSS = """
     border-color: #d6d3c4;
 }
 
-/* Abstention Escalation Box (Compliant with Anti-AI-Slop Sin #5: clean card, no left border) */
+/* Administrative Office Ticket (Two-Column Ticket) */
+.orca-office-ticket {
+    background: #ffffff;
+    border: 1.5px solid #e8e6dc;
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    margin: 1rem 0;
+    box-shadow: 0 2px 8px rgba(20, 20, 19, 0.04);
+}
+
+.orca-ticket-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem;
+}
+
+/* Abstention Escalation Box */
 .orca-abstain-box {
     background-color: #faf9f5;
     border: 1px solid #e8e6dc;

@@ -91,7 +91,7 @@ def test_app_empty_state_renders_academic_directory():
     app = AppTest.from_file(str(Path(student_core.__file__).with_name("app.py")), default_timeout=30).run()
     assert not app.exception
     # When initial query is empty, it should render directory and recent notices
-    assert any("Academic Regulations & Student Services Directory" in item.value for item in app.markdown)
+    assert any("Official Academic Domains & Student Services Directory" in item.value for item in app.markdown)
     assert any("Recent Official Campus Notices" in item.value for item in app.markdown)
     assert any("Bursar's Office" in item.value for item in app.markdown)
 

@@ -5,8 +5,12 @@ from pathlib import Path
 import pytest
 
 from starter.ui_helpers import (
+    get_domain_catalog,
+    get_intent_ranking,
     highlight_matched_terms,
+    highlight_matched_terms_html,
     is_non_english_query,
+    load_dashboard_kpis,
     load_notice_dates,
     match_badge,
     match_label,
@@ -118,3 +122,70 @@ def test_highlight_matched_terms():
     # Stopwords like "is" or "the" should not be bolded
     assert "**is**" not in highlighted
     assert "**the**" not in highlighted
+
+
+def test_highlight_matched_terms_html():
+    text = "The deadline to pay tuition for Fall semester is Friday. <script>alert(1)</script>"
+    query = "When is the tuition deadline?"
+    highlighted = highlight_matched_terms_html(text, query)
+
+    # Must escape raw HTML
+    assert "<script>" not in highlighted
+    assert "&lt;script&gt;" in highlighted
+    # Keywords wrapped in <mark> tag
+    assert '<mark class="orca-highlight">deadline</mark>' in highlighted
+    assert '<mark class="orca-highlight">tuition</mark>' in highlighted
+    # No markdown ** leaks
+    assert "**" not in highlighted
+
+
+def test_get_domain_catalog():
+    from starter.student_core import load_documents
+    docs = load_documents()
+    catalog = get_domain_catalog(docs)
+
+    assert len(catalog) == 7
+    total_docs = sum(c["total_count"] for c in catalog)
+    total_faqs = sum(c["faq_count"] for c in catalog)
+    total_notices = sum(c["notice_count"] for c in catalog)
+
+    assert total_docs == 112
+    assert total_faqs == 84
+    assert total_notices == 28
+
+    intents = {c["intent"] for c in catalog}
+    assert "course_registration" in intents
+    assert "tuition" in intents
+    assert "exam" in intents
+    assert "class_schedule" in intents
+    assert "student_services" in intents
+    assert "graduation" in intents
+    assert "technical_support" in intents
+
+    for item in catalog:
+        assert item["color"].startswith("#")
+        assert len(item["office_name"]) > 0
+
+
+def test_get_intent_ranking():
+    ranking = get_intent_ranking("When is tuition due for the semester?", top_n=3)
+    assert len(ranking) == 3
+    # Top intent should be tuition
+    assert ranking[0][0] == "tuition"
+    assert ranking[0][1] > 0.5
+    # Probabilities sorted descending
+    assert ranking[0][1] >= ranking[1][1] >= ranking[2][1]
+
+
+def test_load_dashboard_kpis():
+    kpis = load_dashboard_kpis()
+    assert isinstance(kpis, dict)
+    assert "mrr" in kpis
+    assert "intent_accuracy" in kpis
+    assert "deflection_rate" in kpis
+    assert "top3_rescue_rate" in kpis
+    assert kpis["total_queries"] == 120
+    assert kpis["mrr"] == pytest.approx(0.943, abs=0.01)
+    assert kpis["intent_accuracy"] == pytest.approx(0.9714, abs=0.01)
+    assert kpis["top3_rescue_rate"] == pytest.approx(0.9810, abs=0.01)
+
