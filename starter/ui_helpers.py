@@ -213,6 +213,17 @@ def highlight_matched_terms(text: str, query: str) -> str:
     return pattern.sub(replace_fn, text)
 
 
+def clean_html(raw: str) -> str:
+    """Strip leading/trailing whitespace and blank lines from multi-line HTML strings.
+
+    Prevents CommonMark from interpreting 4+ space indented lines or blank-line-separated
+    fragments inside st.markdown(..., unsafe_allow_html=True) as <pre><code> blocks.
+    """
+    if not raw:
+        return ""
+    return "\n".join(line.strip() for line in raw.splitlines() if line.strip())
+
+
 def highlight_matched_terms_html(text: str, query: str) -> str:
     """Safely escape HTML and highlight matched query terms using <mark> tags (Fixes BE-1)."""
     if not text:
