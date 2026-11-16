@@ -27,6 +27,7 @@ from starter.student_core import (  # noqa: E402
 )
 from starter.theme import apply_theme  # noqa: E402
 from starter.ui_helpers import (  # noqa: E402
+    clean_html,
     get_domain_catalog,
     get_intent_ranking,
     highlight_matched_terms_html,
@@ -39,6 +40,11 @@ from starter.ui_helpers import (  # noqa: E402
 )
 
 
+def render_html(raw_html: str) -> None:
+    """Render multi-line HTML safely without triggering CommonMark 4-space code blocks."""
+    st.markdown(clean_html(raw_html), unsafe_allow_html=True)
+
+
 def show_table(df: pd.DataFrame, caption: str = "Data Table") -> None:
     """Render dataframe as an accessible HTML table without pyarrow dependency (WCAG 2.2 SC 1.3.1)."""
     html_table = df.to_html(index=False, classes="orca-table", border=0)
@@ -48,7 +54,7 @@ def show_table(df: pd.DataFrame, caption: str = "Data Table") -> None:
             f'<table role="table" class="orca-table"><caption style="font-weight:600;text-align:left;padding:6px 0;font-size:0.9rem;color:#5e5d59;">{caption}</caption>',
             1,
         )
-    st.markdown(html_table, unsafe_allow_html=True)
+    render_html(html_table)
 
 
 @st.cache_resource
@@ -172,7 +178,7 @@ tab_search, tab_eval = st.tabs(["Student Assistant", "Operational & Research Das
 # ----------------- TAB 1: ASSISTANT -----------------
 with tab_search:
     # Oxford Navy Hero Masthead Banner
-    st.markdown(
+    render_html(
         """
         <div class="orca-hero-banner">
             <div class="orca-hero-overline">Hanoi University · Official Regulation & Knowledge Portal</div>
@@ -190,8 +196,7 @@ with tab_search:
                 <span class="orca-stat-pill"><strong>Dual-Gate</strong> Rejection</span>
             </div>
         </div>
-        """,
-        unsafe_allow_html=True,
+        """
     )
 
     query_param_q = st.query_params.get("q", "")
@@ -266,7 +271,7 @@ with tab_search:
             </div>
         </div>
         """
-        st.markdown(ticket_html, unsafe_allow_html=True)
+        render_html(ticket_html)
 
     elif should_retrieve and query.strip():
         # Retrieve candidate documents using calibrated dual-gate
@@ -358,7 +363,7 @@ with tab_search:
                     </details>
                 </div>
                 """
-                st.markdown(card_html, unsafe_allow_html=True)
+                render_html(card_html)
 
                 # Ensure doc['id'] is present in markdown stream for AppTest inspection compatibility
                 st.markdown(f"<!-- doc_id:{doc['id']} -->", unsafe_allow_html=True)
@@ -379,9 +384,8 @@ with tab_search:
                 st.markdown("---")
 
             # Feedback mechanism
-            st.markdown(
-                "<p style='font-size:0.85rem;color:#5e5d59;margin-bottom:0.5rem;'>Was this answer helpful for your inquiry?</p>",
-                unsafe_allow_html=True,
+            render_html(
+                "<p style='font-size:0.85rem;color:#5e5d59;margin-bottom:0.5rem;'>Was this answer helpful for your inquiry?</p>"
             )
             fb_col1, fb_col2, _ = st.columns([1, 1, 6])
             with fb_col1:
@@ -418,7 +422,7 @@ with tab_search:
 
     else:
         # FIRST-USE EMPTY STATE: Dynamic 7-Domain Bento Grid with Chromatic Cards (Fixes BE-2)
-        st.markdown(
+        render_html(
             """
             <div style="margin: 1.5rem 0 0.5rem 0;">
                 <div style="font-family: Georgia, 'Times New Roman', serif; font-size: 1.3rem; font-weight: 600; color: #141413; margin-bottom: 0.35rem;">
@@ -428,8 +432,7 @@ with tab_search:
                     The student regulatory knowledge base indexes 112 verified university documents across 7 authentic administrative domains:
                 </p>
             </div>
-            """,
-            unsafe_allow_html=True,
+            """
         )
 
         domain_catalog = get_domain_catalog(documents)
@@ -455,12 +458,12 @@ with tab_search:
                 </div>
             </div>
             """
-            cards_html.append(c_html)
+            cards_html.append(clean_html(c_html))
 
         grid_container = f'<div class="orca-directory-grid">{"".join(cards_html)}</div>'
-        st.markdown(grid_container, unsafe_allow_html=True)
+        render_html(grid_container)
 
-        st.markdown(
+        render_html(
             """
             <div style="margin: 2rem 0 0.75rem 0; border-top: 1px solid #e8e6dc; padding-top: 1.25rem;">
                 <div style="font-family: Georgia, 'Times New Roman', serif; font-size: 1.15rem; font-weight: 600; color: #141413; margin-bottom: 0.25rem;">
@@ -470,8 +473,7 @@ with tab_search:
                     Official regulatory updates and calendar announcements currently in effect:
                 </p>
             </div>
-            """,
-            unsafe_allow_html=True,
+            """
         )
 
         # Render 3 recent notices from dataset
@@ -482,7 +484,7 @@ with tab_search:
         for notice in recent_notices[:3]:
             d_date = notice_dates.get(notice["id"], "2026-11")
             excerpt = notice["answer"][:170] + ("..." if len(notice["answer"]) > 170 else "")
-            st.markdown(
+            render_html(
                 f"""
                 <div class="orca-notice-card domain-{notice['intent']}">
                     <div class="orca-meta-row" style="margin-bottom:0.25rem;">
@@ -497,13 +499,12 @@ with tab_search:
                         {html.escape(excerpt)}
                     </div>
                 </div>
-                """,
-                unsafe_allow_html=True,
+                """
             )
 
 # ----------------- TAB 2: EVALUATION DASHBOARD -----------------
 with tab_eval:
-    st.markdown(
+    render_html(
         """
         <div style="margin-bottom:1.25rem; border-bottom:1px solid #e8e6dc; padding-bottom:1rem;">
             <h2 style="font-family:Georgia, serif; font-size:1.6rem; font-weight:600; color:#141413; margin-bottom:0.25rem;">
@@ -513,8 +514,7 @@ with tab_eval:
                 Quantitative verification across 120 official benchmark queries, 146 development queries, and 112 corpus documents.
             </p>
         </div>
-        """,
-        unsafe_allow_html=True,
+        """
     )
 
     # Load 100% dynamic dashboard KPIs (Fixes BE-5)

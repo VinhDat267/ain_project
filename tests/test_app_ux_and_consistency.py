@@ -95,3 +95,25 @@ def test_app_empty_state_renders_academic_directory():
     assert any("Recent Official Campus Notices" in item.value for item in app.markdown)
     assert any("Bursar's Office" in item.value for item in app.markdown)
 
+
+def test_no_indented_html_code_blocks_in_app():
+    """Verify no HTML block in app.markdown contains 4-space indented lines or blank lines that trigger CommonMark <pre><code> blocks."""
+    app = AppTest.from_file(str(Path(student_core.__file__).with_name("app.py")), default_timeout=30).run()
+    for item in app.markdown:
+        val = item.value
+        if val.startswith("<div"):
+            for line in val.splitlines():
+                assert line != "", f"Blank line inside HTML block would break CommonMark HTML parsing: {val[:120]}"
+                assert not line.startswith("    "), f"4-space indented line inside HTML block: {line}"
+
+    # Also verify after running a query
+    app.text_input[0].set_value("When is tuition due for the semester?")
+    app.button[1].click().run()
+    for item in app.markdown:
+        val = item.value
+        if val.startswith("<div"):
+            for line in val.splitlines():
+                assert line != "", f"Blank line inside HTML block would break CommonMark HTML parsing: {val[:120]}"
+                assert not line.startswith("    "), f"4-space indented line inside HTML block: {line}"
+
+
