@@ -64,8 +64,9 @@ Thang điểm mức độ nghiêm trọng (Nielsen Severity Scale):
     > *"💡 Xin chào! Trợ lý quy chế hiện tại hỗ trợ tốt nhất với câu hỏi bằng tiếng Anh. Quý sinh viên vui lòng đặt câu hỏi bằng tiếng Anh (Ví dụ: 'When is the tuition payment deadline?')."*
   - Với câu hỏi ngoài kho (`q_004` quán ăn chay): Hệ thống chặn đứng an toàn, không hiện hộp xanh mâu thuẫn, hiển thị thông báo chuyển tiếp:
     > *"🛡️ Information not found — please contact the administrative office.*  
-    > *Đề xuất văn phòng hỗ trợ: University Administrative Office (Administration Building, Room 101).*  
-    > *Gợi ý: Hãy thử đặt câu hỏi tập trung vào quy chế học vụ, lịch thi, đăng ký môn học hoặc học phí."*
+    > *Outside the indexed documents. Topics it covers: Course Registration, Tuition & Fees, ...*  
+    > *Gợi ý: diễn đạt lại bằng thuật ngữ học vụ nếu câu hỏi thuộc 7 chủ đề này; nếu không, hỏi trực tiếp nhà trường."*
+  - App **không** gợi ý văn phòng cho câu bị từ chối: intent của câu ngoài kho chỉ là dự đoán bắt buộc của bộ phân loại, và kho dữ liệu không có phòng, tòa nhà hay giờ làm việc nào để chỉ đường.
 
 ---
 

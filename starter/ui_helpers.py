@@ -30,58 +30,62 @@ HIGHLIGHT_STOPWORDS = {
     "this", "that", "these", "those",
 }
 
-# Administrative office registry: ONLY using authentic office names attested in data/faq.json and data/notices.json
+# Contact point per intent. "name" is quoted from, and "contact" paraphrases, the document named
+# in "evidence" (data/faq.json or data/notices.json); tests/test_ui_helpers.py checks this.
+# The corpus gives no buildings, room numbers or opening hours, so none are shown.
 OFFICE_REGISTRY: dict[str, dict[str, str]] = {
     "course_registration": {
-        "name": "Registrar's Office",
-        "role": "Course registration, add/drop deadlines, prerequisite overrides, and enrollment verification.",
-        "location": "Administration Building, Room 101",
-        "contact": "Student Portal > Registration",
+        "name": "Student Portal",
+        "role": "Course registration, add/drop, waitlists, holds and override requests.",
+        "contact": "Course Registration page of the HANU Student Portal",
+        "evidence": "faq_course_registration_01",
     },
     "class_schedule": {
-        "name": "Registrar's Office",
-        "role": "Timetables, lecture room assignments, and class schedule conflict resolution.",
-        "location": "Administration Building, Room 101",
-        "contact": "Student Portal > Class Schedule",
+        "name": "My Schedule",
+        "role": "Current class times, room numbers and printable weekly schedule.",
+        "contact": "My Schedule page on the Student Portal",
+        "evidence": "faq_class_schedule_01",
     },
     "exam": {
         "name": "Registrar's Office",
-        "role": "Final exam schedules, room assignments, exam conflict rescheduling, and accommodations.",
-        "location": "Administration Building, Room 102",
-        "contact": "Student Portal > Examinations",
+        "role": "Final exam calendar and exam conflict rescheduling.",
+        "contact": "Conflict exam process (report at least two weeks before exam week)",
+        "evidence": "faq_exam_02",
     },
     "tuition": {
         "name": "Bursar's Office",
-        "role": "Tuition billing statements, installment plans, refund processing, and financial holds.",
-        "location": "Finance Hall, Room 204",
-        "contact": "Student Portal > Tuition & Fees",
+        "role": "Payment calendar, installment plans, refunds and tuition statements.",
+        "contact": "Student Portal billing tab, or the Bursar's Office in person",
+        "evidence": "faq_tuition_11",
     },
     "student_services": {
         "name": "Advising Center",
-        "role": "Academic advising, tutoring centers, student counseling, accessibility services, and health.",
-        "location": "Student Union Building, 2nd Floor",
-        "contact": "Student Portal > Student Services",
+        "role": "Academic advising appointments; other services are named in each answer.",
+        "contact": "Advising tab on the Student Portal",
+        "evidence": "faq_student_services_01",
     },
     "graduation": {
-        "name": "Registrar's Office",
-        "role": "Graduation applications, degree audits, Latin honors cutoffs, and commencement ceremonies.",
-        "location": "Administration Building, Room 105",
-        "contact": "Student Portal > Graduation",
+        "name": "Registrar",
+        "role": "Graduation applications, honors cutoffs, transcripts and conferral dates.",
+        "contact": "Registrar's transcript request service",
+        "evidence": "faq_graduation_09",
     },
     "technical_support": {
         "name": "IT Help Desk",
-        "role": "Student portal logins, password resets, campus Wi-Fi, VPN setup, and software licenses.",
-        "location": "Library Building, Ground Floor IT Center",
-        "contact": "IT Helpdesk Portal",
+        "role": "Course website errors, account lockouts and compromised accounts.",
+        "contact": "Student Portal support ticket form",
+        "evidence": "faq_technical_support_04",
     },
 }
 
 DEFAULT_OFFICE: dict[str, str] = {
-    "name": "Registrar's Office",
-    "role": "General student inquiries, document authentication, and inter-department routing.",
-    "location": "Administration Building, Main Desk",
-    "contact": "HANU Information Desk",
+    "name": "Student Portal",
+    "role": "Student self-service.",
+    "contact": "HANU Student Portal",
+    "evidence": "faq_course_registration_01",
 }
+
+FEEDBACK_LOG = PROJECT_ROOT / "output" / "feedback" / "feedback.jsonl"
 
 # 7-Domain Chromatic Palette aligned with authentic INTENTS in data/intents.csv
 DOMAIN_PALETTE: dict[str, dict[str, str]] = {
@@ -169,7 +173,7 @@ def match_badge(score: float) -> str:
 
 
 def office_for_intent(intent: str) -> dict[str, str]:
-    """Map intent name to the authentic administrative office described in corpus."""
+    """Map an intent to the contact point named in the corpus for that topic."""
     return OFFICE_REGISTRY.get(intent, DEFAULT_OFFICE)
 
 
@@ -225,25 +229,32 @@ def clean_html(raw: str) -> str:
 
 
 def highlight_matched_terms_html(text: str, query: str) -> str:
-    """Safely escape HTML and highlight matched query terms using <mark> tags (Fixes BE-1)."""
+    """Escape HTML and wrap matched query terms in <mark> tags.
+
+    Terms are matched on the raw text and each piece is escaped afterwards, so a
+    query word such as "amp" or "quot" can never match inside an HTML entity.
+    """
     if not text:
         return ""
-    escaped_text = html.escape(text)
     if not query:
-        return escaped_text
+        return html.escape(text)
 
     words = re.findall(r"\b[A-Za-z0-9_-]{3,}\b", query.lower())
     terms = {w for w in words if w not in HIGHLIGHT_STOPWORDS}
     if not terms:
-        return escaped_text
+        return html.escape(text)
 
     sorted_terms = sorted(terms, key=len, reverse=True)
     pattern = re.compile(r"\b(" + "|".join(re.escape(t) for t in sorted_terms) + r")\b", re.IGNORECASE)
 
-    def replace_fn(match: re.Match[str]) -> str:
-        return f'<mark class="orca-highlight">{match.group(0)}</mark>'
-
-    return pattern.sub(replace_fn, escaped_text)
+    parts: list[str] = []
+    last = 0
+    for match in pattern.finditer(text):
+        parts.append(html.escape(text[last:match.start()]))
+        parts.append(f'<mark class="orca-highlight">{html.escape(match.group(0))}</mark>')
+        last = match.end()
+    parts.append(html.escape(text[last:]))
+    return "".join(parts)
 
 
 def get_domain_catalog(documents: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -271,7 +282,6 @@ def get_domain_catalog(documents: list[dict[str, Any]]) -> list[dict[str, Any]]:
             "border": meta["border"],
             "desc": meta["desc"],
             "office_name": office["name"],
-            "office_location": office["location"],
             "office_contact": office["contact"],
             "total_count": len(docs),
             "faq_count": faq_cnt,
@@ -294,56 +304,84 @@ def get_intent_ranking(query: str, top_n: int = 3) -> list[tuple[str, float]]:
         return []
 
 
-def load_dashboard_kpis() -> dict[str, Any]:
-    """Dynamically load benchmark evaluation and business metrics from CSV outputs (Fixes BE-5)."""
-    kpis: dict[str, Any] = {
-        "mrr": 0.9430,
-        "intent_accuracy": 0.9714,
-        "total_queries": 120,
-        "in_corpus_queries": 105,
-        "ooc_queries": 15,
-        "deflection_rate": 0.7750,
-        "top3_rescue_rate": 0.9810,
-        "ooc_rejection_rate": 1.0000,
-        "safe_escalation_rate": 0.1417,
-        "false_abstention_rate": 0.0190,
-        "expected_cost": 0.4333,
-    }
+KPI_KEYS = (
+    "mrr", "intent_accuracy", "intent_correct", "top3_rescue_rate", "ooc_rejection_rate",
+    "total_queries", "in_corpus_queries", "ooc_queries",
+    "deflection_rate", "safe_escalation_rate", "false_abstention_rate", "expected_cost",
+    "w_silent_wrong", "w_false_abstain", "w_ooc_leak",
+)
 
-    biz_file = PROJECT_ROOT / "experiments" / "results" / "business" / "business_summary.csv"
-    if biz_file.exists():
-        try:
-            import pandas as pd
-            df_biz = pd.read_csv(biz_file)
-            b_dict = dict(zip(df_biz["metric"], df_biz["value"]))
-            if "self_service_deflection_rate_overall" in b_dict:
-                kpis["deflection_rate"] = float(b_dict["self_service_deflection_rate_overall"])
-            if "top3_rescue_rate" in b_dict:
-                kpis["top3_rescue_rate"] = float(b_dict["top3_rescue_rate"])
-            if "safe_escalation_rate" in b_dict:
-                kpis["safe_escalation_rate"] = float(b_dict["safe_escalation_rate"])
-            if "false_abstention_rate" in b_dict:
-                kpis["false_abstention_rate"] = float(b_dict["false_abstention_rate"])
-            if "expected_cost_per_query" in b_dict:
-                kpis["expected_cost"] = float(b_dict["expected_cost_per_query"])
-            if "total_queries" in b_dict:
-                kpis["total_queries"] = int(b_dict["total_queries"])
-        except Exception:
-            pass
+# business_summary.csv metric name -> KPI key
+_BUSINESS_KPIS = {
+    "self_service_deflection_rate_overall": "deflection_rate",
+    "safe_escalation_rate": "safe_escalation_rate",
+    "false_abstention_rate": "false_abstention_rate",
+    "expected_cost_per_query": "expected_cost",
+    "w_silent_wrong": "w_silent_wrong",
+    "w_false_abstain": "w_false_abstain",
+    "w_ooc_leak": "w_ooc_leak",
+}
 
-    summary_file = PROJECT_ROOT / "experiments" / "results" / "midterm-sample" / "summary.csv"
+
+def load_dashboard_kpis(results_dir: str | Path | None = None) -> dict[str, Any]:
+    """Read the dashboard KPIs from the result CSVs; there are no built-in fallback numbers.
+
+    ``midterm-sample/summary.csv`` is a per-type table (rows ``in_corpus``,
+    ``out_of_corpus``, ``all``); ``business/business_summary.csv`` is a
+    ``metric,value`` table. A KPI whose file or row is missing stays ``None``
+    and the app shows "n/a", so a stale number is never presented as current.
+    """
+    import pandas as pd
+
+    base = Path(results_dir) if results_dir else PROJECT_ROOT / "experiments" / "results"
+    kpis: dict[str, Any] = dict.fromkeys(KPI_KEYS)
+
+    summary_file = base / "midterm-sample" / "summary.csv"
     if summary_file.exists():
         try:
-            import pandas as pd
-            df_sum = pd.read_csv(summary_file)
-            s_dict = dict(zip(df_sum["metric"], df_sum["value"]))
-            if "full_mrr" in s_dict:
-                kpis["mrr"] = float(s_dict["full_mrr"])
-            if "intent_accuracy" in s_dict:
-                kpis["intent_accuracy"] = float(s_dict["intent_accuracy"])
-            if "ooc_rejection_rate" in s_dict:
-                kpis["ooc_rejection_rate"] = float(s_dict["ooc_rejection_rate"])
-        except Exception:
+            rows = pd.read_csv(summary_file).set_index("type")
+            in_corpus, ooc, all_rows = rows.loc["in_corpus"], rows.loc["out_of_corpus"], rows.loc["all"]
+            kpis["mrr"] = float(in_corpus["mrr"])
+            kpis["intent_accuracy"] = float(in_corpus["intent_acc"])
+            kpis["top3_rescue_rate"] = float(in_corpus["hit3"])
+            kpis["ooc_rejection_rate"] = float(all_rows["ooc_rejection"])
+            kpis["in_corpus_queries"] = int(in_corpus["n"])
+            kpis["ooc_queries"] = int(ooc["n"])
+            kpis["total_queries"] = int(all_rows["n"])
+            kpis["intent_correct"] = round(kpis["intent_accuracy"] * kpis["in_corpus_queries"])
+        except (OSError, KeyError, ValueError):
+            pass
+
+    business_file = base / "business" / "business_summary.csv"
+    if business_file.exists():
+        try:
+            frame = pd.read_csv(business_file)
+            values = dict(zip(frame["metric"], frame["value"]))
+            for metric, key in _BUSINESS_KPIS.items():
+                if metric in values:
+                    kpis[key] = float(values[metric])
+        except (OSError, KeyError, ValueError):
             pass
 
     return kpis
+
+
+def record_feedback(query: str, doc_id: str, helpful: bool, log_path: str | Path | None = None) -> Path:
+    """Append one feedback vote as a JSON line and return the log path.
+
+    The log lives in ``output/feedback/`` (git-ignored) so the team can read the
+    votes during error analysis.
+    """
+    from datetime import datetime, timezone
+
+    path = Path(log_path) if log_path else FEEDBACK_LOG
+    path.parent.mkdir(parents=True, exist_ok=True)
+    entry = {
+        "time": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "query": query,
+        "top_doc_id": doc_id,
+        "helpful": bool(helpful),
+    }
+    with open(path, "a", encoding="utf-8") as fh:
+        fh.write(json.dumps(entry, ensure_ascii=False) + "\n")
+    return path

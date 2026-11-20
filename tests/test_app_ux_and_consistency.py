@@ -38,8 +38,42 @@ def test_app_ooc_query_abstains_without_conflicting_success():
     assert len(app.success) == 0, f"Conflicting success banner displayed: {[s.value for s in app.success]}"
     # Must have the exact required abstention error string
     assert any("Information not found — please contact the administrative office." in item.value for item in app.error)
-    # Must provide administrative routing escalation guidance (U3)
-    assert any("Suggested Administrative Routing" in item.value for item in app.info)
+    # Must explain the abstention and list the covered topics (U3) ...
+    assert any("Outside the indexed documents" in item.value for item in app.info)
+    # ... but must not route a rejected query to an office picked by the intent classifier.
+    from starter.ui_helpers import OFFICE_REGISTRY
+
+    shown = " ".join(item.value for item in list(app.info) + list(app.error))
+    for office in OFFICE_REGISTRY.values():
+        assert office["contact"] not in shown, f"Rejected query was routed to {office['contact']}"
+
+
+def test_app_states_the_corpus_is_synthetic():
+    """The UI must not present the synthetic corpus as an official university portal."""
+    app = AppTest.from_file(str(Path(student_core.__file__).with_name("app.py")), default_timeout=30).run()
+    page = " ".join(item.value for item in app.markdown)
+    assert "not an official Hanoi University service" in page
+    for claim in ("Official Regulation", "verified university documents", "Official Records", "Campus Offices"):
+        assert claim not in page, claim
+
+
+def test_feedback_button_writes_a_log_entry(tmp_path, monkeypatch):
+    """'Helpful' must actually store the vote, not only show a toast."""
+    import json
+
+    from starter import ui_helpers
+
+    log = tmp_path / "feedback.jsonl"
+    monkeypatch.setattr(ui_helpers, "FEEDBACK_LOG", log)
+    app = AppTest.from_file(str(Path(student_core.__file__).with_name("app.py")), default_timeout=30).run()
+    app.text_input[0].set_value("When is tuition due for the semester?")
+    app.button[1].click().run()
+    next(b for b in app.button if b.label == "Helpful").click().run()
+
+    assert not app.exception
+    entries = [json.loads(line) for line in log.read_text(encoding="utf-8").splitlines()]
+    assert entries and entries[-1]["helpful"] is True
+    assert entries[-1]["top_doc_id"] == "faq_tuition_01"
 
 
 def test_notice_dates_provenance_integrity():
@@ -91,8 +125,8 @@ def test_app_empty_state_renders_academic_directory():
     app = AppTest.from_file(str(Path(student_core.__file__).with_name("app.py")), default_timeout=30).run()
     assert not app.exception
     # When initial query is empty, it should render directory and recent notices
-    assert any("Official Academic Domains & Student Services Directory" in item.value for item in app.markdown)
-    assert any("Recent Official Campus Notices" in item.value for item in app.markdown)
+    assert any("Topic Directory & Contact Points" in item.value for item in app.markdown)
+    assert any("Recent Campus Notices" in item.value for item in app.markdown)
     assert any("Bursar's Office" in item.value for item in app.markdown)
 
 
