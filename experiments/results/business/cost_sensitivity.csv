@@ -1,5 +1,5 @@
-penalty_ratio,w_silent_wrong,w_false_abstain,n_silent_wrong,n_false_abstentions,total_penalty_units,expected_cost_per_query,cost_per_1000_queries,silent_wrong_share_pct
-1:1,1.0,1.0,10,2,12.0,0.1,100.0,83.33
-3:1,3.0,1.0,10,2,32.0,0.2667,266.67,93.75
-5:1,5.0,1.0,10,2,52.0,0.4333,433.33,96.15
-10:1,10.0,1.0,10,2,102.0,0.85,850.0,98.04
+penalty_ratio,w_silent_wrong,w_false_abstain,n_silent_wrong,n_ooc_leaked,n_false_abstentions,total_penalty_units,expected_cost_per_query,cost_per_1000_queries,silent_wrong_share_pct
+1:1,1.0,1.0,10,0,2,12.0,0.1,100.0,83.33
+3:1,3.0,1.0,10,0,2,32.0,0.2667,266.67,93.75
+5:1,5.0,1.0,10,0,2,52.0,0.4333,433.33,96.15
+10:1,10.0,1.0,10,0,2,102.0,0.85,850.0,98.04

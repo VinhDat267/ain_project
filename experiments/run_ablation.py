@@ -37,9 +37,20 @@ from experiments.evaluate import (  # noqa: E402
 from starter.intent import IntentConfig  # noqa: E402
 from starter.retrieval import RetrievalConfig  # noqa: E402
 
-# (retrieval, intent, intent_mode); retrieval may be "jaccard" or "bm25",
+# (retrieval, intent, intent_mode[, intent_threshold]); retrieval may be "jaccard" or "bm25",
 # intent may be "majority", "knn1" or "knn5", intent_mode is "full" or "lodo".
-Run = tuple[Union[RetrievalConfig, str], Union[IntentConfig, str], str]
+# The optional 4th item turns on the product's second abstention gate
+# (abstain when the intent confidence is below it); without it only cosine abstains.
+Run = Union[
+    tuple[Union[RetrievalConfig, str], Union[IntentConfig, str], str],
+    tuple[Union[RetrievalConfig, str], Union[IntentConfig, str], str, Optional[float]],
+]
+
+
+def unpack_run(run: Run) -> tuple[Union[RetrievalConfig, str], Union[IntentConfig, str], str, Optional[float]]:
+    """Return ``(retrieval, intent, intent_mode, intent_threshold)``; the threshold defaults to None."""
+    retrieval, intent, mode, *rest = run
+    return retrieval, intent, mode, (rest[0] if rest else None)
 
 WORD = RetrievalConfig()  # word TF-IDF, index_field="text", stopwords removed
 
@@ -96,17 +107,26 @@ EXPERIMENTS: dict[str, dict[str, Run]] = {
 }
 
 # Frozen at V17 (14/10). Must contain a run named "final" (the DEFAULT configs).
-from starter.student_core import DEFAULT_INTENT_CONFIG, DEFAULT_RETRIEVAL_CONFIG  # noqa: E402
+# "final" uses both gates of student_core.retrieve(): cosine >= RETRIEVAL_THRESHOLD
+# (inside DEFAULT_RETRIEVAL_CONFIG) and intent confidence >= INTENT_THRESHOLD.
+from starter.student_core import (  # noqa: E402
+    DEFAULT_INTENT_CONFIG,
+    DEFAULT_RETRIEVAL_CONFIG,
+    INTENT_THRESHOLD,
+    RETRIEVAL_THRESHOLD,
+)
 
 FROZEN_COMPARISONS: dict[str, Run] = {
     "final": (
         DEFAULT_RETRIEVAL_CONFIG
         if DEFAULT_RETRIEVAL_CONFIG is not None
-        else RetrievalConfig(analyzer="char_wb", char_ngram_range=(3, 5), sublinear_tf=True, threshold=0.15),
+        else RetrievalConfig(analyzer="char_wb", char_ngram_range=(3, 5), sublinear_tf=True,
+                             threshold=RETRIEVAL_THRESHOLD),
         DEFAULT_INTENT_CONFIG
         if DEFAULT_INTENT_CONFIG is not None
         else IntentConfig(model="logreg", features="tfidf", lr_C=10),
         "full",
+        INTENT_THRESHOLD,
     ),
     "baseline_jaccard_majority": ("jaccard", "majority", "full"),
     "word_default_knn1": (WORD, "knn1", "full"),
@@ -133,7 +153,10 @@ class SplitLocked(RuntimeError):
 
 def frozen_hash(runs: dict[str, Run]) -> str:
     """Stable hash of a set of runs, stored in LOCK to detect parameter changes."""
-    payload = {name: [describe(r), describe(i), mode] for name, (r, i, mode) in sorted(runs.items())}
+    payload = {}
+    for name, run in sorted(runs.items()):
+        retrieval, intent, mode, gate = unpack_run(run)
+        payload[name] = [describe(retrieval), describe(intent), mode, gate]
     return hashlib.sha256(json.dumps(payload, sort_keys=True).encode("utf-8")).hexdigest()
 
 
@@ -160,18 +183,20 @@ def _evaluate_runs(runs: dict[str, Run], split: str, queries: list[dict], result
 
     documents = load_documents()
     summaries = []
-    for name, (retrieval, intent, mode) in runs.items():
+    for name, run in runs.items():
+        retrieval, intent, mode, gate = unpack_run(run)
         try:
             retriever = build_retriever(retrieval, documents)
-            per_query = evaluate_run(queries, documents, retriever, intent, mode)
+            per_query = evaluate_run(queries, documents, retriever, intent, mode, intent_threshold=gate)
         except (IntentNotReady, NotImplementedError) as exc:
             if not skip_unready:
                 raise
             print(f"  skip {name}: {exc}")
             continue
         summary = summarize(per_query)
-        write_run(results_dir / split / name, per_query, summary,
-                  run_config(split, name, retrieval, intent, mode, len(queries), []))
+        config = run_config(split, name, retrieval, intent, mode, len(queries), [])
+        config["intent_threshold"] = gate
+        write_run(results_dir / split / name, per_query, summary, config)
         summaries.append(summary.assign(run=name))
         print(f"  done {name}")
     if not summaries:

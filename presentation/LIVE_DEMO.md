@@ -28,19 +28,22 @@ rồi bấm **Retrieve documents**. Lời dẫn chi tiết nằm trong
 | 0–15 giây | Câu chuẩn về mật khẩu | technical_support 88%; faq_technical_support_01 đứng đầu, cosine 0.54 |
 | 15–25 giây | Gõ sai Student thành Sutdent | Vẫn cùng FAQ; intent 90%, cosine 0.53 |
 | 25–40 giây | Diễn đạt lại câu mật khẩu | Vẫn cùng FAQ; intent 85%, cosine 0.51 |
-| 40–50 giây | Hỏi nhà hàng chay | Intent 31%; hiện “Information not found — please contact the administrative office.” |
-| 50–65 giây | Hỏi thuê kayak trong campus | Intent 29%; cũng từ chối dù có từ campus |
+| 40–50 giây | Hỏi nhà hàng chay | Hiện “Information not found — please contact the administrative office.”; dòng *Why it was rejected*: cosine 0.24 (qua), intent 31% (trượt ngưỡng 34%) |
+| 50–65 giây | Hỏi thuê kayak trong campus | Cũng từ chối dù có từ campus: cosine 0.39 vẫn qua ngưỡng 0.15, chỉ cổng intent (29%) chặn |
 | 65–90 giây | Trùng lịch thi cuối kỳ | Sai top-1: faq_class_schedule_02, cosine 0.27; FAQ đúng faq_exam_02 ở hạng 2, cosine 0.19 |
 
-Với hai câu ngoài phạm vi, giải thích rằng độ tin cậy intent thấp hơn ngưỡng 0.34.
+Với hai câu ngoài phạm vi, chỉ vào dòng *Why it was rejected* trong khung xanh:
+độ tin cậy intent thấp hơn ngưỡng 0.34. Câu kayak là ví dụ cho thấy chỉ dùng cosine
+thì không đủ.
 Với câu cuối, chỉ rõ hệ thống còn nhầm “lịch học” với “lịch thi”; không gọi đây là
 câu trả lời đúng. Điểm cosine và posterior intent đo hai khía cạnh khác nhau,
 không phải xác suất câu trả lời đúng.
 
 ## Kiểm tra thực tế
 
-Đã nhập và bấm nút cả sáu câu trên trình duyệt ngày 03/11/2026.
-Sáu tình huống khớp kịch bản, gồm cả lỗi xếp hạng cố ý trình bày ở cuối.
+Đã nhập và bấm nút cả sáu câu trên trình duyệt ngày 03/11/2026, và chụp lại ngày
+20/11/2026 với giao diện mới (PR #19). Kết quả cả hai lần trùng nhau và khớp kịch bản,
+gồm cả lỗi xếp hạng cố ý trình bày ở cuối.
 Không ghi nhận lỗi hoặc cảnh báo JavaScript trong phiên kiểm tra.
 Đây là kiểm tra sáu tình huống demo, không thay thế đánh giá toàn bộ benchmark.
 

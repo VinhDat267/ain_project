@@ -27,6 +27,7 @@ from starter.student_core import (  # noqa: E402
 )
 from starter.theme import apply_theme  # noqa: E402
 from starter.ui_helpers import (  # noqa: E402
+    DOMAIN_PALETTE,
     clean_html,
     get_domain_catalog,
     get_intent_ranking,
@@ -37,7 +38,25 @@ from starter.ui_helpers import (  # noqa: E402
     match_badge,
     match_label,
     office_for_intent,
+    record_feedback,
 )
+
+DISCLAIMER = (
+    "Course project demo (AIN, Project 12). Answers come only from a synthetic, educational "
+    "HANU corpus; this is not an official Hanoi University service."
+)
+
+
+def fmt_rate(value: float | None, spec: str = ".1%") -> str:
+    """Format a KPI, or "n/a" when its result file was missing."""
+    return "n/a" if value is None else format(value, spec)
+
+
+def fmt_count(rate: float | None, total: int | None) -> str:
+    """Format ``round(rate * total)/total``, or "n/a"."""
+    if rate is None or total is None:
+        return "n/a"
+    return f"{round(rate * total)}/{total}"
 
 
 def render_html(raw_html: str) -> None:
@@ -78,6 +97,9 @@ apply_theme()
 
 documents = load_documents()
 notice_dates = load_notice_dates()
+kpis = load_dashboard_kpis()
+n_faqs = sum(1 for d in documents if d["source"] == "faq.json" or d["id"].startswith("faq_"))
+n_notices = sum(1 for d in documents if d["source"] == "notices.json" or d["id"].startswith("notice_"))
 
 # ----------------- SIDEBAR: CONTROLS & CORPUS EXPLORER -----------------
 # NOTE: To guarantee 100% compatibility with automated AppTest suites (tests/test_midterm_sample.py),
@@ -86,8 +108,7 @@ with st.sidebar:
     st.markdown("### HANU Assistant")
     st.markdown(
         "<p style='font-size:0.875rem;color:#5e5d59;line-height:1.45;margin-bottom:0.75rem;'>"
-        "Deterministic, verified guidance for academic regulations, course registration, tuition deadlines, "
-        "examinations, and administrative offices at Hanoi University."
+        f"{DISCLAIMER}"
         "</p>",
         unsafe_allow_html=True,
     )
@@ -152,12 +173,10 @@ with st.sidebar:
     selected_preset = st.selectbox("Quick-load sample questions:", list(presets.keys()))
 
     st.markdown("---")
-    st.markdown("#### Regulatory Archive")
-    n_faqs = sum(1 for d in documents if d["source"] == "faq.json" or d["id"].startswith("faq_"))
-    n_notices = sum(1 for d in documents if d["source"] == "notices.json" or d["id"].startswith("notice_"))
+    st.markdown("#### Document Archive")
     st.markdown(
         f"<p style='font-size:0.8rem;color:#5e5d59;margin-bottom:0.5rem;'>"
-        f"Archive contains <strong>{len(documents)}</strong> verified university documents ({n_faqs} FAQs, {n_notices} Notices)."
+        f"Archive contains <strong>{len(documents)}</strong> synthetic corpus documents ({n_faqs} FAQs, {n_notices} Notices)."
         f"</p>",
         unsafe_allow_html=True,
     )
@@ -179,20 +198,20 @@ tab_search, tab_eval = st.tabs(["Student Assistant", "Operational & Research Das
 with tab_search:
     # Oxford Navy Hero Masthead Banner
     render_html(
-        """
+        f"""
         <div class="orca-hero-banner">
-            <div class="orca-hero-overline">Hanoi University · Official Regulation & Knowledge Portal</div>
+            <div class="orca-hero-overline">AIN Course Project · Synthetic HANU Corpus</div>
             <div class="orca-hero-title">HANU Student Knowledge Assistant</div>
             <div class="orca-hero-subtitle">
-                Deterministic, verified guidance for course registration, tuition deadlines, final examinations,
-                degree requirements, and campus administrative services.
+                Retrieval-only answers on course registration, tuition, exams, schedules, graduation,
+                student services and IT support. {DISCLAIMER}
             </div>
             <div class="orca-stat-strip">
-                <span class="orca-stat-pill"><strong>112</strong> Official Records</span>
-                <span class="orca-stat-pill"><strong>84</strong> FAQs</span>
-                <span class="orca-stat-pill"><strong>28</strong> Notices</span>
-                <span class="orca-stat-pill"><strong>7</strong> Campus Offices</span>
-                <span class="orca-stat-pill"><strong>98.1%</strong> Top-3 Rescue</span>
+                <span class="orca-stat-pill"><strong>{len(documents)}</strong> Documents</span>
+                <span class="orca-stat-pill"><strong>{n_faqs}</strong> FAQs</span>
+                <span class="orca-stat-pill"><strong>{n_notices}</strong> Notices</span>
+                <span class="orca-stat-pill"><strong>{len(DOMAIN_PALETTE)}</strong> Topics</span>
+                <span class="orca-stat-pill"><strong>{fmt_rate(kpis['top3_rescue_rate'])}</strong> Top-3 Rescue</span>
                 <span class="orca-stat-pill"><strong>Dual-Gate</strong> Rejection</span>
             </div>
         </div>
@@ -239,7 +258,7 @@ with tab_search:
             <div class="orca-ticket-grid">
                 <div>
                     <div style="font-size:0.75rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:#2563eb; margin-bottom:0.25rem;">
-                        Primary Department Routing
+                        Suggested Contact (named in the corpus)
                     </div>
                     <div style="font-family:Georgia, serif; font-size:1.15rem; font-weight:600; color:#141413; margin-bottom:0.35rem;">
                         {office['name']}
@@ -256,16 +275,13 @@ with tab_search:
                 </div>
                 <div>
                     <div style="font-size:0.75rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:#64748b; margin-bottom:0.25rem;">
-                        Service Location & Portal
+                        Self-Service Channel
                     </div>
                     <div style="font-size:0.95rem; font-weight:600; color:#141413; margin-bottom:0.35rem;">
-                        📍 {office['location']}
-                    </div>
-                    <div style="font-size:0.875rem; color:#5e5d59; line-height:1.45; margin-bottom:0.75rem;">
-                        Student Self-Service: <code>{office['contact']}</code>
+                        {office['contact']}
                     </div>
                     <div style="font-size:0.8125rem; color:#87867f; border-top:1px solid #e8e6dc; padding-top:0.5rem;">
-                        Office Hours: Monday – Friday, 08:00 – 17:00 (Hanoi Time)
+                        Source: <code>{office['evidence']}</code>. The corpus lists no buildings, rooms or opening hours.
                     </div>
                 </div>
             </div>
@@ -293,24 +309,34 @@ with tab_search:
             )
 
         if not results:
-            # STRICT GUARDRAIL: When abstained, only display st.error with the exact required string.
-            # Never display conflicting green st.success banner!
+            # Abstention: show the required error string and no success banner. Do not name
+            # an office here: the intent label of a rejected query is the classifier's forced
+            # guess, so routing on it would present a confident answer the system just declined.
             st.error("Information not found — please contact the administrative office.")
 
-            # Neutral, high-craft escalation frame
+            topic_list = ", ".join(meta["title"] for meta in DOMAIN_PALETTE.values())
+            ranked = _get_retriever().rank(query)
+            best_cosine = ranked[0][1] if ranked else 0.0
+
+            def gate(value: float, limit: float, as_pct: bool) -> str:
+                shown, bound = (f"{value:.0%}", f"{limit:.0%}") if as_pct else (f"{value:.2f}", f"{limit:.2f}")
+                return f"{shown} (gate ≥ {bound}, {'passed' if value >= limit else 'failed'})"
+
             st.info(
-                f"**Suggested Administrative Routing**: **{office['name']}**\n\n"
-                f"- **Office Responsibilities**: {office['role']}\n"
-                f"- **Physical Location**: {office['location']}\n"
-                f"- **Student Portal**: `{office['contact']}`\n\n"
-                f"**Tips for Refining Your Inquiry:**\n"
-                f"1. Use formal campus terms (e.g., *'tuition payment'*, *'course add/drop'*, *'final exam'*).\n"
-                f"2. Avoid personal non-academic questions.\n"
-                f"3. Check spelling if your question contains abbreviations."
+                f"**Outside the indexed documents.** This assistant answers only from its {len(documents)} "
+                f"FAQ and notice documents and found none that matches well enough.\n\n"
+                f"**Why it was rejected:** best cosine similarity {gate(best_cosine, similarity_thresh, False)} · "
+                f"intent confidence {gate(confidence, intent_thresh, True)}.\n\n"
+                f"**Topics it covers:** {topic_list}.\n\n"
+                f"**Tips:**\n"
+                f"1. If your question is about one of these topics, rephrase it with campus terms "
+                f"(e.g. *'tuition payment'*, *'course add/drop'*, *'final exam'*).\n"
+                f"2. Check spelling and expand abbreviations.\n"
+                f"3. Otherwise, ask the university directly: the corpus has no information on this question."
             )
         else:
             # Successful retrieval: Render green success banner with intent, confidence, and office routing
-            st.success(f"Intent: {intent} · confidence {confidence:.0%} · Routed to {office['name']}")
+            st.success(f"Intent: {intent} · confidence {confidence:.0%} · Contact: {office['name']}")
             st.markdown(f"### Found {len(results)} relevant documents:")
 
             retriever = _get_retriever()
@@ -321,7 +347,7 @@ with tab_search:
 
                 doc_date = notice_dates.get(doc["id"], "")
                 if doc["id"].startswith("notice_") or doc.get("source") == "notices.json":
-                    src_tag = f"Official Notice · Published {doc_date}" if doc_date else "Official Notice"
+                    src_tag = f"Notice · Published {doc_date}" if doc_date else "Notice"
                     src_class = "orca-badge-notice"
                 else:
                     src_tag = "FAQ Entry"
@@ -389,11 +415,16 @@ with tab_search:
             )
             fb_col1, fb_col2, _ = st.columns([1, 1, 6])
             with fb_col1:
-                if st.button("Helpful", key="fb_yes"):
-                    st.toast("Thank you! Feedback recorded for content quality improvement.")
+                vote_yes = st.button("Helpful", key="fb_yes")
             with fb_col2:
-                if st.button("Needs Clarification", key="fb_no"):
-                    st.toast("Thank you. We will review this query in our next administrative content cycle.")
+                vote_no = st.button("Needs Clarification", key="fb_no")
+            if vote_yes or vote_no:
+                try:
+                    log_path = record_feedback(query, results[0][0]["id"], helpful=vote_yes)
+                    shown = log_path.relative_to(PROJECT_ROOT) if log_path.is_relative_to(PROJECT_ROOT) else log_path
+                    st.toast(f"Thank you. Feedback saved to {shown.as_posix()}.")
+                except OSError as exc:
+                    st.toast(f"Feedback could not be saved: {exc}")
 
         # In Inspector Mode: Display 3-way retrieval method comparison using cached retrievers (Fixes BE-3)
         if inspector_mode and query.strip():
@@ -423,13 +454,13 @@ with tab_search:
     else:
         # FIRST-USE EMPTY STATE: Dynamic 7-Domain Bento Grid with Chromatic Cards (Fixes BE-2)
         render_html(
-            """
+            f"""
             <div style="margin: 1.5rem 0 0.5rem 0;">
                 <div style="font-family: Georgia, 'Times New Roman', serif; font-size: 1.3rem; font-weight: 600; color: #141413; margin-bottom: 0.35rem;">
-                    Official Academic Domains & Student Services Directory
+                    Topic Directory & Contact Points
                 </div>
                 <p style="font-size: 0.925rem; color: #5e5d59; margin-bottom: 1.25rem;">
-                    The student regulatory knowledge base indexes 112 verified university documents across 7 authentic administrative domains:
+                    The corpus indexes {len(documents)} synthetic documents across {len(DOMAIN_PALETTE)} topics. Each card names the contact point the corpus gives for that topic:
                 </p>
             </div>
             """
@@ -454,7 +485,6 @@ with tab_search:
                 </div>
                 <div class="orca-directory-footer">
                     <span>{item['faq_count']} FAQs · {item['notice_count']} Notices</span>
-                    <span style="color:#87867f;">{item['office_location'].split(',')[0]}</span>
                 </div>
             </div>
             """
@@ -467,10 +497,10 @@ with tab_search:
             """
             <div style="margin: 2rem 0 0.75rem 0; border-top: 1px solid #e8e6dc; padding-top: 1.25rem;">
                 <div style="font-family: Georgia, 'Times New Roman', serif; font-size: 1.15rem; font-weight: 600; color: #141413; margin-bottom: 0.25rem;">
-                    Recent Official Campus Notices
+                    Recent Campus Notices
                 </div>
                 <p style="font-size: 0.875rem; color: #5e5d59; margin-bottom: 1rem;">
-                    Official regulatory updates and calendar announcements currently in effect:
+                    The three most recent notices in the corpus, by publication date:
                 </p>
             </div>
             """
@@ -482,13 +512,14 @@ with tab_search:
         ]
         recent_notices.sort(key=lambda d: notice_dates.get(d["id"], ""), reverse=True)
         for notice in recent_notices[:3]:
-            d_date = notice_dates.get(notice["id"], "2026-11")
+            d_date = notice_dates.get(notice["id"], "")
+            date_part = f" · Published {d_date}" if d_date else ""
             excerpt = notice["answer"][:170] + ("..." if len(notice["answer"]) > 170 else "")
             render_html(
                 f"""
                 <div class="orca-notice-card domain-{notice['intent']}">
                     <div class="orca-meta-row" style="margin-bottom:0.25rem;">
-                        <span class="orca-badge orca-badge-notice">Official Notice · Published {d_date}</span>
+                        <span class="orca-badge orca-badge-notice">Notice{date_part}</span>
                         <span style="font-size:0.75rem; color:#87867f;">Record ID: <code>{notice['id']}</code></span>
                         <span style="font-size:0.75rem; color:#87867f; margin-left:auto;">Domain: <code>{notice['intent']}</code></span>
                     </div>
@@ -504,53 +535,66 @@ with tab_search:
 
 # ----------------- TAB 2: EVALUATION DASHBOARD -----------------
 with tab_eval:
+    n_bench = kpis["total_queries"] if kpis["total_queries"] is not None else "n/a"
     render_html(
-        """
+        f"""
         <div style="margin-bottom:1.25rem; border-bottom:1px solid #e8e6dc; padding-bottom:1rem;">
             <h2 style="font-family:Georgia, serif; font-size:1.6rem; font-weight:600; color:#141413; margin-bottom:0.25rem;">
                 Benchmark Evaluation & Operational Business Dashboard
             </h2>
             <p style="font-size:0.95rem; color:#5e5d59; margin-bottom:0;">
-                Quantitative verification across 120 official benchmark queries, 146 development queries, and 112 corpus documents.
+                Measured on the course's {n_bench} benchmark queries and {len(documents)} corpus documents
+                (read from <code>experiments/results/midterm-sample/</code> and <code>experiments/results/business/</code>).
             </p>
         </div>
         """
     )
 
-    # Load 100% dynamic dashboard KPIs (Fixes BE-5)
-    kpis = load_dashboard_kpis()
+    if all(kpis[k] is None for k in ("mrr", "deflection_rate")):
+        st.info("Result files not found. Run `python scripts/evaluate.py` and `python experiments/business_metrics.py`.")
+
+    weights = (
+        "n/a" if kpis["w_silent_wrong"] is None
+        else f"Penalty w_wrong={kpis['w_silent_wrong']:g}, w_ooc_leak={kpis['w_ooc_leak']:g}, "
+             f"w_abstain={kpis['w_false_abstain']:g}"
+    )
+    intent_detail = (
+        "n/a" if kpis["intent_correct"] is None
+        else f"{kpis['intent_correct']}/{kpis['in_corpus_queries']} in-corpus correct"
+    )
 
     col_m1, col_m2, col_m3, col_m4 = st.columns(4)
-    col_m1.metric("Overall Full MRR", f"{kpis['mrr']:.3f}", help="Mean Reciprocal Rank on 120 benchmark queries")
-    col_m2.metric("Intent Accuracy", f"{kpis['intent_accuracy']:.1%}", "102/105 in-corpus correct")
+    col_m1.metric("Overall Full MRR", fmt_rate(kpis["mrr"], ".3f"),
+                  help=f"Mean Reciprocal Rank on the {kpis['in_corpus_queries'] or 'n/a'} in-corpus benchmark queries")
+    col_m2.metric("Intent Accuracy", fmt_rate(kpis["intent_accuracy"]), intent_detail)
     col_m3.metric(
         "Self-Service Deflection",
-        f"{kpis['deflection_rate']:.1%}",
-        f"{int(kpis['deflection_rate'] * kpis['total_queries'])}/{kpis['total_queries']} queries resolved at Top-1",
+        fmt_rate(kpis["deflection_rate"]),
+        f"{fmt_count(kpis['deflection_rate'], kpis['total_queries'])} queries resolved at Top-1",
     )
     col_m4.metric(
         "Top-3 Rescue Rate",
-        f"{kpis['top3_rescue_rate']:.1%}",
-        f"{int(kpis['top3_rescue_rate'] * kpis['in_corpus_queries'])}/{kpis['in_corpus_queries']} in-corpus captured in Top-3",
+        fmt_rate(kpis["top3_rescue_rate"]),
+        f"{fmt_count(kpis['top3_rescue_rate'], kpis['in_corpus_queries'])} in-corpus captured in Top-3",
     )
 
     col_m5, col_m6, col_m7, col_m8 = st.columns(4)
-    col_m5.metric("OOC Rejection", f"{kpis['ooc_rejection_rate']:.1%}", f"{kpis['ooc_queries']}/{kpis['ooc_queries']} out-of-corpus blocked")
+    col_m5.metric(
+        "OOC Rejection",
+        fmt_rate(kpis["ooc_rejection_rate"]),
+        f"{fmt_count(kpis['ooc_rejection_rate'], kpis['ooc_queries'])} out-of-corpus blocked",
+    )
     col_m6.metric(
         "Safe Escalation",
-        f"{kpis['safe_escalation_rate']:.1%}",
-        f"{int(kpis['safe_escalation_rate'] * kpis['total_queries'])}/{kpis['total_queries']} routed to offices",
+        fmt_rate(kpis["safe_escalation_rate"]),
+        f"{fmt_count(kpis['safe_escalation_rate'], kpis['total_queries'])} abstained and referred onward",
     )
     col_m7.metric(
         "False Abstention",
-        f"{kpis['false_abstention_rate']:.1%}",
-        f"{int(round(kpis['false_abstention_rate'] * kpis['in_corpus_queries']))}/{kpis['in_corpus_queries']} marginal boundary queries",
+        fmt_rate(kpis["false_abstention_rate"]),
+        f"{fmt_count(kpis['false_abstention_rate'], kpis['in_corpus_queries'])} in-corpus queries rejected",
     )
-    col_m8.metric(
-        "Expected Cost / Query",
-        f"{kpis['expected_cost']:.4f}",
-        "Penalty w_wrong=5.0, w_abstain=1.0",
-    )
+    col_m8.metric("Expected Cost / Query", fmt_rate(kpis["expected_cost"], ".4f"), weights)
 
     st.markdown("---")
     dash_col1, dash_col2 = st.columns(2)
@@ -578,7 +622,7 @@ with tab_eval:
             ablation_file = PROJECT_ROOT / "experiments" / "results" / "dev" / "ablation.csv"
         if ablation_file.exists():
             df_ab = pd.read_csv(ablation_file)
-            show_table(df_ab, caption="Empirical Ablation Across 120 Benchmark Queries")
+            show_table(df_ab, caption=f"Empirical Ablation Across {n_bench} Benchmark Queries")
         else:
             st.info("Ablation file not found.")
 
@@ -594,7 +638,11 @@ with tab_eval:
         st.markdown("#### Intent Confusion Matrix (7x7)")
         cm_img = PROJECT_ROOT / "experiments" / "results" / "figures" / "intent_confusion.png"
         if cm_img.exists():
-            st.image(str(cm_img), caption="7x7 Intent Confusion Matrix (102/105 Correct, 97.1%)", use_column_width=True)
+            st.image(
+                str(cm_img),
+                caption=f"7x7 Intent Confusion Matrix ({intent_detail}, {fmt_rate(kpis['intent_accuracy'])})",
+                use_column_width=True,
+            )
 
         st.markdown("#### Noise Degradation Curve (E3b: 0..3 Typo Swaps)")
         noise_img = PROJECT_ROOT / "experiments" / "results" / "figures" / "noise_curve.png"
@@ -603,10 +651,21 @@ with tab_eval:
         else:
             st.info("Noise curve figure pending.")
 
-        st.markdown("#### Dual-Gate Parameter Sweep")
+        # This figure is the preliminary E6 sweep (18/10): cosine gate only, word TF-IDF +
+        # sublinear TF, dev split. The shipped dual-gate char_wb config is evidenced by the
+        # "Dual-Gate Ablation Study" table, not by this curve.
+        st.markdown("#### Preliminary Threshold Sweep (E6, word TF-IDF)")
         sweep_img = PROJECT_ROOT / "experiments" / "results" / "figures" / "threshold_sweep_sublinear_tf.png"
         if sweep_img.exists():
-            st.image(str(sweep_img), caption="Threshold Sweep Trade-off Curve", use_column_width=True)
+            st.image(
+                str(sweep_img),
+                caption=(
+                    "Cosine-only threshold sweep for word TF-IDF + sublinear TF on the dev split (18/10). "
+                    "Not the production config: see the Dual-Gate Ablation table for char_wb 3-5 "
+                    f"with cosine ≥ {RETRIEVAL_THRESHOLD} and intent ≥ {INTENT_THRESHOLD}."
+                ),
+                use_column_width=True,
+            )
         else:
             st.info("Threshold sweep figure pending.")
 

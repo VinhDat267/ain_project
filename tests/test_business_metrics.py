@@ -63,3 +63,40 @@ def test_cost_sensitivity_ratios():
     assert ratios["3:1"] == pytest.approx(32.0 / 120.0, abs=1e-4)   # 0.2667
     assert ratios["5:1"] == pytest.approx(52.0 / 120.0, abs=1e-4)   # 0.4333
     assert ratios["10:1"] == pytest.approx(102.0 / 120.0, abs=1e-4) # 0.8500
+
+
+def _tiny_per_query(tmp_path, ooc_abstained):
+    """2 in-corpus (1 correct, 1 silent wrong) + 2 OOC, of which ``ooc_abstained`` are rejected."""
+    import pandas as pd
+
+    rows = [
+        {"type": "normal", "expected_intent": "tuition", "abstained": 0, "hit1": 1, "hit3": 1},
+        {"type": "paraphrase", "expected_intent": "exam", "abstained": 0, "hit1": 0, "hit3": 1},
+        {"type": "out_of_corpus", "expected_intent": "", "abstained": int(ooc_abstained >= 1), "hit1": 0, "hit3": 0},
+        {"type": "out_of_corpus", "expected_intent": "", "abstained": int(ooc_abstained >= 2), "hit1": 0, "hit3": 0},
+    ]
+    path = tmp_path / "per_query.csv"
+    pd.DataFrame(rows).to_csv(path, index=False)
+    return path
+
+
+def test_answered_ooc_queries_cost_like_wrong_answers(tmp_path):
+    safe = compute_business_metrics(_tiny_per_query(tmp_path, 2), output_dir=tmp_path / "a")
+    leaky = compute_business_metrics(_tiny_per_query(tmp_path, 0), output_dir=tmp_path / "b")
+    cost = {name: dict(zip(df[0]["metric"], df[0]["value"]))["expected_cost_per_query"]
+            for name, df in (("safe", safe), ("leaky", leaky))}
+
+    assert cost["safe"] == pytest.approx(5.0 * 1 / 4)            # one silent wrong answer
+    assert cost["leaky"] == pytest.approx(5.0 * (1 + 2) / 4)     # plus two leaked OOC answers
+    sens = dict(zip(leaky[2]["penalty_ratio"], leaky[2]["expected_cost_per_query"]))
+    assert sens["1:1"] == pytest.approx(3 / 4) and sens["10:1"] == pytest.approx(30 / 4)
+
+
+def test_summary_descriptions_follow_the_data(tmp_path):
+    summary, _, _ = compute_business_metrics(
+        _tiny_per_query(tmp_path, 1), output_dir=tmp_path, w_silent_wrong=3.0, w_false_abstain=2.0
+    )
+    desc = dict(zip(summary["metric"], summary["description"]))
+    assert "(1/4)" in desc["self_service_deflection_rate_overall"]
+    assert "(1/2)" in desc["unsafe_ooc_answer_rate"]
+    assert "w_wrong=3" in desc["expected_cost_per_query"] and "w_abstain=2" in desc["expected_cost_per_query"]

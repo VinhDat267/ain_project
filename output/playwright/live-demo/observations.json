@@ -1,42 +1,68 @@
 {
-  "checked_on": "2026-11-03",
+  "checked_on": "2026-11-20",
   "url": "http://127.0.0.1:8501/",
-  "method": "Real browser input and Retrieve documents clicks against the running local Streamlit server",
+  "branch": "vinh/fix-review-findings (PR #19)",
+  "viewport": "1280x960, scrolled so the query box is at the top",
+  "method": "Playwright: fill the query box, click Retrieve documents, wait for the Streamlit run to finish, read alerts and result cards from the page, then take a viewport screenshot",
   "scenarios": [
     {
-      "scenario": "live_normal",
+      "file": "01-normal.png",
       "query": "How do I reset my Student Portal password?",
-      "visible": "Campus Notice and FAQ Assistant\n\nAsk a question about campus services. Answers are retrieved from the provided FAQs and notices, with source and similarity scores.\n\nAsk a campus question\n\nClassify intent\n\nRetrieve documents\n\nIntent: technical_support · confidence 88%\n\nHow do I reset my Student Portal password? · faq_technical_support_01 · faq.json · cosine 0.54\n\nUse the \"Forgot Password\" link on the login page and follow the identity verification steps sent to your recovery contact on file.\n\nNew Self-Service Password Reset Tool · notice_technical_support_02 · notices.json · cosine 0.43\n\nA new self-service password reset tool is now available on the Student Portal login page, reducing the need to contact the IT Help Desk directly.\n\nWhat should I do if I suspect my account was compromised? · faq_technical_support_10 · faq.json · cosine 0.19\n\nChange your password immediately and report the incident to the IT Help Desk so they can review recent login activity on your account.\n\nIf no document is relevant enough, the correct behavior is to say so (low confidence / no match) rather than inventing an answer."
+      "banner": "Intent: technical_support · confidence 88% · Contact: IT Help Desk",
+      "results": [
+        {"rank": 1, "doc_id": "faq_technical_support_01", "cosine": 0.5391, "label": "Strong match"},
+        {"rank": 2, "doc_id": "notice_technical_support_02", "cosine": 0.4333, "label": "Strong match"},
+        {"rank": 3, "doc_id": "faq_technical_support_10", "cosine": 0.1890, "label": "Weak match"}
+      ]
     },
     {
-      "scenario": "02-typo",
+      "file": "02-typo.png",
       "query": "How do I reset my Sutdent Portal password?",
-      "visible": "Campus Notice and FAQ Assistant\n\nAsk a question about campus services. Answers are retrieved from the provided FAQs and notices, with source and similarity scores.\n\nAsk a campus question\n\nClassify intent\n\nRetrieve documents\n\nIntent: technical_support · confidence 90%\n\nHow do I reset my Student Portal password? · faq_technical_support_01 · faq.json · cosine 0.53\n\nUse the \"Forgot Password\" link on the login page and follow the identity verification steps sent to your recovery contact on file.\n\nNew Self-Service Password Reset Tool · notice_technical_support_02 · notices.json · cosine 0.42\n\nA new self-service password reset tool is now available on the Student Portal login page, reducing the need to contact the IT Help Desk directly.\n\nWhat should I do if I suspect my account was compromised? · faq_technical_support_10 · faq.json · cosine 0.20\n\nChange your password immediately and report the incident to the IT Help Desk so they can review recent login activity on your account.\n\nIf no document is relevant enough, the correct behavior is to say so (low confidence / no match) rather than inventing an answer."
+      "banner": "Intent: technical_support · confidence 90% · Contact: IT Help Desk",
+      "results": [
+        {"rank": 1, "doc_id": "faq_technical_support_01", "cosine": 0.5281, "label": "Strong match"},
+        {"rank": 2, "doc_id": "notice_technical_support_02", "cosine": 0.4239, "label": "Strong match"},
+        {"rank": 3, "doc_id": "faq_technical_support_10", "cosine": 0.1965, "label": "Weak match"}
+      ]
     },
     {
-      "scenario": "03-paraphrase",
+      "file": "03-paraphrase.png",
       "query": "I forgot my Student Portal password - how do I reset it?",
-      "visible": "Campus Notice and FAQ Assistant\n\nAsk a question about campus services. Answers are retrieved from the provided FAQs and notices, with source and similarity scores.\n\nAsk a campus question\n\nClassify intent\n\nRetrieve documents\n\nIntent: technical_support · confidence 85%\n\nHow do I reset my Student Portal password? · faq_technical_support_01 · faq.json · cosine 0.51\n\nUse the \"Forgot Password\" link on the login page and follow the identity verification steps sent to your recovery contact on file.\n\nNew Self-Service Password Reset Tool · notice_technical_support_02 · notices.json · cosine 0.40\n\nA new self-service password reset tool is now available on the Student Portal login page, reducing the need to contact the IT Help Desk directly.\n\nWhat should I do if I suspect my account was compromised? · faq_technical_support_10 · faq.json · cosine 0.18\n\nChange your password immediately and report the incident to the IT Help Desk so they can review recent login activity on your account.\n\nIf no document is relevant enough, the correct behavior is to say so (low confidence / no match) rather than inventing an answer."
+      "banner": "Intent: technical_support · confidence 85% · Contact: IT Help Desk",
+      "results": [
+        {"rank": 1, "doc_id": "faq_technical_support_01", "cosine": 0.5143, "label": "Strong match"},
+        {"rank": 2, "doc_id": "notice_technical_support_02", "cosine": 0.4046, "label": "Strong match"},
+        {"rank": 3, "doc_id": "faq_technical_support_10", "cosine": 0.1819, "label": "Weak match"}
+      ]
     },
     {
-      "scenario": "04-restaurant",
+      "file": "04-restaurant.png",
       "query": "What's the best restaurant near campus for vegan food?",
-      "visible": "Campus Notice and FAQ Assistant\n\nAsk a question about campus services. Answers are retrieved from the provided FAQs and notices, with source and similarity scores.\n\nAsk a campus question\n\nClassify intent\n\nRetrieve documents\n\nIntent: technical_support · confidence 31%\n\nInformation not found — please contact the administrative office.\n\nIf no document is relevant enough, the correct behavior is to say so (low confidence / no match) rather than inventing an answer."
+      "error": "Information not found — please contact the administrative office.",
+      "rejection_reason": "best cosine similarity 0.24 (gate ≥ 0.15, passed) · intent confidence 31% (gate ≥ 34%, failed)",
+      "results": []
     },
     {
-      "scenario": "05-kayak",
+      "file": "05-kayak.png",
       "query": "Can I rent a kayak from the campus recreation center?",
-      "visible": "Campus Notice and FAQ Assistant\n\nAsk a question about campus services. Answers are retrieved from the provided FAQs and notices, with source and similarity scores.\n\nAsk a campus question\n\nClassify intent\n\nRetrieve documents\n\nIntent: student_services · confidence 29%\n\nInformation not found — please contact the administrative office.\n\nIf no document is relevant enough, the correct behavior is to say so (low confidence / no match) rather than inventing an answer."
+      "error": "Information not found — please contact the administrative office.",
+      "rejection_reason": "best cosine similarity 0.39 (gate ≥ 0.15, passed) · intent confidence 29% (gate ≥ 34%, failed)",
+      "results": []
     },
     {
-      "scenario": "06-known-failure",
+      "file": "06-known-failure.png",
       "query": "Two of my finals overlap on the same day - who do I tell?",
-      "visible": "Campus Notice and FAQ Assistant\n\nAsk a question about campus services. Answers are retrieved from the provided FAQs and notices, with source and similarity scores.\n\nAsk a campus question\n\nClassify intent\n\nRetrieve documents\n\nIntent: class_schedule · confidence 37%\n\nHow do I check if two of my classes overlap in time? · faq_class_schedule_02 · faq.json · cosine 0.27\n\nThe registration system blocks you from adding a class that overlaps an already-enrolled section, and \"My Schedule\" displays a weekly grid to double-check manually.\n\nWhat do I do if two of my final exams are scheduled at the same time? · faq_exam_02 · faq.json · cosine 0.19\n\nReport the conflict to the Registrar's Office at least two weeks before exam week; they will reschedule one exam through the conflict exam process.\n\nCan two sections of the same course have different meeting patterns? · faq_class_schedule_06 · faq.json · cosine 0.13\n\nYes. Departments may offer one section that meets twice a week and another that meets once a week for the same course; check each section's listed pattern before registering.\n\nIf no document is relevant enough, the correct behavior is to say so (low confidence / no match) rather than inventing an answer."
+      "banner": "Intent: class_schedule · confidence 37% · Contact: My Schedule",
+      "results": [
+        {"rank": 1, "doc_id": "faq_class_schedule_02", "cosine": 0.2682, "label": "Possible match"},
+        {"rank": 2, "doc_id": "faq_exam_02", "cosine": 0.1893, "label": "Weak match"},
+        {"rank": 3, "doc_id": "faq_class_schedule_06", "cosine": 0.1326, "label": "Weak match"}
+      ]
     }
   ],
   "browser_console": {
     "errors": 0,
     "warnings": 0
   },
-  "note": "All six observations match the demo script. The sixth scenario intentionally demonstrates an incorrect top-ranked document."
+  "note": "All six results match the 03/11 check and the demo script. Scenario 6 intentionally shows a wrong top-ranked document: the correct FAQ (faq_exam_02) is ranked 2nd. Scenario 5 shows why the intent gate is needed: its cosine (0.39) passes the cosine gate."
 }

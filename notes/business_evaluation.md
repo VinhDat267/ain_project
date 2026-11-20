@@ -22,7 +22,7 @@ Hệ thống trợ lý hỏi đáp quy chế học đường đóng vai trò là
 | **Tỷ lệ Chuyển tiếp An toàn (`safe_escalation_rate`)** | **14.17% (17/120)** | Chuyển tiếp sinh viên sang đúng văn phòng phụ trách: 15 câu ngoài kho + 2 câu từ chối thận trọng |
 | **Tỷ lệ Từ chối Nhầm (`false_abstention_rate`)** | **1.90% (2/105)** | Chỉ có 2 câu hỏi trong kho (`q_064`, `q_066`) bị từ chối do độ tin cậy ý định tiệm cận ngưỡng |
 | **Tỷ lệ Trả lời Ảo ngoài Kho (`unsafe_ooc_answer_rate`)** | **0.00% (0/15)** | **Tuyệt đối an toàn (Zero Hallucination)**: 100% câu hỏi ngoài kho đều bị chặn đứng |
-| **Chi phí Tổn thất Kỳ vọng (`expected_cost_per_query`)** | **0.4333** | Tính với trọng số phạt thông tin sai $w_{\text{wrong}} = 5.0$ và chuyển tiếp $w_{\text{abstain}} = 1.0$ |
+| **Chi phí Tổn thất Kỳ vọng (`expected_cost_per_query`)** | **0.4333** | Tính với trọng số phạt thông tin sai $w_{\text{wrong}} = 5.0$ (áp dụng cả cho câu ngoài kho bị trả lời: $w_{\text{ooc\_leak}} = w_{\text{wrong}}$) và chuyển tiếp $w_{\text{abstain}} = 1.0$ |
 
 ---
 

@@ -23,3 +23,6 @@ dist/
 .playwright-mcp/
 
 output/playwright/audit-*/
+
+# Local feedback votes from the demo app
+output/feedback/
