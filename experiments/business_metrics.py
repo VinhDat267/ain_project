@@ -20,7 +20,18 @@ def compute_business_metrics(
     output_dir: Path | None = None,
     w_silent_wrong: float = 5.0,
     w_false_abstain: float = 1.0,
+    w_ooc_leak: float | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """Write business_summary.csv, per_intent_business.csv and cost_sensitivity.csv.
+
+    Cost per query = (w_silent_wrong * in-corpus wrong answers
+    + w_ooc_leak * answered out-of-corpus queries
+    + w_false_abstain * false abstentions) / total queries.
+    An answered out-of-corpus query is a confident wrong answer, so
+    ``w_ooc_leak`` defaults to ``w_silent_wrong``.
+    """
+    if w_ooc_leak is None:
+        w_ooc_leak = w_silent_wrong
     pq_file = per_query_path or (PROJECT_ROOT / "experiments" / "results" / "midterm-sample" / "per_query.csv")
     out_dir = output_dir or (PROJECT_ROOT / "experiments" / "results" / "business")
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -71,23 +82,27 @@ def compute_business_metrics(
     false_abstention_rate = n_false_abstentions / n_in_corpus
     unsafe_ooc_answer_rate = n_ooc_leaked / n_ooc if n_ooc > 0 else 0.0
 
+    def penalty(w_wrong: float, w_leak: float, w_abstain: float) -> float:
+        return (w_wrong * n_silent_wrong) + (w_leak * n_ooc_leaked) + (w_abstain * n_false_abstentions)
+
     # Expected penalty / cost per query
-    expected_cost_per_query = (
-        (w_silent_wrong * n_silent_wrong) + (w_false_abstain * n_false_abstentions)
-    ) / total_queries
+    expected_cost_per_query = penalty(w_silent_wrong, w_ooc_leak, w_false_abstain) / total_queries
 
     summary_data = [
         {"metric": "total_queries", "value": float(total_queries), "description": "Total benchmark evaluation queries"},
         {"metric": "in_corpus_queries", "value": float(n_in_corpus), "description": "Queries with target document in corpus"},
         {"metric": "ooc_queries", "value": float(n_ooc), "description": "Out-of-corpus queries requiring abstention"},
-        {"metric": "self_service_deflection_rate_overall", "value": round(self_service_deflection_rate, 4), "description": "Fraction of all queries resolved correctly at Top-1 (93/120)"},
-        {"metric": "in_corpus_resolution_rate_top1", "value": round(in_corpus_resolution_rate_top1, 4), "description": "In-corpus queries resolved correctly at Top-1 (93/105)"},
-        {"metric": "top3_rescue_rate", "value": round(top3_rescue_rate, 4), "description": "In-corpus queries with correct document in Top-3 cards (103/105)"},
-        {"metric": "silent_wrong_answer_rate", "value": round(silent_wrong_answer_rate, 4), "description": "Queries answered incorrectly without abstaining (10/105)"},
-        {"metric": "safe_escalation_rate", "value": round(safe_escalation_rate, 4), "description": "Queries safely routed to administrative office (17/120)"},
-        {"metric": "false_abstention_rate", "value": round(false_abstention_rate, 4), "description": "Legitimate queries mistakenly abstained (2/105)"},
-        {"metric": "unsafe_ooc_answer_rate", "value": round(unsafe_ooc_answer_rate, 4), "description": "Out-of-corpus queries mistakenly answered (0/15)"},
-        {"metric": "expected_cost_per_query", "value": round(expected_cost_per_query, 4), "description": "Expected operational penalty per query (w_wrong=5.0, w_abstain=1.0 assumption)"},
+        {"metric": "self_service_deflection_rate_overall", "value": round(self_service_deflection_rate, 4), "description": f"Fraction of all queries resolved correctly at Top-1 ({n_answered_correct_top1}/{total_queries})"},
+        {"metric": "in_corpus_resolution_rate_top1", "value": round(in_corpus_resolution_rate_top1, 4), "description": f"In-corpus queries resolved correctly at Top-1 ({n_answered_correct_top1}/{n_in_corpus})"},
+        {"metric": "top3_rescue_rate", "value": round(top3_rescue_rate, 4), "description": f"In-corpus queries with correct document in Top-3 cards ({n_top3_correct}/{n_in_corpus})"},
+        {"metric": "silent_wrong_answer_rate", "value": round(silent_wrong_answer_rate, 4), "description": f"In-corpus queries answered incorrectly without abstaining ({n_silent_wrong}/{n_in_corpus})"},
+        {"metric": "safe_escalation_rate", "value": round(safe_escalation_rate, 4), "description": f"Queries where the assistant abstained and referred the student onward ({total_escalations}/{total_queries})"},
+        {"metric": "false_abstention_rate", "value": round(false_abstention_rate, 4), "description": f"Legitimate queries mistakenly abstained ({n_false_abstentions}/{n_in_corpus})"},
+        {"metric": "unsafe_ooc_answer_rate", "value": round(unsafe_ooc_answer_rate, 4), "description": f"Out-of-corpus queries mistakenly answered ({n_ooc_leaked}/{n_ooc})"},
+        {"metric": "expected_cost_per_query", "value": round(expected_cost_per_query, 4), "description": f"Expected penalty per query (w_wrong={w_silent_wrong:g}, w_ooc_leak={w_ooc_leak:g}, w_abstain={w_false_abstain:g} assumption)"},
+        {"metric": "w_silent_wrong", "value": float(w_silent_wrong), "description": "Penalty weight for an in-corpus wrong answer"},
+        {"metric": "w_ooc_leak", "value": float(w_ooc_leak), "description": "Penalty weight for an answered out-of-corpus query"},
+        {"metric": "w_false_abstain", "value": float(w_false_abstain), "description": "Penalty weight for a false abstention"},
     ]
     summary_df = pd.DataFrame(summary_data)
     summary_csv_path = out_dir / "business_summary.csv"
@@ -166,19 +181,22 @@ def compute_business_metrics(
     # Note: These weights are an operational research assumption, not empirical office labor telemetry.
     sensitivity_ratios = [(1.0, 1.0), (3.0, 1.0), (5.0, 1.0), (10.0, 1.0)]
     sensitivity_records: list[dict[str, Any]] = []
+    # A leaked OOC answer is weighted like a silent wrong answer at every ratio.
     for w_wrong_val, w_abstain_val in sensitivity_ratios:
-        total_penalty = (w_wrong_val * n_silent_wrong) + (w_abstain_val * n_false_abstentions)
+        total_penalty = penalty(w_wrong_val, w_wrong_val, w_abstain_val)
         cost_per_q = total_penalty / total_queries
+        wrong_units = w_wrong_val * (n_silent_wrong + n_ooc_leaked)
         sensitivity_records.append({
-            "penalty_ratio": f"{int(w_wrong_val)}:1",
+            "penalty_ratio": f"{w_wrong_val:g}:{w_abstain_val:g}",
             "w_silent_wrong": w_wrong_val,
             "w_false_abstain": w_abstain_val,
             "n_silent_wrong": n_silent_wrong,
+            "n_ooc_leaked": n_ooc_leaked,
             "n_false_abstentions": n_false_abstentions,
             "total_penalty_units": round(total_penalty, 4),
             "expected_cost_per_query": round(cost_per_q, 4),
             "cost_per_1000_queries": round(cost_per_q * 1000, 2),
-            "silent_wrong_share_pct": round((w_wrong_val * n_silent_wrong / total_penalty) * 100, 2) if total_penalty > 0 else 0.0,
+            "silent_wrong_share_pct": round((wrong_units / total_penalty) * 100, 2) if total_penalty > 0 else 0.0,
         })
     sensitivity_df = pd.DataFrame(sensitivity_records)
     sensitivity_csv_path = out_dir / "cost_sensitivity.csv"
@@ -191,11 +209,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Compute business and operational metrics")
     parser.add_argument("--w-silent-wrong", type=float, default=5.0)
     parser.add_argument("--w-false-abstain", type=float, default=1.0)
+    parser.add_argument("--w-ooc-leak", type=float, default=None, help="defaults to --w-silent-wrong")
     args = parser.parse_args()
 
     s_df, pi_df, cs_df = compute_business_metrics(
         w_silent_wrong=args.w_silent_wrong,
         w_false_abstain=args.w_false_abstain,
+        w_ooc_leak=args.w_ooc_leak,
     )
     print("=== BUSINESS METRICS SUMMARY ===")
     print(s_df.to_string(index=False))
