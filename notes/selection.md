@@ -35,15 +35,17 @@ Căn cứ biên bản làm việc nhóm ngày 02/11/2026 (`notes/midterm_integra
 
 | Nhóm | Cấu hình | MRR Normal | MRR Para | MRR Typo | Mean (Para+Typo) | Ghi chú & Đánh giá |
 |---|---|:---:|:---:|:---:|:---:|---|
-| **E0** | `baseline_jaccard` | 1.000 | 0.281 | 0.990 | 0.635 | Mức sàn cơ bản (token overlap) |
-| **E1** | `word_text` | 0.980 | 0.298 | 0.990 | 0.644 | Lập chỉ mục `text = question + answer` |
-| **E1** | `word_question` | 1.000 | 0.205 | 1.000 | 0.602 | Chỉ mục ngắn làm tụt điểm paraphrase (-31%) |
-| **E2** | `sublinear_tf` | 1.000 | 0.340 | 0.990 | 0.665 | Nén log TF giúp tăng mạnh câu paraphrase |
+| **E0** | `baseline_jaccard` | 1.000 | 0.247 | 0.990 | 0.619 | Mức sàn cơ bản (token overlap) |
+| **E1** | `word_text` | 0.980 | 0.244 | 0.990 | 0.617 | Lập chỉ mục `text = question + answer` |
+| **E1** | `word_question` | 1.000 | 0.106 | 1.000 | 0.553 | Chỉ mục ngắn làm tụt điểm paraphrase (-57%) |
+| **E2** | `sublinear_tf` | 1.000 | 0.260 | 0.990 | 0.625 | Nén log TF giúp tăng mạnh câu paraphrase |
 | **E3** | `char_3_5` | 0.986 | 0.258 | 0.990 | 0.624 | N-gram ký tự thuần túy không ranh giới từ |
 | **E3** | **`char_wb_3_5`** | **1.000** | **0.299** | **1.000** | **0.650** | Đạt điểm tuyệt đối 1.000 trên Normal & Typo |
 | **E3** | `char_wb_2_4` | 1.000 | 0.344 | 1.000 | **0.672** | N-gram ngắn nhạy cảm hơn với paraphrase ngắn |
 | **E4** | `hybrid_0.5` | 0.986 | 0.267 | 0.980 | 0.623 | Kết hợp tuyến tính không vượt trội char_wb |
-| **E7** | `bm25` | 1.000 | 0.351 | 1.000 | **0.676** | BM25 rất mạnh nhưng điểm không bị chặn [0, 1] |
+| **E7** | `bm25` | 1.000 | 0.270 | 1.000 | 0.635 | Nhỉnh hơn word TF-IDF nhưng điểm không bị chặn [0, 1] |
+
+*Ghi chú (20/11): mọi dòng trên được chạy lại trên cùng 146 câu dev (`run_ablation.py --split dev --group …`). Bản trước lấy E0/E1/E2/E7 từ các run 18/10 chỉ có 122 câu, nên không so sánh được với E3/E4.*
 
 **Quyết định lựa chọn cấu hình trích xuất:**
 - Cấu hình **`char_wb (3, 5)` kết hợp Sublinear TF ($1 + \ln(tf)$), Smooth IDF và Chuẩn hóa $L_2$** được lựa chọn làm giải pháp chính thức cho sản phẩm.

@@ -17,8 +17,8 @@ dev_a_15,Where can students purchase parking permits for the campus north garage
 dev_a_16,Are university dining halls open during Thanksgiving holiday break?,out_of_corpus,,,Dining hall holiday hours not in corpus
 dev_a_17,Can students bring emotional support pets into campus dormitories?,out_of_corpus,,,Dormitory pet policy not in corpus
 dev_a_18,What are the operating hours for the campus swimming pool on weekends?,out_of_corpus,,,Swimming pool recreation hours not in corpus
-dev_a_19,How can undergraduate students apply for on-campus student union barista jobs?,out_of_corpus,,,Campus student union jobs not in corpus
-dev_a_20,Is there a campus lost and found department for missing student ID cards?,out_of_corpus,,,Lost and found service not in corpus
+dev_a_19,Can students book a piano practice room in the music building for the evening?,out_of_corpus,,,Music practice room booking not in corpus
+dev_a_20,Is there a covered bicycle parking area with lockers next to the science labs?,out_of_corpus,,,Bicycle storage and lockers not in corpus
 dev_a_21,Which local pharmacy near campus can refill prescriptions for university students?,out_of_corpus,,,Local pharmacy near campus not in corpus
 dev_a_22,Where is the nearest laundromat to the south campus dormitory buildings?,out_of_corpus,,,Off-campus laundromat not in corpus
 dev_a_23,What is the best route to drive from downtown to the airport during rush hour?,out_of_corpus,,,General driving directions outside campus
