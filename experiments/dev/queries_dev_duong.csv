@@ -1,1 +1,25 @@
 id,query,type,expected_intent,expected_doc_id,notes
+dev_d_01,"Is it allowed to sit in on a lecture for personal enrichment without receiving grades or credits?",paraphrase,course_registration,faq_course_registration_07,Paraphrase for course auditing
+dev_d_02,"What date are continuing undergraduates allowed to begin picking their classes for the next term?",paraphrase,course_registration,faq_course_registration_10,Paraphrase for returning student registration window
+dev_d_03,"Are test marks statistically adjusted if the entire cohort scores lower than anticipated?",paraphrase,exam,faq_exam_08,Paraphrase for grading curve
+dev_d_04,"Which physical credentials must test-takers present upon entering the evaluation hall?",paraphrase,exam,faq_exam_10,Paraphrase for exam identification requirement
+dev_d_05,"What steps grant a third party or guardian authorization to settle academic expenses on my behalf?",paraphrase,tuition,faq_tuition_08,Paraphrase for sponsor or parent payer setup
+dev_d_06,"Are foreign learners permitted to submit educational payments using overseas foreign funds?",paraphrase,tuition,faq_tuition_10,Paraphrase for international tuition currency
+dev_d_07,"Are lecture times modified or suspended during official institutional recess days?",paraphrase,class_schedule,faq_class_schedule_08,Paraphrase for class schedule during university holidays
+dev_d_08,"Does the course timetable dashboard indicate instructor consultation availability?",paraphrase,class_schedule,faq_class_schedule_10,Paraphrase for viewing faculty office hours
+dev_d_09,"Where do students sign up to become members of extracurricular interest groups on campus?",paraphrase,student_services,faq_student_services_08,Paraphrase for joining student clubs
+dev_d_10,"Which administrative office assists when serious friction or conflicts happen with my dorm suite mate?",paraphrase,student_services,faq_student_services_11,Paraphrase for roommate dispute
+dev_d_11,"What is the expected timeframe before the physical degree certificate arrives by mail following commencement?",paraphrase,graduation,faq_graduation_06,Paraphrase for diploma receipt timeline
+dev_d_12,"What consequences occur if a prospective senior misses the formal cutoff date to petition for degree conferral?",paraphrase,graduation,faq_graduation_10,Paraphrase for missing graduation application deadline
+dev_d_13,"What causes submission attachments to be rejected when turning in assignments to the portal?",paraphrase,technical_support,faq_technical_support_08,Paraphrase for course platform upload failure
+dev_d_14,"What security actions should be taken if unauthorized third parties appear to have accessed my student portal?",paraphrase,technical_support,faq_technical_support_10,Paraphrase for compromised student account
+dev_d_15,"Where can university students get discounted tickets for campus football games?",out_of_corpus,,,Athletic event ticket discount not in corpus
+dev_d_16,"What are the rules regarding keeping bicycle locks parked overnight outside campus buildings?",out_of_corpus,,,Campus bicycle parking overnight policy not in corpus
+dev_d_17,"Does the university clinic provide free seasonal flu vaccination shots to all enrolled students?",out_of_corpus,,,Health center flu vaccination service not in corpus
+dev_d_18,"How do I reserve a private study room in the campus library for group project meetings?",out_of_corpus,,,Library study room reservation not in corpus
+dev_d_19,"What is the policy for decorating dormitory room doors during the winter holiday season?",out_of_corpus,,,Residence hall door decoration policy not in corpus
+dev_d_20,"Where can students submit complaints regarding vending machine malfunctions on campus?",out_of_corpus,,,Vending machine maintenance complaints not in corpus
+dev_d_21,"Can graduate students sponsor visitor passes for off-campus guests to use the university gym?",out_of_corpus,,,Recreation center guest pass policy not in corpus
+dev_d_22,"Is there a campus bookstore buyback program for used textbooks at the end of the term?",out_of_corpus,,,Bookstore textbook buyback not in corpus
+dev_d_23,"What is the recommended brewing temperature and grind size for pour-over coffee?",out_of_corpus,,,General coffee brewing recipe outside campus
+dev_d_24,"How do I troubleshoot an error when updating the graphics card drivers on Windows 11?",out_of_corpus,,,General PC operating system troubleshooting outside campus

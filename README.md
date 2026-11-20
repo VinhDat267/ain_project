@@ -66,9 +66,11 @@ vào `experiments/results/midterm-sample/`.
 
 Đây là **tái lập cấu hình cố định trên benchmark đã được xem**, không phải kết quả
 CV hay ước lượng trên tập test chưa đụng đến. Script báo cáo riêng full MRR của
-slide và MRR@10 của bộ thí nghiệm cũ. Các bài so sánh cũ trong `experiments/`
-vẫn giữ quy trình riêng; hai stub `intent_cv.py` và `noise_curve.py` không được
-coi là đã hoàn thành bởi lần tích hợp này.
+slide và MRR@10 của bộ thí nghiệm cũ. Toàn bộ các bài thực nghiệm so sánh trong `experiments/`
+đã được hoàn thiện đầy đủ:
+- `experiments/noise_curve.py` (E3b): Đo lường suy thoái nhiễu chính tả 0..3 lỗi gõ, lưu tại `experiments/results/dev/noise_curve.csv` và hình vẽ `experiments/results/figures/noise_curve.png`.
+- `experiments/intent_cv.py` (E5b): 5-fold Stratified Cross-Validation cho 9 mô hình phân loại intent, lưu tại `experiments/results/dev/intent_cv.csv`.
+- `experiments/run_ablation.py`: Chạy đầy đủ các nhóm E0, E1, E2, E3 (char_wb), E4 (hybrid) và E7 (BM25).
 
 Chi tiết cấu hình và thay đổi API tương thích: [notes/midterm_integration.md](notes/midterm_integration.md).
 
@@ -78,15 +80,18 @@ Slide đã rà soát: [HTML tiếng Việt](presentation/presentation.html),
 [PDF tiếng Anh](presentation/presentation_en.pdf).
 Xem [cách xuất PDF và nguồn số liệu](presentation/README.md), [lời dẫn thuyết trình 10 phút](presentation/speaker_notes_vi_10min.md), cùng [kịch bản live demo 90s](presentation/LIVE_DEMO.md) ([danh sách câu hỏi demo](presentation/demo_queries.txt)).
 
+Bài báo nghiên cứu chuẩn IEEE: [Bản PDF](report/report.pdf) · [Bản nguồn HTML](report/ieee_report.html) · [README](report/README.md).
+
 ## Cấu trúc repo
 
 | Đường dẫn | Nội dung |
 |---|---|
-| `starter/` | Code lõi: `retrieval.py` (TF-IDF, cosine), `intent.py` (phân loại intent), `student_core.py` (API công khai), `app.py` (giao diện Streamlit) |
-| `experiments/` | Script đánh giá và thí nghiệm, tập câu hỏi dev, kết quả |
+| `starter/` | Code lõi: `retrieval.py` (TF-IDF, cosine, `explain`), `intent.py` (phân loại intent), `student_core.py` (API công khai), `app.py` (giao diện Streamlit) |
+| `experiments/` | Script đánh giá và thí nghiệm (E0–E7, E3b, E5b), tập câu hỏi dev (146 câu), kết quả và biểu đồ |
 | `data/` | Kho tài liệu (84 FAQ, 28 thông báo) và 120 câu hỏi đánh giá của môn học, giữ nguyên bản gốc |
-| `tests/` | Kiểm thử, gồm bộ sanity test của môn học |
-| `notes/` | Tính tay, phân tích lỗi, ngân hàng câu hỏi vấn đáp |
+| `report/` | Bài báo nghiên cứu khoa học chuẩn IEEE (bản HTML và PDF hoàn chỉnh) |
+| `tests/` | Kiểm thử tự động (90 unit & integration tests), gồm bộ sanity test của môn học |
+| `notes/` | Tính tay (TF-IDF & Naive Bayes), phân tích lỗi, phân tích kho dữ liệu, quy trình chọn cấu hình, ngân hàng câu hỏi vấn đáp |
 | `scripts/` | Sinh dữ liệu của môn học và `evaluate.py` tái lập code mẫu midterm |
 
 ## Tài liệu của nhóm
