@@ -1,0 +1,41 @@
+{
+  "split": "dev/E5",
+  "run_name": "logreg_tfidf_lodo",
+  "retriever": {
+    "kind": "tfidf",
+    "analyzer": "word",
+    "index_field": "text",
+    "word_ngram_range": [
+      1,
+      1
+    ],
+    "char_ngram_range": [
+      3,
+      5
+    ],
+    "remove_stopwords": true,
+    "sublinear_tf": false,
+    "hybrid_alpha": 0.5,
+    "threshold": 0.0
+  },
+  "intent": {
+    "kind": "model",
+    "model": "logreg",
+    "features": "tfidf",
+    "ngram_range": [
+      1,
+      1
+    ],
+    "nb_alpha": 1.0,
+    "lr_C": 1.0,
+    "svm_C": 1.0,
+    "include_descriptions": false,
+    "include_questions": false,
+    "sublinear_tf": false
+  },
+  "intent_mode": "lodo",
+  "n_queries": 146,
+  "query_files": [],
+  "commit": "894e47db9e7d11c731da5148e13ff91e01b827fe",
+  "created_at": "2026-11-20T15:12:51+00:00"
+}

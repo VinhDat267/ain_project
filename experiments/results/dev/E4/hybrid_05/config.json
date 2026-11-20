@@ -24,6 +24,6 @@
   "intent_mode": "full",
   "n_queries": 146,
   "query_files": [],
-  "commit": "f36d4c5fbe1d9e1dc10c4b03f40d664683729031+dirty",
-  "created_at": "2026-11-15T14:28:54+00:00"
+  "commit": "894e47db9e7d11c731da5148e13ff91e01b827fe",
+  "created_at": "2026-11-20T15:12:46+00:00"
 }
