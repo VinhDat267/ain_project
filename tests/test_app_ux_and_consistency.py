@@ -40,6 +40,9 @@ def test_app_ooc_query_abstains_without_conflicting_success():
     assert any("Information not found — please contact the administrative office." in item.value for item in app.error)
     # Must explain the abstention and list the covered topics (U3) ...
     assert any("Outside the indexed documents" in item.value for item in app.info)
+    # ... and say which gate rejected it: the kayak query passes cosine but fails the intent gate.
+    reason = next(item.value for item in app.info if "Why it was rejected" in item.value)
+    assert "intent confidence" in reason and "failed" in reason
     # ... but must not route a rejected query to an office picked by the intent classifier.
     from starter.ui_helpers import OFFICE_REGISTRY
 

@@ -315,9 +315,18 @@ with tab_search:
             st.error("Information not found — please contact the administrative office.")
 
             topic_list = ", ".join(meta["title"] for meta in DOMAIN_PALETTE.values())
+            ranked = _get_retriever().rank(query)
+            best_cosine = ranked[0][1] if ranked else 0.0
+
+            def gate(value: float, limit: float, as_pct: bool) -> str:
+                shown, bound = (f"{value:.0%}", f"{limit:.0%}") if as_pct else (f"{value:.2f}", f"{limit:.2f}")
+                return f"{shown} (gate ≥ {bound}, {'passed' if value >= limit else 'failed'})"
+
             st.info(
                 f"**Outside the indexed documents.** This assistant answers only from its {len(documents)} "
                 f"FAQ and notice documents and found none that matches well enough.\n\n"
+                f"**Why it was rejected:** best cosine similarity {gate(best_cosine, similarity_thresh, False)} · "
+                f"intent confidence {gate(confidence, intent_thresh, True)}.\n\n"
                 f"**Topics it covers:** {topic_list}.\n\n"
                 f"**Tips:**\n"
                 f"1. If your question is about one of these topics, rephrase it with campus terms "
@@ -327,7 +336,7 @@ with tab_search:
             )
         else:
             # Successful retrieval: Render green success banner with intent, confidence, and office routing
-            st.success(f"Intent: {intent} · confidence {confidence:.0%} · Routed to {office['name']}")
+            st.success(f"Intent: {intent} · confidence {confidence:.0%} · Contact: {office['name']}")
             st.markdown(f"### Found {len(results)} relevant documents:")
 
             retriever = _get_retriever()
