@@ -63,4 +63,27 @@ def test_a_final_run_is_required(tmp_path):
 def test_experiment_groups_are_well_formed():
     for group, runs in EXPERIMENTS.items():
         for name, run in runs.items():
-            assert len(run) == 3 and run[2] in ("full", "lodo"), (group, name)
+            assert len(run) in (3, 4) and run[2] in ("full", "lodo"), (group, name)
+
+
+def test_final_frozen_run_uses_both_product_gates():
+    """The official final run must abstain exactly like student_core.retrieve()."""
+    from experiments.run_ablation import FROZEN_COMPARISONS, unpack_run
+    from starter.student_core import INTENT_THRESHOLD, RETRIEVAL_THRESHOLD
+
+    retrieval, _, mode, gate = unpack_run(FROZEN_COMPARISONS["final"])
+    assert retrieval.threshold == RETRIEVAL_THRESHOLD
+    assert gate == INTENT_THRESHOLD and mode == "full"
+
+
+def test_intent_gate_is_applied_and_recorded(tmp_path):
+    """A 4-item run turns on the intent gate: the 'majority' baseline (confidence ~0.14) then abstains."""
+    gated = {"final": ("jaccard", "majority", "full", 0.5)}
+    run_frozen_on_test(runs=gated, queries=QUERIES, results_dir=tmp_path)
+    import pandas as pd
+
+    per_query = pd.read_csv(tmp_path / "test" / "final" / "per_query.csv")
+    config = json.loads((tmp_path / "test" / "final" / "config.json").read_text(encoding="utf-8"))
+    assert config["intent_threshold"] == 0.5
+    assert per_query["abstained"].tolist() == [1, 1]
+    assert frozen_hash(gated) != frozen_hash(RUNS)
