@@ -104,10 +104,12 @@ def test_explain_mathematical_invariant_sums_to_cosine():
     assert sum_contributions == pytest.approx(cosine_score, abs=1e-5)
 
 
-def test_manifest_and_business_metrics_consistency():
-    """Verify that the manifest and business summary are quantitatively consistent with raw CSVs."""
-    manifest = build_manifest()
-    summary_df, per_intent_df, sensitivity_df = compute_business_metrics()
+def test_manifest_and_business_metrics_consistency(tmp_path):
+    """Verify that the manifest and business summary are quantitatively consistent with raw CSVs without mutating repo files."""
+    import json
+
+    manifest = build_manifest(output_path=tmp_path / "manifest.json")
+    summary_df, per_intent_df, sensitivity_df = compute_business_metrics(output_dir=tmp_path)
 
     b_dict = dict(zip(summary_df["metric"], summary_df["value"]))
 
@@ -119,8 +121,18 @@ def test_manifest_and_business_metrics_consistency():
     assert b_dict["total_queries"] == 120
     assert b_dict["in_corpus_queries"] == 105
     assert b_dict["ooc_queries"] == 15
-    assert b_dict["top3_rescue_rate"] == pytest.approx(0.9810, abs=1e-4)
+    assert b_dict["top3_rescue_rate"] == pytest.approx(0.9619, abs=1e-4)
+    assert b_dict["raw_hit3_rate"] == pytest.approx(0.9810, abs=1e-4)
     assert b_dict["self_service_deflection_rate_overall"] == pytest.approx(0.7750, abs=1e-4)
+
+    committed_manifest = json.loads(
+        (PROJECT_ROOT / "experiments" / "results" / "report_verification_manifest.json").read_text(encoding="utf-8")
+    )
+    assert committed_manifest == manifest
+
+    committed_summary = pd.read_csv(PROJECT_ROOT / "experiments" / "results" / "business" / "business_summary.csv")
+    committed_dict = dict(zip(committed_summary["metric"], committed_summary["value"]))
+    assert committed_dict == b_dict
 
 
 def test_app_empty_state_renders_academic_directory():

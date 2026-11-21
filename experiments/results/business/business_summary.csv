@@ -4,7 +4,8 @@ in_corpus_queries,105.0,Queries with target document in corpus
 ooc_queries,15.0,Out-of-corpus queries requiring abstention
 self_service_deflection_rate_overall,0.775,Fraction of all queries resolved correctly at Top-1 (93/120)
 in_corpus_resolution_rate_top1,0.8857,In-corpus queries resolved correctly at Top-1 (93/105)
-top3_rescue_rate,0.981,In-corpus queries with correct document in Top-3 cards (103/105)
+top3_rescue_rate,0.9619,In-corpus queries answered with correct document in Top-3 cards (101/105)
+raw_hit3_rate,0.981,In-corpus raw ranking Hit@3 before abstention gate (103/105)
 silent_wrong_answer_rate,0.0952,In-corpus queries answered incorrectly without abstaining (10/105)
 safe_escalation_rate,0.1417,Queries where the assistant abstained and referred the student onward (17/120)
 false_abstention_rate,0.019,Legitimate queries mistakenly abstained (2/105)
