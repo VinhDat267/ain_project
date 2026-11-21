@@ -23,7 +23,7 @@ Căn cứ biên bản làm việc nhóm ngày 02/11/2026 (`notes/midterm_integra
    - Ngưỡng tin cậy hậu nghiệm (posterior probability gate) $T_{\text{intent}} = 0.34$.
 
 3. **Cơ chế kiểm chứng độc lập và Sweep Ngưỡng (E6):**
-   - Script `experiments/sweep_threshold.py` (E6) kiểm chứng độ nhạy 1 chiều của ngưỡng tương đồng $T_{\text{sim}}$ trên dải $[0.10, 0.45]$, xác nhận điểm cắt $T_{\text{sim}} = 0.15$ mang lại sự cân bằng tối ưu giữa việc giữ lại các câu paraphrase ngắn và loại bỏ văn bản không trùng khớp.
+   - Script `experiments/sweep_threshold.py` (E6) kiểm chứng độ nhạy 1 chiều của ngưỡng tương đồng $T_{\text{sim}}$ trên dải $[0.00, 1.00]$ của tập dev 146 câu cho `word TF-IDF + sublinear_tf` (`chosen = 0.33`, cosine-only), minh họa lý do một cổng cosine đơn lẻ gặp đánh đổi gắt với câu OOC và cần cổng kép ở sản phẩm.
    - Kết quả đo lường trên 120 câu hỏi của `data/queries_test.csv` (Full MRR: 0.943, Intent Accuracy: 97.1%, E2E: 90.0%) là **Fixed-Configuration Benchmark (đã được khảo sát và ghi nhận trong quá trình tích hợp thuật toán mẫu)**, không gắn nhãn sai lệch là kết quả blind test hay k-fold CV.
    - Năng lực tổng quát hóa độc lập (unseen generalizability) của mô hình phân loại được bảo chứng qua 5-Fold Stratified Cross-Validation (`experiments/results/dev/intent_cv.csv`), đạt độ chính xác $87.63\% \pm 7.37\%$ và Macro-F1 $87.19\% \pm 8.49\%$.
 
@@ -49,7 +49,7 @@ Căn cứ biên bản làm việc nhóm ngày 02/11/2026 (`notes/midterm_integra
 
 **Quyết định lựa chọn cấu hình trích xuất:**
 - Cấu hình **`char_wb (3, 5)` kết hợp Sublinear TF ($1 + \ln(tf)$), Smooth IDF và Chuẩn hóa $L_2$** được lựa chọn làm giải pháp chính thức cho sản phẩm.
-- *Lý do:* Đạt sự cân bằng hoàn hảo giữa khả năng kháng nhiễu chính tả tuyệt đối (1.000 Hit@1 trên cả 1, 2, 3 lỗi gõ trong E3b), điểm số Cosine bị chặn chuẩn tắc trong $[0, 1]$, và khả năng phân rã đặc trưng tuyến tính minh bạch (`explain()`).
+- *Lý do:* Đạt sự cân bằng tốt giữa khả năng kháng nhiễu chính tả (`1.000` Hit@1 ở $k = 0, 1, 3$ lỗi gõ và `0.959` ở $k = 2$ lỗi gõ trong E3b), điểm số Cosine bị chặn chuẩn tắc trong $[0, 1]$, và khả năng phân rã đặc trưng tuyến tính minh bạch (`explain()`).
 
 ---
 
