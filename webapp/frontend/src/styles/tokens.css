@@ -1,0 +1,120 @@
+/* Design tokens generated via design-taste-frontend (tasteskill 2.5.1)
+ * Palette: cool-white-slate (Frost and slate)
+ * Type pairing: funnel (Funnel Display / Funnel Sans + DM Mono)
+ * Radius: soft
+ */
+:root {
+  --p-bg: #f7f9fa;
+  --p-surface: #ecf0f2;
+  --p-ink: #1f3038;
+  --p-muted: #5d6b72;
+  --p-accent: #0d7480;
+  --p-accent-ink: #ffffff;
+  --p-action: #0d7480;
+  --p-action-ink: #ffffff;
+  --p-inv-bg: #1f3038;
+  --p-inv-surface: #2c3c44;
+  --p-inv-ink: #f7f9fa;
+  --p-inv-muted: #9ea7ab;
+  --p-inv-accent: #f7f9fa;
+  --p-inv-accent-ink: #1f3038;
+  --p-inv-action: #f7f9fa;
+  --p-inv-action-ink: #1f3038;
+
+  /* Active semantic aliases on base ground */
+  --bg: var(--p-bg);
+  --surface: var(--p-surface);
+  --surface-elevated: #ffffff;
+  --ink: var(--p-ink);
+  --muted: var(--p-muted);
+  --accent: var(--p-accent);
+  --accent-ink: var(--p-accent-ink);
+  --action: var(--p-action);
+  --action-ink: var(--p-action-ink);
+  --line: color-mix(in oklab, var(--ink) 11%, transparent);
+  --line-strong: color-mix(in oklab, var(--ink) 20%, transparent);
+
+  /* Status tokens (strictly non-violet, WCAG AA contrast on light surface) */
+  --ok: #047857;
+  --ok-bg: #e6f4ef;
+  --ok-line: #a7dfd0;
+  --warn: #b45309;
+  --warn-bg: #fef4e6;
+  --warn-line: #f5cf9a;
+  --danger: #be123c;
+  --danger-bg: #fdecef;
+  --danger-line: #f6b8c7;
+  --info: #1d4ed8;
+  --info-bg: #eaf1fd;
+  --info-line: #bfd3f8;
+
+  /* Typography */
+  --font-display: "Funnel Display", system-ui, -apple-system, sans-serif;
+  --font-text: "Funnel Sans", system-ui, -apple-system, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --display-weight: 400;
+  --display-tracking: -0.03em;
+  --display-tracking-xl: -0.04em;
+  --ly-scale: 0.98;
+
+  /* Type scale (minimum 13px for readable UI labels) */
+  --t-label: 13px;
+  --t-small: 14px;
+  --t-body: 16px;
+  --t-lead: 18px;
+  --t-card: 18px;
+  --t-h3: 22px;
+  --t-h2: clamp(26px, 1.4vw + 20px, 36px);
+  --t-h1: clamp(32px, 2.2vw + 22px, 52px);
+  --t-stat: clamp(26px, 0.9vw + 22px, 34px);
+
+  /* Layout & Equal Edges */
+  --nav: 72px;
+  --container: 1280px;
+  --gut: 80px;
+  --gutter: 24px;
+  --card-pad: 24px;
+  --card-gap: 16px;
+
+  /* 4/8 spacing scale */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 64px;
+
+  /* Radius & Controls (soft preset) */
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 20px;
+  --r-btn: 8px;
+  --btn-h: 44px;
+  --btn-h-sm: 36px;
+
+  /* Motion */
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --m-ease-enter: cubic-bezier(0.22, 1, 0.36, 1);
+  --m-in: 150ms;
+  --m-out: 120ms;
+  --m-press: 90ms;
+}
+
+@media (max-width: 1023px) {
+  :root {
+    --gut: 48px;
+    --t-lead: 17px;
+  }
+}
+
+@media (max-width: 639px) {
+  :root {
+    --nav: 56px;
+    --gut: 24px;
+    --gutter: 12px;
+    --card-pad: 16px;
+    --card-gap: 12px;
+  }
+}

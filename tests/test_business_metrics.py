@@ -8,8 +8,8 @@ from experiments.business_metrics import compute_business_metrics
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 
-def test_business_metrics_summary_values():
-    summary_df, per_intent_df, sensitivity_df = compute_business_metrics()
+def test_business_metrics_summary_values(tmp_path):
+    summary_df, per_intent_df, sensitivity_df = compute_business_metrics(output_dir=tmp_path)
 
     metrics = dict(zip(summary_df["metric"], summary_df["value"]))
 
@@ -20,7 +20,8 @@ def test_business_metrics_summary_values():
     # Core rates
     assert metrics["self_service_deflection_rate_overall"] == pytest.approx(0.7750, abs=1e-4)
     assert metrics["in_corpus_resolution_rate_top1"] == pytest.approx(0.8857, abs=1e-4)
-    assert metrics["top3_rescue_rate"] == pytest.approx(0.9810, abs=1e-4)
+    assert metrics["top3_rescue_rate"] == pytest.approx(0.9619, abs=1e-4)
+    assert metrics["raw_hit3_rate"] == pytest.approx(0.9810, abs=1e-4)
     assert metrics["silent_wrong_answer_rate"] == pytest.approx(0.0952, abs=1e-4)
     assert metrics["safe_escalation_rate"] == pytest.approx(0.1417, abs=1e-4)
     assert metrics["false_abstention_rate"] == pytest.approx(0.0190, abs=1e-4)
@@ -28,8 +29,8 @@ def test_business_metrics_summary_values():
     assert metrics["expected_cost_per_query"] == pytest.approx(0.4333, abs=1e-4)
 
 
-def test_business_metrics_invariants():
-    summary_df, per_intent_df, sensitivity_df = compute_business_metrics()
+def test_business_metrics_invariants(tmp_path):
+    summary_df, per_intent_df, sensitivity_df = compute_business_metrics(output_dir=tmp_path)
     metrics = dict(zip(summary_df["metric"], summary_df["value"]))
 
     # In-corpus partition invariant: resolution + silent_wrong + false_abstain = 1.0
@@ -37,6 +38,11 @@ def test_business_metrics_invariants():
     wrong_rate = metrics["silent_wrong_answer_rate"]
     abstain_rate = metrics["false_abstention_rate"]
     assert res_rate + wrong_rate + abstain_rate == pytest.approx(1.0, abs=1e-4)
+
+    # Delivered Top-3 never includes abstained queries in any in-corpus segment
+    in_corpus_segments = per_intent_df[per_intent_df["segment_name"] != "out_of_corpus"]
+    for _, row in in_corpus_segments.iterrows():
+        assert row["top1_correct"] <= row["top3_correct"] <= row["total_queries"] - row["abstained"]
 
     # All OOC queries must be rejected (15/15)
     ooc_rows = per_intent_df[per_intent_df["segment_name"] == "out_of_corpus"]
@@ -52,8 +58,8 @@ def test_business_metrics_invariants():
         assert row["abstained"] == 0
 
 
-def test_cost_sensitivity_ratios():
-    summary_df, per_intent_df, sensitivity_df = compute_business_metrics()
+def test_cost_sensitivity_ratios(tmp_path):
+    summary_df, per_intent_df, sensitivity_df = compute_business_metrics(output_dir=tmp_path)
 
     assert len(sensitivity_df) == 4
     ratios = dict(zip(sensitivity_df["penalty_ratio"], sensitivity_df["expected_cost_per_query"]))
@@ -100,3 +106,21 @@ def test_summary_descriptions_follow_the_data(tmp_path):
     assert "(1/4)" in desc["self_service_deflection_rate_overall"]
     assert "(1/2)" in desc["unsafe_ooc_answer_rate"]
     assert "w_wrong=3" in desc["expected_cost_per_query"] and "w_abstain=2" in desc["expected_cost_per_query"]
+
+
+def test_abstained_in_corpus_hit3_not_counted_as_delivered(tmp_path):
+    import pandas as pd
+
+    rows = [
+        {"type": "normal", "expected_intent": "tuition", "abstained": 0, "hit1": 1, "hit3": 1},
+        {"type": "paraphrase", "expected_intent": "exam", "abstained": 1, "hit1": 1, "hit3": 1},
+    ]
+    path = tmp_path / "per_query.csv"
+    pd.DataFrame(rows).to_csv(path, index=False)
+    summary_df, per_intent_df, _ = compute_business_metrics(path, output_dir=tmp_path / "out")
+    metrics = dict(zip(summary_df["metric"], summary_df["value"]))
+    assert metrics["top3_rescue_rate"] == pytest.approx(0.5)
+    assert metrics["raw_hit3_rate"] == pytest.approx(1.0)
+    exam_row = per_intent_df[per_intent_df["segment_name"] == "exam"].iloc[0]
+    assert exam_row["top3_correct"] == 0
+    assert exam_row["top3_rescue_rate"] == 0.0

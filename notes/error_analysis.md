@@ -13,7 +13,7 @@ Trên bộ 120 câu hỏi benchmark chuẩn (`data/queries_test.csv` gồm 105 c
 - **Hit@1 (In-corpus):** `90.48% (95/105)`
 - **Intent Accuracy:** `97.14% (102/105)`
 - **OOC Rejection (Từ chối câu ngoài kho):** `100.0% (15/15)`
-- **Balanced E2E:** `90.0% (108/120)`
+- **E2E Acc@1 (All):** `90.0% (108/120)` · **Balanced E2E:** `91.4%`
 
 Toàn bộ **35 câu Normal** và **35 câu Typo** đều đạt **Hit@1 = 1.000 (35/35)** và **MRR = 1.000**. Mọi sai số xếp hạng và lỗi phân loại đều tập trung tại **35 câu Paraphrase** (12 ca sai/từ chối) và các câu hỏi ngoài kho tri thức (**Out-of-Corpus - OOC**).
 

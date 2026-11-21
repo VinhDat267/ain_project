@@ -32,14 +32,14 @@
 
 ### B. 7 Bảng màu Định danh Chủ đề Học vụ (7-Domain Chromatic Palette)
 
-| Chủ đề (`intent`) | Văn phòng Phụ trách | Màu Chủ đạo | Nền Huy hiệu | Chữ Huy hiệu | Chuẩn WCAG |
+| Chủ đề (`intent`) | Điểm liên hệ (trong corpus) | Màu Chủ đạo | Nền Huy hiệu | Chữ Huy hiệu | Chuẩn WCAG |
 |---|---|:---:|:---:|:---:|:---:|
-| `course_registration` | Registrar's Office | `#2563eb` (Royal Blue) | `#dbeafe` | `#1e40af` | **5.4 : 1 (AA)** |
+| `course_registration` | Student Portal | `#2563eb` (Royal Blue) | `#dbeafe` | `#1e40af` | **5.4 : 1 (AA)** |
 | `tuition` | Bursar's Office | `#059669` (Emerald Teal) | `#d1fae5` | `#065f46` | **6.1 : 1 (AAA)** |
 | `exam` | Registrar's Office | `#e11d48` (Academic Crimson)| `#ffe4e6` | `#9f1239` | **5.8 : 1 (AA)** |
-| `class_schedule` | Registrar's Office | `#4f46e5` (Indigo Violet) | `#e0e7ff` | `#3730a3` | **6.9 : 1 (AAA)** |
+| `class_schedule` | My Schedule | `#4f46e5` (Indigo Violet) | `#e0e7ff` | `#3730a3` | **6.9 : 1 (AAA)** |
 | `student_services` | Advising Center | `#d97706` (Warm Amber) | `#fef3c7` | `#92400e` | **5.3 : 1 (AA)** |
-| `graduation` | Registrar's Office | `#9333ea` (Burgundy Plum) | `#f3e8ff` | `#6b21a8` | **5.7 : 1 (AA)** |
+| `graduation` | Registrar | `#9333ea` (Burgundy Plum) | `#f3e8ff` | `#6b21a8` | **5.7 : 1 (AA)** |
 | `technical_support` | IT Help Desk | `#0284c7` (Sky Cyan) | `#e0f2fe` | `#075985` | **5.6 : 1 (AA)** |
 
 ### C. Màu Nhấn & Màu Ngữ nghĩa (Accent & Semantic Tokens)

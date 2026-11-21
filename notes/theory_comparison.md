@@ -1,7 +1,7 @@
 # Chuyên đề So sánh Lý thuyết Mô hình Biểu diễn và Truy xuất Văn bản
 
 > **Tài liệu học thuật & Thuyết trình chuyên sâu — Project 12 (Campus FAQ Assistant)**  
-> **Tác giả:** Nhóm đồ án Project 12 (Đại học Quốc gia TP.HCM — CS50 AI)
+> **Tác giả:** Nhóm đồ án Project 12 (Trường Đại học Hà Nội — HANU, Môn Trí tuệ nhân tạo AIN / CS50 AI)
 
 ---
 

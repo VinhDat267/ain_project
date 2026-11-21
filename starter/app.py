@@ -211,7 +211,7 @@ with tab_search:
                 <span class="orca-stat-pill"><strong>{n_faqs}</strong> FAQs</span>
                 <span class="orca-stat-pill"><strong>{n_notices}</strong> Notices</span>
                 <span class="orca-stat-pill"><strong>{len(DOMAIN_PALETTE)}</strong> Topics</span>
-                <span class="orca-stat-pill"><strong>{fmt_rate(kpis['top3_rescue_rate'])}</strong> Top-3 Rescue</span>
+                <span class="orca-stat-pill"><strong>{fmt_rate(kpis['top3_rescue_rate'])}</strong> Top-3 Delivered</span>
                 <span class="orca-stat-pill"><strong>Dual-Gate</strong> Rejection</span>
             </div>
         </div>
@@ -573,9 +573,9 @@ with tab_eval:
         f"{fmt_count(kpis['deflection_rate'], kpis['total_queries'])} queries resolved at Top-1",
     )
     col_m4.metric(
-        "Top-3 Rescue Rate",
+        "Top-3 Delivered",
         fmt_rate(kpis["top3_rescue_rate"]),
-        f"{fmt_count(kpis['top3_rescue_rate'], kpis['in_corpus_queries'])} in-corpus captured in Top-3",
+        f"{fmt_count(kpis['top3_rescue_rate'], kpis['in_corpus_queries'])} answered in Top-3 (raw Hit@3 {fmt_rate(kpis['raw_hit3'])})",
     )
 
     col_m5, col_m6, col_m7, col_m8 = st.columns(4)
@@ -651,7 +651,7 @@ with tab_eval:
         else:
             st.info("Noise curve figure pending.")
 
-        # This figure is the preliminary E6 sweep (18/10): cosine gate only, word TF-IDF +
+        # This figure is the preliminary E6 sweep (146 dev queries): cosine gate only, word TF-IDF +
         # sublinear TF, dev split. The shipped dual-gate char_wb config is evidenced by the
         # "Dual-Gate Ablation Study" table, not by this curve.
         st.markdown("#### Preliminary Threshold Sweep (E6, word TF-IDF)")
@@ -660,7 +660,7 @@ with tab_eval:
             st.image(
                 str(sweep_img),
                 caption=(
-                    "Cosine-only threshold sweep for word TF-IDF + sublinear TF on the dev split (18/10). "
+                    "Cosine-only threshold sweep for word TF-IDF + sublinear TF on the dev split (146 dev queries). "
                     "Not the production config: see the Dual-Gate Ablation table for char_wb 3-5 "
                     f"with cosine ≥ {RETRIEVAL_THRESHOLD} and intent ≥ {INTENT_THRESHOLD}."
                 ),

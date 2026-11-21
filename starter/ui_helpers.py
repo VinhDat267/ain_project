@@ -305,7 +305,7 @@ def get_intent_ranking(query: str, top_n: int = 3) -> list[tuple[str, float]]:
 
 
 KPI_KEYS = (
-    "mrr", "intent_accuracy", "intent_correct", "top3_rescue_rate", "ooc_rejection_rate",
+    "mrr", "intent_accuracy", "intent_correct", "top3_rescue_rate", "raw_hit3", "ooc_rejection_rate",
     "total_queries", "in_corpus_queries", "ooc_queries",
     "deflection_rate", "safe_escalation_rate", "false_abstention_rate", "expected_cost",
     "w_silent_wrong", "w_false_abstain", "w_ooc_leak",
@@ -314,6 +314,7 @@ KPI_KEYS = (
 # business_summary.csv metric name -> KPI key
 _BUSINESS_KPIS = {
     "self_service_deflection_rate_overall": "deflection_rate",
+    "top3_rescue_rate": "top3_rescue_rate",
     "safe_escalation_rate": "safe_escalation_rate",
     "false_abstention_rate": "false_abstention_rate",
     "expected_cost_per_query": "expected_cost",
@@ -343,7 +344,7 @@ def load_dashboard_kpis(results_dir: str | Path | None = None) -> dict[str, Any]
             in_corpus, ooc, all_rows = rows.loc["in_corpus"], rows.loc["out_of_corpus"], rows.loc["all"]
             kpis["mrr"] = float(in_corpus["mrr"])
             kpis["intent_accuracy"] = float(in_corpus["intent_acc"])
-            kpis["top3_rescue_rate"] = float(in_corpus["hit3"])
+            kpis["raw_hit3"] = float(in_corpus["hit3"])
             kpis["ooc_rejection_rate"] = float(all_rows["ooc_rejection"])
             kpis["in_corpus_queries"] = int(in_corpus["n"])
             kpis["ooc_queries"] = int(ooc["n"])

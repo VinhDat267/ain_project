@@ -35,7 +35,11 @@ def compute_text_stats(texts: list[str]) -> dict[str, float]:
     }
 
 
-def build_manifest(project_root: Path | None = None) -> dict[str, Any]:
+def build_manifest(
+    project_root: Path | None = None,
+    output_path: Path | None = None,
+    write_output: bool = True,
+) -> dict[str, Any]:
     root = project_root or PROJECT_ROOT
 
     # 1. Load raw datasets
@@ -172,11 +176,11 @@ def build_manifest(project_root: Path | None = None) -> dict[str, Any]:
     }
 
     # Save manifest
-    out_dir = root / "experiments" / "results"
-    out_dir.mkdir(parents=True, exist_ok=True)
-    out_file = out_dir / "report_verification_manifest.json"
-    with open(out_file, "w", encoding="utf-8") as f:
-        json.dump(manifest, f, indent=2, ensure_ascii=False)
+    if write_output:
+        out_file = Path(output_path) if output_path is not None else (root / "experiments" / "results" / "report_verification_manifest.json")
+        out_file.parent.mkdir(parents=True, exist_ok=True)
+        with open(out_file, "w", encoding="utf-8") as f:
+            json.dump(manifest, f, indent=2, ensure_ascii=False)
 
     return manifest
 
