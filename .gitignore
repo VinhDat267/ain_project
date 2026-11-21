@@ -26,3 +26,10 @@ output/playwright/audit-*/
 
 # Local feedback votes from the demo app
 output/feedback/
+
+# Standalone web application build/dev artifacts & local taste-skill state
+.taste-skill/
+webapp/frontend/node_modules/
+webapp/frontend/dist/
+*.tsbuildinfo
+

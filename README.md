@@ -36,10 +36,23 @@ Chạy kiểm thử (hai test kiểm tra stub của đề được deselect tron
 .venv/bin/python -m pytest -q
 ```
 
-Mở ứng dụng demo:
+Mở ứng dụng demo (Streamlit gốc):
 
 ```bash
 .venv/bin/python -m streamlit run starter/app.py
+```
+
+Mở ứng dụng web độc lập (FastAPI + React/TypeScript, chạy song song với `starter/app.py` trên port `8000`):
+
+```powershell
+# Chạy 1 lệnh local (tự build frontend nếu chưa có và phục vụ tại http://127.0.0.1:8000)
+.\scripts\run_webapp.ps1
+
+# Hoặc chế độ dev (FastAPI reload + Vite HMR tại http://127.0.0.1:5173)
+.\scripts\run_webapp.ps1 -Dev
+
+# Hoặc đóng gói và chạy bằng Docker (port 8000)
+docker compose up --build
 ```
 
 ## Bản midterm tích hợp từ tài liệu của nhóm
@@ -87,12 +100,13 @@ Bài báo nghiên cứu chuẩn IEEE: [Bản PDF](report/report.pdf) · [Bản n
 | Đường dẫn | Nội dung |
 |---|---|
 | `starter/` | Code lõi: `retrieval.py` (TF-IDF, cosine, `explain`), `intent.py` (phân loại intent), `student_core.py` (API công khai), `app.py` (giao diện Streamlit) |
+| `webapp/` | Ứng dụng web độc lập: backend FastAPI (`webapp/backend/`) và giao diện React/TypeScript (`webapp/frontend/`), đóng gói qua `Dockerfile` và `docker-compose.yml` |
 | `experiments/` | Script đánh giá và thí nghiệm (E0–E7, E3b, E5b), tập câu hỏi dev (146 câu), kết quả và biểu đồ |
 | `data/` | Kho tài liệu (84 FAQ, 28 thông báo) và 120 câu hỏi đánh giá của môn học, giữ nguyên bản gốc |
 | `report/` | Bài báo nghiên cứu khoa học chuẩn IEEE (bản HTML và PDF hoàn chỉnh) |
-| `tests/` | Kiểm thử tự động (90 unit & integration tests), gồm bộ sanity test của môn học |
+| `tests/` | Kiểm thử tự động (127 active unit & integration tests, 2 deselected sanity stub tests) |
 | `notes/` | Tính tay (TF-IDF & Naive Bayes), phân tích lỗi, phân tích kho dữ liệu, quy trình chọn cấu hình, ngân hàng câu hỏi vấn đáp |
-| `scripts/` | Sinh dữ liệu của môn học và `evaluate.py` tái lập code mẫu midterm |
+| `scripts/` | Sinh dữ liệu của môn học, `evaluate.py` tái lập code mẫu midterm và `run_webapp.ps1` |
 
 ## Tài liệu của nhóm
 
