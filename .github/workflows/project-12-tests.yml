@@ -6,6 +6,7 @@ on:
   pull_request:
 
 jobs:
+  # Core + course suite. Its name ("pytest") is the required check on main.
   pytest:
     runs-on: ubuntu-latest
     steps:
@@ -19,3 +20,65 @@ jobs:
         run: pip install -r requirements.txt
       - name: Run tests
         run: pytest -q
+
+  # FastAPI backend of the standalone web app (webapp/backend).
+  webapp-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            webapp/backend/requirements.txt
+      - name: Install dependencies
+        run: pip install -r requirements.txt -r webapp/backend/requirements.txt
+      - name: Run API tests
+        run: pytest -o addopts="" webapp/backend/tests -q
+
+  # React + TypeScript frontend: type-check (tsc -b) and production build.
+  webapp-frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: webapp/frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: webapp/frontend/package-lock.json
+      - name: Install packages
+        run: npm ci
+      - name: Type-check and build
+        run: npm run build
+
+  # Build the Docker image and smoke-test the running container.
+  docker-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t campus-faq-web:ci .
+      - name: Start container
+        run: docker run -d --name campus-faq-web -p 8000:8000 campus-faq-web:ci
+      - name: Smoke-test API and web UI
+        run: |
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8000/api/health; then break; fi
+            sleep 2
+          done
+          curl -fsS http://127.0.0.1:8000/api/health
+          curl -fsS -X POST http://127.0.0.1:8000/api/chat \
+            -H 'Content-Type: application/json' \
+            -d '{"query": "When is tuition due for the semester?"}' | grep -q '"faq_tuition_01"'
+          curl -fsS -X POST http://127.0.0.1:8000/api/chat \
+            -H 'Content-Type: application/json' \
+            -d '{"query": "Can I rent a kayak from the campus recreation center?"}' | grep -q '"abstained":true'
+          curl -fsS http://127.0.0.1:8000/ | grep -q '<div id="root">'
+      - name: Container logs
+        if: always()
+        run: docker logs campus-faq-web
