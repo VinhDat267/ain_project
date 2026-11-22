@@ -39,6 +39,7 @@ from starter.ui_helpers import (  # noqa: E402
     match_label,
     office_for_intent,
     record_feedback,
+    table_html,
 )
 
 DISCLAIMER = (
@@ -66,14 +67,17 @@ def render_html(raw_html: str) -> None:
 
 def show_table(df: pd.DataFrame, caption: str = "Data Table") -> None:
     """Render dataframe as an accessible HTML table without pyarrow dependency (WCAG 2.2 SC 1.3.1)."""
-    html_table = df.to_html(index=False, classes="orca-table", border=0)
-    if "<caption" not in html_table:
-        html_table = html_table.replace(
-            "<table",
-            f'<table role="table" class="orca-table"><caption style="font-weight:600;text-align:left;padding:6px 0;font-size:0.9rem;color:#5e5d59;">{caption}</caption>',
-            1,
-        )
-    render_html(html_table)
+    render_html(table_html(df, caption))
+
+
+def kpi(col, label: str, value: str, detail: str, help_text: str | None = None) -> None:
+    """KPI value with its detail as a caption.
+
+    st.metric's delta slot draws a green up-arrow, which reads as "improved" and
+    is wrong for counts such as false abstentions; it also truncates long text.
+    """
+    col.metric(label, value, help=help_text)
+    col.caption(detail)
 
 
 @st.cache_resource
@@ -564,77 +568,29 @@ with tab_eval:
     )
 
     col_m1, col_m2, col_m3, col_m4 = st.columns(4)
-    col_m1.metric("Overall Full MRR", fmt_rate(kpis["mrr"], ".3f"),
-                  help=f"Mean Reciprocal Rank on the {kpis['in_corpus_queries'] or 'n/a'} in-corpus benchmark queries")
-    col_m2.metric("Intent Accuracy", fmt_rate(kpis["intent_accuracy"]), intent_detail)
-    col_m3.metric(
-        "Self-Service Deflection",
-        fmt_rate(kpis["deflection_rate"]),
-        f"{fmt_count(kpis['deflection_rate'], kpis['total_queries'])} queries resolved at Top-1",
-    )
-    col_m4.metric(
-        "Top-3 Delivered",
-        fmt_rate(kpis["top3_rescue_rate"]),
-        f"{fmt_count(kpis['top3_rescue_rate'], kpis['in_corpus_queries'])} answered in Top-3 (raw Hit@3 {fmt_rate(kpis['raw_hit3'])})",
-    )
+    kpi(col_m1, "Overall Full MRR", fmt_rate(kpis["mrr"], ".3f"),
+        f"{kpis['in_corpus_queries'] or 'n/a'} in-corpus queries",
+        help_text="Mean Reciprocal Rank over the full ranking of the in-corpus benchmark queries")
+    kpi(col_m2, "Intent Accuracy", fmt_rate(kpis["intent_accuracy"]), intent_detail)
+    kpi(col_m3, "Self-Service Deflection", fmt_rate(kpis["deflection_rate"]),
+        f"{fmt_count(kpis['deflection_rate'], kpis['total_queries'])} queries resolved at Top-1")
+    kpi(col_m4, "Top-3 Delivered", fmt_rate(kpis["top3_rescue_rate"]),
+        f"{fmt_count(kpis['top3_rescue_rate'], kpis['in_corpus_queries'])} answered in Top-3 "
+        f"(raw Hit@3 {fmt_rate(kpis['raw_hit3'])})")
 
     col_m5, col_m6, col_m7, col_m8 = st.columns(4)
-    col_m5.metric(
-        "OOC Rejection",
-        fmt_rate(kpis["ooc_rejection_rate"]),
-        f"{fmt_count(kpis['ooc_rejection_rate'], kpis['ooc_queries'])} out-of-corpus blocked",
-    )
-    col_m6.metric(
-        "Safe Escalation",
-        fmt_rate(kpis["safe_escalation_rate"]),
-        f"{fmt_count(kpis['safe_escalation_rate'], kpis['total_queries'])} abstained and referred onward",
-    )
-    col_m7.metric(
-        "False Abstention",
-        fmt_rate(kpis["false_abstention_rate"]),
-        f"{fmt_count(kpis['false_abstention_rate'], kpis['in_corpus_queries'])} in-corpus queries rejected",
-    )
-    col_m8.metric("Expected Cost / Query", fmt_rate(kpis["expected_cost"], ".4f"), weights)
+    kpi(col_m5, "OOC Rejection", fmt_rate(kpis["ooc_rejection_rate"]),
+        f"{fmt_count(kpis['ooc_rejection_rate'], kpis['ooc_queries'])} out-of-corpus blocked")
+    kpi(col_m6, "Safe Escalation", fmt_rate(kpis["safe_escalation_rate"]),
+        f"{fmt_count(kpis['safe_escalation_rate'], kpis['total_queries'])} abstained and referred onward")
+    kpi(col_m7, "False Abstention", fmt_rate(kpis["false_abstention_rate"]),
+        f"{fmt_count(kpis['false_abstention_rate'], kpis['in_corpus_queries'])} in-corpus queries rejected")
+    kpi(col_m8, "Expected Cost / Query", fmt_rate(kpis["expected_cost"], ".4f"), weights)
 
     st.markdown("---")
-    dash_col1, dash_col2 = st.columns(2)
-
-    with dash_col1:
-        st.markdown("#### Operational Business Metrics & Segment Breakdown")
-        per_intent_file = PROJECT_ROOT / "experiments" / "results" / "business" / "per_intent_business.csv"
-        if per_intent_file.exists():
-            df_pi = pd.read_csv(per_intent_file)
-            show_table(df_pi, caption="Operational Performance Breakdown by Intent & Query Type")
-        else:
-            st.info("Run `python experiments/business_metrics.py` to generate segment metrics.")
-
-        st.markdown("#### Cost Sensitivity Analysis across Penalty Ratios")
-        sensitivity_file = PROJECT_ROOT / "experiments" / "results" / "business" / "cost_sensitivity.csv"
-        if sensitivity_file.exists():
-            df_sens = pd.read_csv(sensitivity_file)
-            show_table(df_sens, caption="Cost Sensitivity under 1:1, 3:1, 5:1, and 10:1 Penalty Ratios")
-        else:
-            st.info("Run `python experiments/business_metrics.py` to generate sensitivity table.")
-
-        st.markdown("#### Dual-Gate Ablation Study")
-        ablation_file = PROJECT_ROOT / "experiments" / "results" / "midterm-sample" / "ablation.csv"
-        if not ablation_file.exists():
-            ablation_file = PROJECT_ROOT / "experiments" / "results" / "dev" / "ablation.csv"
-        if ablation_file.exists():
-            df_ab = pd.read_csv(ablation_file)
-            show_table(df_ab, caption=f"Empirical Ablation Across {n_bench} Benchmark Queries")
-        else:
-            st.info("Ablation file not found.")
-
-        st.markdown("#### 5-Fold Stratified Intent Cross-Validation (E5b)")
-        cv_file = PROJECT_ROOT / "experiments" / "results" / "dev" / "intent_cv.csv"
-        if cv_file.exists():
-            df_cv = pd.read_csv(cv_file)
-            show_table(df_cv, caption="Stratified 5-Fold Intent Cross-Validation on 112 Documents")
-        else:
-            st.info("Intent CV results pending.")
-
-    with dash_col2:
+    # Figures sit in pairs; wide tables get the full width so they never overlap a figure.
+    fig_col1, fig_col2 = st.columns(2)
+    with fig_col1:
         st.markdown("#### Intent Confusion Matrix (7x7)")
         cm_img = PROJECT_ROOT / "experiments" / "results" / "figures" / "intent_confusion.png"
         if cm_img.exists():
@@ -643,7 +599,7 @@ with tab_eval:
                 caption=f"7x7 Intent Confusion Matrix ({intent_detail}, {fmt_rate(kpis['intent_accuracy'])})",
                 use_column_width=True,
             )
-
+    with fig_col2:
         st.markdown("#### Noise Degradation Curve (E3b: 0..3 Typo Swaps)")
         noise_img = PROJECT_ROOT / "experiments" / "results" / "figures" / "noise_curve.png"
         if noise_img.exists():
@@ -651,6 +607,27 @@ with tab_eval:
         else:
             st.info("Noise curve figure pending.")
 
+    gate_col1, gate_col2 = st.columns(2)
+    with gate_col1:
+        st.markdown("#### Dual-Gate Ablation Study")
+        ablation_file = PROJECT_ROOT / "experiments" / "results" / "midterm-sample" / "ablation.csv"
+        if not ablation_file.exists():
+            ablation_file = PROJECT_ROOT / "experiments" / "results" / "dev" / "ablation.csv"
+        if ablation_file.exists():
+            df_ab = pd.read_csv(ablation_file)
+            # Five short columns so the key counts stay visible in a half-width column.
+            compact_ab = pd.DataFrame({
+                "Gate": df_ab["rule"].str.replace("_", " "),
+                "Cosine ≥": df_ab["cosine_threshold"],
+                "Intent ≥": df_ab["intent_threshold"],
+                "Correct": df_ab["correct"].astype(int).astype(str) + "/" + df_ab["total"].astype(int).astype(str),
+                "OOC rejected": df_ab["ooc_rejected"].astype(int).astype(str) + "/"
+                + df_ab["ooc_total"].astype(int).astype(str),
+            })
+            show_table(compact_ab, caption=f"Empirical Ablation Across {n_bench} Benchmark Queries")
+        else:
+            st.info("Ablation file not found.")
+    with gate_col2:
         # This figure is the preliminary E6 sweep (146 dev queries): cosine gate only, word TF-IDF +
         # sublinear TF, dev split. The shipped dual-gate char_wb config is evidenced by the
         # "Dual-Gate Ablation Study" table, not by this curve.
@@ -669,8 +646,28 @@ with tab_eval:
         else:
             st.info("Threshold sweep figure pending.")
 
-        noise_curve_file = PROJECT_ROOT / "experiments" / "results" / "dev" / "noise_curve.csv"
-        if noise_curve_file.exists():
-            st.markdown("#### Noise Curve Raw Data (E3b)")
-            df_noise = pd.read_csv(noise_curve_file)
-            show_table(df_noise, caption="Noise Degradation Under Typographic Perturbations")
+    st.markdown("#### Operational Business Metrics & Segment Breakdown")
+    per_intent_file = PROJECT_ROOT / "experiments" / "results" / "business" / "per_intent_business.csv"
+    if per_intent_file.exists():
+        show_table(pd.read_csv(per_intent_file), caption="Operational Performance Breakdown by Intent & Query Type")
+    else:
+        st.info("Run `python experiments/business_metrics.py` to generate segment metrics.")
+
+    st.markdown("#### Cost Sensitivity Analysis across Penalty Ratios")
+    sensitivity_file = PROJECT_ROOT / "experiments" / "results" / "business" / "cost_sensitivity.csv"
+    if sensitivity_file.exists():
+        show_table(pd.read_csv(sensitivity_file), caption="Cost Sensitivity under 1:1, 3:1, 5:1, and 10:1 Penalty Ratios")
+    else:
+        st.info("Run `python experiments/business_metrics.py` to generate sensitivity table.")
+
+    st.markdown("#### 5-Fold Stratified Intent Cross-Validation (E5b)")
+    cv_file = PROJECT_ROOT / "experiments" / "results" / "dev" / "intent_cv.csv"
+    if cv_file.exists():
+        show_table(pd.read_csv(cv_file), caption="Stratified 5-Fold Intent Cross-Validation on 112 Documents")
+    else:
+        st.info("Intent CV results pending.")
+
+    noise_curve_file = PROJECT_ROOT / "experiments" / "results" / "dev" / "noise_curve.csv"
+    if noise_curve_file.exists():
+        with st.expander("Noise Curve Raw Data (E3b)"):
+            show_table(pd.read_csv(noise_curve_file), caption="Noise Degradation Under Typographic Perturbations")

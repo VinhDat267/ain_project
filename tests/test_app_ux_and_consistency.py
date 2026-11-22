@@ -166,3 +166,18 @@ def test_no_indented_html_code_blocks_in_app():
                 assert not line.startswith("    "), f"4-space indented line inside HTML block: {line}"
 
 
+
+
+def test_dashboard_tables_render_cleanly():
+    """Dashboard tables: no leaked tag text, no NaN, and KPIs without green 'improvement' arrows."""
+    app = AppTest.from_file(str(Path(student_core.__file__).with_name("app.py")), default_timeout=30).run()
+    assert not app.exception
+
+    tables = [item.value for item in app.markdown if "orca-table-wrap" in item.value]
+    assert len(tables) >= 5, "expected the ablation, business, cost, CV and noise tables"
+    for markup in tables:
+        assert "</caption> border=" not in markup and "</caption>\nborder=" not in markup
+        assert "NaN" not in markup
+
+    assert len(app.metric) == 8
+    assert all(not metric.delta for metric in app.metric)

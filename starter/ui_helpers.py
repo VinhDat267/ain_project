@@ -228,6 +228,36 @@ def clean_html(raw: str) -> str:
     return "\n".join(line.strip() for line in raw.splitlines() if line.strip())
 
 
+def _format_cell_number(value: float) -> str:
+    """Up to 4 decimals without trailing zeros: 0.866667 -> 0.8667, 10.0 -> 10."""
+    return f"{value:,.4f}".rstrip("0").rstrip(".")
+
+
+def table_html(df: Any, caption: str = "Data Table") -> str:
+    """Return an accessible HTML table for st.markdown(..., unsafe_allow_html=True).
+
+    The caption is inserted right after the opening ``<table ...>`` tag (the old
+    code replaced ``"<table"`` and left ``border="0" class="dataframe ...">``
+    visible as text). Missing values render as an em dash, and the wrapper
+    scrolls horizontally so a wide table never spills into a neighbouring column.
+    Cell values and the caption are HTML-escaped.
+    """
+    # "total_queries" -> "total queries" so long headers can wrap instead of widening the table.
+    df = df.rename(columns=lambda name: str(name).replace("_", " "))
+    raw = df.to_html(
+        index=False,
+        classes="orca-table",
+        border=0,
+        na_rep="—",
+        float_format=_format_cell_number,
+        escape=True,
+    )
+    open_end = raw.index(">", raw.index("<table")) + 1
+    opening = '<table role="table" class="dataframe orca-table">'
+    caption_html = f'<caption class="orca-table-caption">{html.escape(caption)}</caption>'
+    return f'<div class="orca-table-wrap">{opening}{caption_html}{raw[open_end:]}</div>'
+
+
 def highlight_matched_terms_html(text: str, query: str) -> str:
     """Escape HTML and wrap matched query terms in <mark> tags.
 

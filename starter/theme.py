@@ -473,6 +473,43 @@ table.orca-table td {
     color: #2d2c2a;
 }
 
+/* Wide tables scroll inside their own box instead of spilling into the next column */
+.orca-table-wrap {
+    max-width: 100%;
+    overflow-x: auto;
+    margin: 0.75rem 0;
+}
+
+.orca-table-wrap table.orca-table {
+    margin: 0;
+}
+
+.orca-table-wrap table.orca-table {
+    font-size: 0.8125rem;
+}
+
+.orca-table-wrap table.orca-table th,
+.orca-table-wrap table.orca-table td {
+    padding: 0.45rem 0.55rem;
+}
+
+.orca-table-wrap table.orca-table td {
+    white-space: nowrap;
+}
+
+.orca-table-wrap table.orca-table th {
+    vertical-align: bottom;
+}
+
+caption.orca-table-caption {
+    caption-side: top;
+    font-weight: 600;
+    text-align: left;
+    padding: 6px 0;
+    font-size: 0.9rem;
+    color: #5e5d59;
+}
+
 /* Reduced Motion Discipline (WCAG 2.2 SC 2.3.3) */
 @media (prefers-reduced-motion: reduce) {
     *, ::before, ::after {
