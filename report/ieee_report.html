@@ -6,23 +6,23 @@
     <style>
         @page {
             size: A4;
-            margin: 16mm 14mm 18mm 14mm;
+            margin: 15mm 14mm 16mm 14mm;
         }
         body {
             font-family: 'Times New Roman', Times, serif;
             font-size: 9.5pt;
-            line-height: 1.22;
+            line-height: 1.24;
             color: #000;
             background: #fff;
             margin: 0;
-            padding: 15px;
+            padding: 12px;
         }
         .header-section {
             text-align: center;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
         h1.title {
-            font-size: 17pt;
+            font-size: 16.5pt;
             font-weight: bold;
             margin-bottom: 6px;
             line-height: 1.18;
@@ -35,12 +35,12 @@
         .affiliations {
             font-size: 8.5pt;
             font-style: italic;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             color: #333;
         }
         .abstract-keywords-container {
             width: 94%;
-            margin: 0 auto 14px auto;
+            margin: 0 auto 12px auto;
             text-align: justify;
         }
         .abstract-heading, .keywords-heading {
@@ -49,7 +49,7 @@
         }
         .two-column-layout {
             column-count: 2;
-            column-gap: 20px;
+            column-gap: 18px;
             text-align: justify;
         }
         h2.section-title {
@@ -57,7 +57,7 @@
             font-weight: bold;
             text-transform: uppercase;
             text-align: center;
-            margin-top: 12px;
+            margin-top: 11px;
             margin-bottom: 5px;
             break-after: avoid;
         }
@@ -80,8 +80,18 @@
         .equation {
             text-align: center;
             margin: 5px 0;
-            font-style: italic;
-            font-size: 9pt;
+            font-size: 8.5pt;
+            break-inside: avoid;
+        }
+        math[display="block"] {
+            font-size: 8pt;
+            margin: 4px 0;
+            max-width: 100%;
+            overflow: visible;
+        }
+        tt, code {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 8.2pt;
         }
         table {
             width: 100%;
@@ -109,7 +119,7 @@
         }
         .figure-box {
             text-align: center;
-            margin: 8px 0;
+            margin: 7px 0;
             break-inside: avoid;
         }
         .figure-box img {
@@ -144,13 +154,13 @@
     <div class="authors">Viet-Anh Luong, Dat-Vinh Nguyen, and Anh-Duong Nguyen</div>
     <div class="affiliations">
         Faculty of Information Technology, Hanoi University (HANU), Hanoi, Vietnam<br>
-        CS50 AI Capstone Project &mdash; Group 12 (Campus Notice and FAQ Assistant)
+        AIN / CS50 AI Course Project &mdash; Group 12 (Campus Notice and FAQ Assistant)
     </div>
 </div>
 
 <div class="abstract-keywords-container">
     <p class="no-indent">
-        <span class="abstract-heading">Abstract</span>&mdash; Automated question-answering systems deployed within university administrative portals must adhere to strict regulatory standards: responses concerning graduation requirements, tuition deadlines, course registration, and examination policies must be deterministic, auditable, and entirely free of hallucinations. Furthermore, such systems must operate with sub-2 ms latency on commodity CPU hardware while reliably rejecting out-of-corpus (OOC) or adversarial queries. In this work, we present an end-to-end, classical Vector Space Model (VSM) integrated with a supervised discriminative intent classifier and a dual-gate abstention pipeline. By systematically evaluating token representations across word and character $n$-grams within word boundaries (<tt>char_wb (3,5)</tt>), sublinear term frequency scaling ($1+\ln(tf)$), smooth inverse document frequency, and $L_2$ spherical normalization, our system achieves an overall Mean Reciprocal Rank (MRR) of 0.943 and an Intent Classification Accuracy of 97.1% (102/105) on the official 120-query benchmark. Under controlled typographic noise injections (0 to 3 transposition typos), <tt>char_wb (3,5)</tt> exhibits remarkable resilience, maintaining 1.000 Hit@1 where traditional word-level models collapse to 0.837. To prevent false positives on deceptive campus-related out-of-corpus queries, we enforce a conjunctive dual-gate bounding cosine similarity ($T_{\text{sim}} \ge 0.15$) and calibrated intent posterior confidence ($T_{\text{intent}} \ge 0.34$), rejecting 100% (15/15) of out-of-corpus queries and achieving 90.0% (108/120) end-to-end accuracy. The entire architecture executes in $1.4\text{ ms}$ on a standard CPU with an explicit linear feature-attribution mechanism, establishing a robust, zero-cost production baseline for regulatory compliance.
+        <span class="abstract-heading">Abstract</span>&mdash; Automated question-answering systems deployed within university administrative portals must adhere to strict regulatory standards: responses concerning graduation requirements, tuition deadlines, course registration, and examination policies must be deterministic, auditable, and free of generative hallucinations. Furthermore, such systems must operate with low CPU latency while reliably rejecting out-of-corpus (OOC) queries. In this work, we present an end-to-end, classical Vector Space Model (VSM) implemented from first principles in NumPy alongside a supervised discriminative intent classifier and a dual-gate abstention pipeline. Evaluating a fixed sample configuration using word-bounded character <i>n</i>-grams (<tt>char_wb (3,5)</tt>), sublinear term frequency scaling (1 + ln(<i>tf</i>)), smooth inverse document frequency, and <i>L</i><sub>2</sub> normalization, our system achieves a full Mean Reciprocal Rank (MRR) of 0.943 and an Intent Classification Accuracy of 97.1% (102/105) on the course's 120-query benchmark (where all 35 normal queries overlap training questions), complemented by 87.6% accuracy (0.872 Macro-F1) in 5-fold stratified cross-validation across the 112 corpus documents. Under controlled typographic noise injections (0 to 3 adjacent character transpositions on 49 dev queries), <tt>char_wb (3,5)</tt> maintains 1.000 Hit@1 at <i>k</i> = 0, 1, 3 and 0.959 at <i>k</i> = 2, whereas word-level TF-IDF drops to 0.837 at <i>k</i> = 3. To block deceptive campus-related out-of-corpus queries, a conjunctive dual-gate enforces cosine similarity (<i>T</i><sub>sim</sub> &ge; 0.15) and intent posterior confidence (<i>T</i><sub>intent</sub> &ge; 0.34), rejecting 100% (15/15) of OOC queries, delivering 96.2% (101/105) Top-3 resolution (98.1% raw ranking Hit@3), and reaching 90.0% (108/120) end-to-end accuracy with 1.4 ms mean warm-query latency and an explicit linear feature-attribution mechanism.
     </p>
     <p class="no-indent">
         <span class="keywords-heading">Keywords</span>&mdash; Information Retrieval, Vector Space Model, TF-IDF, Character N-Grams, Dual-Gate Abstention, Intent Classification, University Administration QA, Explainable AI.
@@ -161,117 +171,259 @@
 
     <h2 class="section-title">I. Introduction</h2>
     <p>
-        Academic administration in higher education relies on rigorously codified sets of academic rules governing course registration, tuition deadlines, degree completion, and disciplinary procedures. Deploying conversational AI to assist students with administrative inquiries has become an institutional priority. However, contemporary Large Language Model (LLM) architectures and unconstrained generative pipelines introduce critical vulnerabilities in administrative contexts:
+        Academic administration in higher education relies on rigorously codified sets of academic rules governing course registration, tuition deadlines, degree completion, and examination procedures. Deploying conversational search to assist students with administrative inquiries has become an institutional priority. However, contemporary Large Language Model (LLM) architectures and unconstrained generative pipelines introduce critical vulnerabilities in administrative contexts:
     </p>
     <p>
-        1) <em>Stochastic Hallucination:</em> LLMs frequently generate subtly inaccurate deadline dates, graduation criteria, or refund policies. In academic governance, providing incorrect regulatory advice creates severe financial and legal liabilities for both the institution and the student.
+        1) <em>Stochastic Hallucination:</em> LLMs can generate subtly inaccurate deadline dates, graduation criteria, or refund policies. In academic governance, providing incorrect regulatory advice creates financial and administrative risks for both the institution and the student.
     </p>
     <p>
-        2) <em>Computational Latency and Infrastructure Overhead:</em> Generative Transformer decoders typically incur response latencies between $1,000\text{ ms}$ and $4,000\text{ ms}$, requiring dedicated GPU accelerators or recurring cloud API costs.
+        2) <em>Computational Latency and Infrastructure Overhead:</em> Generative Transformer decoders typically incur response latencies of 1,000&ndash;4,000 ms and require dedicated GPU accelerators or recurring cloud API costs.
     </p>
     <p>
-        3) <em>Opaque Decision Logic:</em> Deep neural models function as non-interpretable black boxes, preventing administrators from verifying the exact tokens that triggered a particular answer.
+        3) <em>Opaque Decision Logic:</em> Deep neural models function as non-interpretable black boxes, making it difficult for administrators to audit the exact tokens that triggered a particular answer.
     </p>
     <p>
-        4) <em>Vulnerability to Out-of-Corpus Queries:</em> Dense semantic spaces suffer from geometric anisotropy, where irrelevant queries (e.g., reserving tennis courts or ordering food) map into high cosine similarity scores ($> 0.65$), producing hallucinated or misleading answers.
+        4) <em>Vulnerability to Out-of-Corpus Queries:</em> Dense semantic spaces can suffer from geometric anisotropy, where irrelevant queries (e.g., reserving recreational equipment or ordering food) still map to elevated similarity scores, producing misleading answers without an explicit rejection gate.
     </p>
     <p>
-        To solve these issues, we propose <strong>Project 12 (Campus FAQ Assistant)</strong>: an end-to-end, classical retrieval and intent classification system built from first principles. We prove that a carefully engineered Sparse Vector Space Model utilizing character $n$-grams within word boundaries (<tt>char_wb 3-5</tt>) coupled with a dual-gate abstention mechanism delivers zero-hallucination, 100% deterministic, sub-2 ms responses on standard CPU hardware.
+        To address these constraints without commercial LLM APIs, we implement <strong>Project 12 (Campus Notice and FAQ Assistant)</strong>: a classical retrieval and intent classification pipeline built on a synthetic 112-document Hanoi University (HANU) educational corpus. Our Sparse Vector Space Model with word-bounded character <i>n</i>-grams (<tt>char_wb 3&ndash;5</tt>) and a conjunctive dual-gate abstention rule delivers deterministic, zero-hallucination, sub-2 ms warm responses on standard CPU hardware.
     </p>
 
     <h2 class="section-title">II. Related Work</h2>
     <p>
-        <em>Vector Space Models (VSM):</em> Salton, Wong, and Yang (1975) formalized the projection of textual documents and queries into Euclidean vector spaces weighted by Term Frequency-Inverse Document Frequency (TF-IDF) [1]. Robertson et al. (1994) introduced Okapi BM25 to prevent term frequency saturation and normalize for document length variations [2]. While BM25 excels at general ad-hoc web search, its unbounded score spectrum complicates the selection of a universal abstention threshold.
+        <em>Vector Space Models (VSM):</em> Salton, Wong, and Yang (1975) formalized projecting documents and queries into vector spaces weighted by Term Frequency&ndash;Inverse Document Frequency (TF-IDF) [1]. Robertson et al. (1994) introduced Okapi BM25 to saturate term frequencies and normalize document length [2]. While BM25 excels at ad-hoc ranking, its unbounded score spectrum complicates setting a global abstention threshold, whereas <i>L</i><sub>2</sub>-normalized cosine similarity remains bounded in [0, 1].
     </p>
     <p>
-        <em>Subword Tokenization & Typographic Resilience:</em> Word-level models treat misspelled tokens as Out-Of-Vocabulary (OOV). Bojanowski et al. (2017) demonstrated that breaking words into character $n$-grams preserves morphological roots [3]. We adapt this concept into pure sparse linear algebra via character $n$-grams within word boundaries (<tt>char_wb</tt>).
+        <em>Subword Tokenization &amp; Typographic Resilience:</em> Word-level models treat misspelled tokens as Out-Of-Vocabulary (OOV). Bojanowski et al. (2017) demonstrated that subword character <i>n</i>-grams preserve morphological stems [3]. We apply this principle in sparse TF-IDF via character <i>n</i>-grams padded within word boundaries (<tt>char_wb</tt>).
     </p>
     <p>
-        <em>Selective Classification:</em> Geifman and El-Yaniv (2017) formulated selective classification where models abstain when confidence is below a risk tolerance [4]. Our architecture extends this concept to dual-task information retrieval and intent routing via a coupled geometric-probabilistic gate.
+        <em>Selective Classification:</em> Geifman and El-Yaniv (2017) formulated selective prediction where models abstain below a confidence threshold [4]. Our system couples a geometric similarity floor with a probabilistic intent gate to handle deceptive OOC inputs.
     </p>
 
     <h2 class="section-title">III. Methodology and System Architecture</h2>
-    
+
     <h3 class="subsection-title">A. Sparse Vector Space Feature Engineering</h3>
     <p>
-        The official knowledge base $D = \{d_1, d_2, \dots, d_N\}$ contains $N = 112$ official university documents (84 FAQ entries and 28 announcements) uniformly distributed across seven core administrative intents:
+        The synthetic knowledge base <i>D</i> = {<i>d</i><sub>1</sub>, <i>d</i><sub>2</sub>, &hellip;, <i>d</i><sub><i>N</i></sub>} contains <i>N</i> = 112 university documents (84 FAQ entries and 28 notices) uniformly distributed across seven administrative intents:
     </p>
     <div class="equation">
-        $$\mathcal{I} = \{\text{course\_reg}, \text{exam}, \text{tuition}, \text{schedule}, \text{services}, \text{graduation}, \text{tech\_support}\}$$
+        <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+            <mtable columnalign="center">
+                <mtr>
+                    <mtd>
+                        <mi mathvariant="script">I</mi>
+                        <mo>=</mo>
+                        <mo>{</mo>
+                        <mtext>course_reg</mtext><mo>,</mo><mspace width="0.2em"/>
+                        <mtext>exam</mtext><mo>,</mo><mspace width="0.2em"/>
+                        <mtext>tuition</mtext><mo>,</mo><mspace width="0.2em"/>
+                        <mtext>schedule</mtext><mo>,</mo>
+                    </mtd>
+                </mtr>
+                <mtr>
+                    <mtd>
+                        <mtext>services</mtext><mo>,</mo><mspace width="0.2em"/>
+                        <mtext>graduation</mtext><mo>,</mo><mspace width="0.2em"/>
+                        <mtext>tech_support</mtext>
+                        <mo>}</mo>
+                    </mtd>
+                </mtr>
+            </mtable>
+        </math>
     </div>
     <p>
-        In our primary retrieval engine, queries and documents are padded with boundary delimiters and decomposed into character $n$-grams of length $n \in [3, 5]$:
+        In our primary retrieval engine (<tt>starter/retrieval.py</tt>), words are padded with spaces and decomposed into character <i>n</i>-grams of length <i>n</i> &isin; [3, 5] (<tt>char_wb</tt>):
     </p>
     <div class="equation">
-        $$\phi(t) \in \mathcal{V}_{\text{char\_wb}}, \quad |\mathcal{V}_{\text{char\_wb}}| = 8,398 \quad (|\mathcal{V}_{\text{word(1,2)}}| = 3,210, \; |\mathcal{V}_{\text{word(1,1)}}| = 845)$$
+        <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+            <mtable columnalign="center">
+                <mtr>
+                    <mtd>
+                        <mi>&phi;</mi><mo>(</mo><mi>t</mi><mo>)</mo><mo>&isin;</mo>
+                        <msub><mi mathvariant="script">V</mi><mtext>char_wb</mtext></msub>
+                        <mo>,</mo><mspace width="0.4em"/>
+                        <mo>|</mo><msub><mi mathvariant="script">V</mi><mtext>char_wb</mtext></msub><mo>|</mo>
+                        <mo>=</mo><mn>8,398</mn>
+                    </mtd>
+                </mtr>
+                <mtr>
+                    <mtd>
+                        <mo>(</mo>
+                        <mo>|</mo><msub><mi mathvariant="script">V</mi><mtext>word(1,2)</mtext></msub><mo>|</mo><mo>=</mo><mn>3,210</mn><mo>,</mo><mspace width="0.4em"/>
+                        <mo>|</mo><msub><mi mathvariant="script">V</mi><mtext>word(1,1)</mtext></msub><mo>|</mo><mo>=</mo><mn>845</mn>
+                        <mo>)</mo>
+                    </mtd>
+                </mtr>
+            </mtable>
+        </math>
     </div>
     <p>
-        To prevent repetitive words from dominating the dot product, we implement sublinear logarithmic term frequency scaling:
+        To dampen repetitive term dominance, we apply sublinear logarithmic term frequency scaling:
     </p>
     <div class="equation">
-        $$\text{TF}(t, d) = \begin{cases} 1 + \ln(\text{count}(t, d)) & \text{if } \text{count}(t, d) > 0 \\ 0 & \text{otherwise} \end{cases}$$
+        <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+            <mrow>
+                <mtext>TF</mtext><mo>(</mo><mi>t</mi><mo>,</mo><mi>d</mi><mo>)</mo>
+                <mo>=</mo>
+                <mrow>
+                    <mo>{</mo>
+                    <mtable columnalign="left left">
+                        <mtr>
+                            <mtd><mn>1</mn><mo>+</mo><mi>ln</mi><mo>(</mo><mtext>count</mtext><mo>(</mo><mi>t</mi><mo>,</mo><mi>d</mi><mo>)</mo><mo>)</mo></mtd>
+                            <mtd><mtext>if</mtext><mspace width="0.3em"/><mtext>count</mtext><mo>(</mo><mi>t</mi><mo>,</mo><mi>d</mi><mo>)</mo><mo>&gt;</mo><mn>0</mn></mtd>
+                        </mtr>
+                        <mtr>
+                            <mtd><mn>0</mn></mtd>
+                            <mtd><mtext>otherwise</mtext></mtd>
+                        </mtr>
+                    </mtable>
+                </mrow>
+            </mrow>
+        </math>
     </div>
     <p>
-        Smooth Inverse Document Frequency (IDF) is calculated across the $N = 112$ documents to penalize non-informative, ubiquitous terms:
+        Smooth Inverse Document Frequency (IDF) is computed across the <i>N</i> = 112 documents (matching <tt>scikit-learn</tt> for cross-verification while implemented purely in NumPy):
     </p>
     <div class="equation">
-        $$\text{IDF}(t, D) = \ln\left( \frac{1 + |D|}{1 + |\{d \in D : t \in d\}|} \right) + 1.0$$
+        <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+            <mrow>
+                <mtext>IDF</mtext><mo>(</mo><mi>t</mi><mo>,</mo><mi>D</mi><mo>)</mo>
+                <mo>=</mo>
+                <mi>ln</mi>
+                <mo>(</mo>
+                <mfrac>
+                    <mrow><mn>1</mn><mo>+</mo><mo>|</mo><mi>D</mi><mo>|</mo></mrow>
+                    <mrow><mn>1</mn><mo>+</mo><mo>|</mo><mo>{</mo><mi>d</mi><mo>&isin;</mo><mi>D</mi><mo>:</mo><mi>t</mi><mo>&isin;</mo><mi>d</mi><mo>}</mo><mo>|</mo></mrow>
+                </mfrac>
+                <mo>)</mo>
+                <mo>+</mo><mn>1.0</mn>
+            </mrow>
+        </math>
     </div>
     <p>
-        Each document vector and query vector is normalized onto the Euclidean unit sphere via $L_2$-normalization:
+        Each document and query vector is projected onto the unit sphere via <i>L</i><sub>2</sub>-normalization:
     </p>
     <div class="equation">
-        $$\hat{v} = \frac{\vec{v}}{\|\vec{v}\|_2} = \frac{\vec{v}}{\sqrt{\sum_{k=1}^{|\mathcal{V}|} v_k^2}}$$
+        <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+            <mrow>
+                <mover><mi>v</mi><mo>^</mo></mover>
+                <mo>=</mo>
+                <mfrac>
+                    <mover><mi>v</mi><mo>&rarr;</mo></mover>
+                    <mrow><mo>&parallel;</mo><mover><mi>v</mi><mo>&rarr;</mo></mover><msub><mo>&parallel;</mo><mn>2</mn></msub></mrow>
+                </mfrac>
+                <mo>=</mo>
+                <mfrac>
+                    <mover><mi>v</mi><mo>&rarr;</mo></mover>
+                    <msqrt><munderover><mo>&sum;</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mrow><mo>|</mo><mi mathvariant="script">V</mi><mo>|</mo></mrow></munderover><msubsup><mi>v</mi><mi>k</mi><mn>2</mn></msubsup></msqrt>
+                </mfrac>
+            </mrow>
+        </math>
     </div>
     <p>
-        The retrieval relevance score between a user query $q$ and document $d_i$ simplifies to the cosine of the angle between unit vectors:
+        Retrieval relevance between query <i>q</i> and document <i>d</i><sub><i>i</i></sub> reduces to the dot product of unit vectors:
     </p>
     <div class="equation">
-        $$\text{Sim}(q, d_i) = \hat{q} \cdot \hat{d}_i = \sum_{k \in q \cap d_i} \hat{q}_k \cdot \hat{d}_{i,k}$$
+        <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+            <mrow>
+                <mtext>Sim</mtext><mo>(</mo><mi>q</mi><mo>,</mo><msub><mi>d</mi><mi>i</mi></msub><mo>)</mo>
+                <mo>=</mo>
+                <mover><mi>q</mi><mo>^</mo></mover><mo>&sdot;</mo><msub><mover><mi>d</mi><mo>^</mo></mover><mi>i</mi></msub>
+                <mo>=</mo>
+                <munder><mo>&sum;</mo><mrow><mi>k</mi><mo>&isin;</mo><mi>q</mi><mo>&cap;</mo><msub><mi>d</mi><mi>i</mi></msub></mrow></munder>
+                <msub><mover><mi>q</mi><mo>^</mo></mover><mi>k</mi></msub><mo>&sdot;</mo><msub><mover><mi>d</mi><mo>^</mo></mover><mrow><mi>i</mi><mo>,</mo><mi>k</mi></mrow></msub>
+            </mrow>
+        </math>
     </div>
 
     <h3 class="subsection-title">B. Feature Attribution and Linear Explainability</h3>
     <p>
-        Because the retrieval score is an exact dot product between non-negative unit vectors, the score decomposes strictly into additive feature contributions. For any returned document $d_i$, we define the percentage attribution of subword token $k$ as:
+        Because retrieval relevance is an exact dot product between non-negative unit vectors, the cosine score decomposes additively across overlapping features. Through <tt>retriever.explain(query, doc_id)</tt>, the score contribution of each subword token <i>k</i> is computed directly and sums exactly to <tt>Sim(<i>q</i>, <i>d<sub>i</sub></i>)</tt> (with optional normalization to percentage shares):
     </p>
     <div class="equation">
-        $$\text{Contribution}(k) = \frac{\hat{q}_k \cdot \hat{d}_{i,k}}{\sum_{j} \hat{q}_j \cdot \hat{d}_{i,j}} \times 100\%$$
+        <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+            <mrow>
+                <mtext>Contrib</mtext><mo>(</mo><mi>k</mi><mo>)</mo>
+                <mo>=</mo>
+                <msub><mover><mi>q</mi><mo>^</mo></mover><mi>k</mi></msub><mo>&sdot;</mo><msub><mover><mi>d</mi><mo>^</mo></mover><mrow><mi>i</mi><mo>,</mo><mi>k</mi></mrow></msub>
+                <mo>,</mo><mspace width="0.6em"/>
+                <mtext>Share</mtext><mo>(</mo><mi>k</mi><mo>)</mo>
+                <mo>=</mo>
+                <mfrac>
+                    <mrow><msub><mover><mi>q</mi><mo>^</mo></mover><mi>k</mi></msub><mo>&sdot;</mo><msub><mover><mi>d</mi><mo>^</mo></mover><mrow><mi>i</mi><mo>,</mo><mi>k</mi></mrow></msub></mrow>
+                    <mrow><munder><mo>&sum;</mo><mi>j</mi></munder><msub><mover><mi>q</mi><mo>^</mo></mover><mi>j</mi></msub><mo>&sdot;</mo><msub><mover><mi>d</mi><mo>^</mo></mover><mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow></msub></mrow>
+                </mfrac>
+                <mo>&times;</mo><mn>100</mn><mo>%</mo>
+            </mrow>
+        </math>
     </div>
     <p>
-        This guarantees 100% auditable interpretability: the user interface displays exact token contributions (e.g., <tt>'hold'</tt>: 28.4%, <tt>'tuition'</tt>: 21.1%) for institutional verification.
+        In Research &amp; Inspector Mode, the interface renders the top overlapping word/subword <i>n</i>-grams alongside their raw additive cosine contribution scores, guaranteeing complete auditability for every returned passage.
     </p>
 
-    <h3 class="subsection-title">C. Intent Classification & Posterior Calibration</h3>
+    <h3 class="subsection-title">C. Intent Classification &amp; Posterior Calibration</h3>
     <p>
-        Simultaneously, the query is routed to a supervised classifier predicting intent label $y \in \{1, \dots, 7\}$. We train multinomial Logistic Regression ($C=10$, $L_2$ regularization) on 231 synthetic samples (112 full texts, 112 question titles, and 7 intent descriptions). Posterior probabilities are calibrated via softmax:
+        Simultaneously, the query is passed to a supervised classifier (<tt>starter/intent.py</tt>) predicting one of the 7 intents. We train Multinomial Logistic Regression (<i>C</i> = 10, <i>L</i><sub>2</sub> regularization, <tt>max_iter=2000</tt>) over sublinear word unigram TF-IDF features using 231 training entries constructed from the 112 documents (112 full texts + 112 questions/titles) plus the 7 intent descriptions from <tt>data/intents.csv</tt>:
     </p>
     <div class="equation">
-        $$P(y = c \mid \vec{x}) = \frac{\exp(\vec{w}_c^\top \vec{x} + b_c)}{\sum_{j=1}^7 \exp(\vec{w}_j^\top \vec{x} + b_j)}$$
+        <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+            <mrow>
+                <mi>P</mi><mo>(</mo><mi>y</mi><mo>=</mo><mi>c</mi><mo>&mid;</mo><mover><mi>x</mi><mo>&rarr;</mo></mover><mo>)</mo>
+                <mo>=</mo>
+                <mfrac>
+                    <mrow><mi>exp</mi><mo>(</mo><msubsup><mover><mi>w</mi><mo>&rarr;</mo></mover><mi>c</mi><mi>&top;</mi></msubsup><mover><mi>x</mi><mo>&rarr;</mo></mover><mo>+</mo><msub><mi>b</mi><mi>c</mi></msub><mo>)</mo></mrow>
+                    <mrow><munderover><mo>&sum;</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mn>7</mn></munderover><mi>exp</mi><mo>(</mo><msubsup><mover><mi>w</mi><mo>&rarr;</mo></mover><mi>j</mi><mi>&top;</mi></msubsup><mover><mi>x</mi><mo>&rarr;</mo></mover><mo>+</mo><msub><mi>b</mi><mi>j</mi></msub><mo>)</mo></mrow>
+                </mfrac>
+            </mrow>
+        </math>
     </div>
 
     <h3 class="subsection-title">D. Dual-Gate Abstention Architecture</h3>
     <p>
-        To defend against deceptive out-of-corpus queries containing campus keywords (e.g., "Can I park my helicopter on campus?"), the system enforces a conjunctive dual-gate:
+        To defend against out-of-corpus queries containing shared campus keywords (e.g., &ldquo;campus&rdquo;, &ldquo;university&rdquo;, &ldquo;dorm&rdquo;), <tt>student_core.retrieve()</tt> enforces a conjunctive dual-gate:
     </p>
     <div class="equation">
-        $$\text{Action}(q) = \begin{cases} 
-        \text{Answer}(d^*) & \text{if } \max_d \text{Sim}(q, d) \ge T_{\text{sim}} \;\land\; \max_c P(c \mid q) \ge T_{\text{intent}} \\ 
-        \text{Abstain } ([]) & \text{otherwise} 
-        \end{cases}$$
+        <math display="block" xmlns="http://www.w3.org/1998/Math/MathML" style="font-size: 7.6pt;">
+            <mrow>
+                <mtext>Action</mtext><mo>(</mo><mi>q</mi><mo>)</mo>
+                <mo>=</mo>
+                <mrow>
+                    <mo>{</mo>
+                    <mtable columnalign="left left">
+                        <mtr>
+                            <mtd><mtext>Top-</mtext><mi>k</mi><mo>(</mo><mi>q</mi><mo>)</mo></mtd>
+                            <mtd>
+                                <mtable columnalign="left">
+                                    <mtr><mtd><mtext>if</mtext><mspace width="0.25em"/><munder><mi>max</mi><mi>d</mi></munder><mspace width="0.2em"/><mtext>Sim</mtext><mo>(</mo><mi>q</mi><mo>,</mo><mi>d</mi><mo>)</mo><mo>&ge;</mo><msub><mi>T</mi><mtext>sim</mtext></msub></mtd></mtr>
+                                    <mtr><mtd><mo>&and;</mo><mspace width="0.2em"/><munder><mi>max</mi><mi>c</mi></munder><mspace width="0.2em"/><mi>P</mi><mo>(</mo><mi>c</mi><mo>&mid;</mo><mi>q</mi><mo>)</mo><mo>&ge;</mo><msub><mi>T</mi><mtext>intent</mtext></msub></mtd></mtr>
+                                </mtable>
+                            </mtd>
+                        </mtr>
+                        <mtr>
+                            <mtd><mtext>Abstain</mtext><mspace width="0.2em"/><mo>(</mo><mo>[</mo><mo>]</mo><mo>)</mo></mtd>
+                            <mtd><mtext>otherwise</mtext></mtd>
+                        </mtr>
+                    </mtable>
+                </mrow>
+            </mrow>
+        </math>
     </div>
     <p>
-        where $T_{\text{sim}} = 0.15$ and $T_{\text{intent}} = 0.34$. Queries matching common campus terms surpass $T_{\text{sim}}$, but fail $T_{\text{intent}}$ due to a flat posterior distribution, triggering safe abstention.
+        where <i>T</i><sub>sim</sub> = 0.15 and <i>T</i><sub>intent</sub> = 0.34. Deceptive OOC prompts that clear <i>T</i><sub>sim</sub> due to surface terms yield diffuse intent posteriors below <i>T</i><sub>intent</sub> and are safely rejected.
     </p>
 
     <h2 class="section-title">IV. Experimental Evaluation</h2>
 
     <h3 class="subsection-title">A. Benchmark Performance (120 Queries)</h3>
     <p>
-        The official benchmark consists of 120 queries partitioned into Normal ($n=35$), Typo ($n=35$), Paraphrase ($n=35$), and Out-of-Corpus ($n=15$).
+        The course benchmark (<tt>data/queries_test.csv</tt>) comprises 120 queries partitioned into Normal (<i>n</i> = 35), Typo (<i>n</i> = 35), Paraphrase (<i>n</i> = 35), and Out-of-Corpus (<i>n</i> = 15).
+    </p>
+    <p>
+        <em>Methodological Scope &amp; Transparency:</em> Table I reports a <strong>fixed-configuration reproduction</strong> (<tt>scripts/evaluate.py</tt> &rarr; <tt>experiments/results/midterm-sample/</tt>) integrated from the team's algorithm study on the previously inspected benchmark, rather than an untouched blind-test or cross-validation estimate. Furthermore, all 35 Normal queries match FAQ questions present in the 231-row intent training set (derived from the 112 documents + 7 intent descriptions, not 231 independent documents). Consequently, non-overlapping generalization is evaluated independently via 5-fold Stratified CV (Table IV) and Leave-One-Document-Out (LODO) evaluation on the 146-query dev split. Full MRR (0.943) assigns 1/11 when the target appears at rank 11 (<i>q</i><sub>056</sub>), whereas cutoff MRR@10 is 0.942.
     </p>
 
     <table>
-        <caption>Table I: Benchmark Results Across Query Types (120 Queries)</caption>
+        <caption>Table I: Fixed-Configuration Benchmark Across Query Types (120 Queries)</caption>
         <thead>
             <tr>
                 <th>Query Type</th>
@@ -340,12 +492,12 @@
     </table>
 
     <p>
-        On Normal and Typo partitions, the system achieves perfect 1.000 Hit@1 and MRR. Across all in-corpus queries, Hit@3 reaches 98.1% (103/105), ensuring that relevant FAQ passages are captured in the top-3 interface cards.
+        On Normal and Typo partitions, the system achieves 1.000 Hit@1 and MRR. Across all 105 in-corpus queries, raw pre-gate Hit@3 reaches 98.1% (103/105), and 96.2% (101/105) are actually answered with the correct document inside the Top-3 interface cards after gating.
     </p>
 
     <h3 class="subsection-title">B. Dual-Gate Ablation Analysis</h3>
     <p>
-        Table II provides empirical validation of the dual-gate abstention mechanism on the 120 benchmark queries.
+        Table II isolates the effect of each gate on the 120 benchmark queries (<tt>midterm-sample/ablation.csv</tt>).
     </p>
 
     <table>
@@ -353,8 +505,8 @@
         <thead>
             <tr>
                 <th>Ablation Rule</th>
-                <th>$T_{\text{sim}}$</th>
-                <th>$T_{\text{intent}}$</th>
+                <th><i>T</i><sub>sim</sub></th>
+                <th><i>T</i><sub>intent</sub></th>
                 <th>Correct Total</th>
                 <th>OOC Rejected</th>
                 <th>OOC Rejection Rate</th>
@@ -397,20 +549,20 @@
     </table>
 
     <div class="figure-box">
-        <img src="../experiments/results/figures/intent_confusion.png" alt="Intent Confusion Matrix">
-        <div class="figure-caption">Fig. 1. 7x7 Intent Confusion Matrix across 105 in-corpus benchmark queries (102/105 correct, 97.1% accuracy).</div>
+        <img src="../experiments/results/figures/intent_confusion.png" alt="7x7 Intent Confusion Matrix">
+        <div class="figure-caption">Fig. 1. 7&times;7 Intent Confusion Matrix across 105 in-corpus benchmark queries (102/105 correct, 97.1% accuracy).</div>
     </div>
 
     <h3 class="subsection-title">C. Typographic Noise Degradation Curve (E3b)</h3>
     <p>
-        To test robustness against user typos, we performed controlled perturbation injections by swapping adjacent characters $k \in \{0, 1, 2, 3\}$ times per query across 49 dev queries.
+        To measure robustness under heavier noise than the single-swap benchmark typos, we injected <i>k</i> &isin; {0, 1, 2, 3} adjacent character transpositions across 49 normal dev queries (<tt>experiments/noise_curve.py</tt>).
     </p>
 
     <table>
         <caption>Table III: Noise Degradation Under Typographic Perturbations (E3b)</caption>
         <thead>
             <tr>
-                <th>Perturbation ($k$)</th>
+                <th>Perturbation (<i>k</i>)</th>
                 <th>Word Hit@1</th>
                 <th>Word MRR@10</th>
                 <th>Char (3,5) Hit@1</th>
@@ -419,28 +571,28 @@
         </thead>
         <tbody>
             <tr>
-                <td>$k = 0$ (No noise)</td>
+                <td><i>k</i> = 0 (No noise)</td>
                 <td>0.959</td>
                 <td>0.980</td>
                 <td><b>1.000</b></td>
                 <td><b>1.000</b></td>
             </tr>
             <tr>
-                <td>$k = 1$ (1 typo)</td>
+                <td><i>k</i> = 1 (1 typo)</td>
                 <td>0.980</td>
                 <td>0.990</td>
                 <td><b>1.000</b></td>
                 <td><b>1.000</b></td>
             </tr>
             <tr>
-                <td>$k = 2$ (2 typos)</td>
+                <td><i>k</i> = 2 (2 typos)</td>
                 <td>0.959</td>
                 <td>0.980</td>
                 <td><b>0.959</b></td>
                 <td><b>0.980</b></td>
             </tr>
             <tr>
-                <td>$k = 3$ (3 typos)</td>
+                <td><i>k</i> = 3 (3 typos)</td>
                 <td>0.837</td>
                 <td>0.891</td>
                 <td><b>1.000</b></td>
@@ -451,12 +603,12 @@
 
     <div class="figure-box">
         <img src="../experiments/results/figures/noise_curve.png" alt="Noise Degradation Curve">
-        <div class="figure-caption">Fig. 2. Empirical noise curve: Hit@1 and MRR@10 as a function of injected typo count ($0 \to 3$ adjacent transpositions).</div>
+        <div class="figure-caption">Fig. 2. Empirical noise curve (E3b): Hit@1 and MRR@10 across 0 to 3 injected transposition typos on 49 dev queries.</div>
     </div>
 
-    <h3 class="subsection-title">D. 5-Fold Stratified Intent Cross-Validation (E5b)</h3>
+    <h3 class="subsection-title">D. 5-Fold Stratified Intent Cross-Validation (E5b) &amp; Threshold Sweep</h3>
     <p>
-        We conducted 5-fold Stratified Cross-Validation on the official 112 corpus documents across 9 classification algorithms.
+        We conducted 5-fold Stratified Cross-Validation on the 112 corpus documents across 9 classification models (<tt>experiments/intent_cv.py</tt>). Logistic Regression with TF-IDF achieves the highest accuracy (0.876 &plusmn; 0.074) and Macro-F1 (0.872 &plusmn; 0.085) while supplying calibrated softmax probabilities, unlike Linear SVM whose uncalibrated margin scores require post-hoc softmax scaling.
     </p>
 
     <table>
@@ -475,12 +627,12 @@
                 <td>0.034 &plusmn; 0.001</td>
             </tr>
             <tr>
-                <td>k-NN ($k=1$)</td>
+                <td>k-NN (<i>k</i> = 1)</td>
                 <td>0.769 &plusmn; 0.073</td>
                 <td>0.741 &plusmn; 0.102</td>
             </tr>
             <tr>
-                <td>k-NN ($k=5$)</td>
+                <td>k-NN (<i>k</i> = 5)</td>
                 <td>0.814 &plusmn; 0.101</td>
                 <td>0.793 &plusmn; 0.123</td>
             </tr>
@@ -518,64 +670,64 @@
     </table>
 
     <div class="figure-box">
-        <img src="../experiments/results/figures/threshold_sweep_sublinear_tf.png" alt="Threshold Sweep Curve">
-        <div class="figure-caption">Fig. 3. Dual-gate parameter sweep ($T_{\text{sim}}$) illustrating the trade-off between in-corpus recall and OOC rejection.</div>
+        <img src="../experiments/results/figures/threshold_sweep_sublinear_tf.png" alt="Preliminary Cosine-Only Threshold Sweep">
+        <div class="figure-caption">Fig. 3. Preliminary cosine-only threshold sweep (E6) for word TF-IDF with sublinear TF on the 146-query dev split (chosen = 0.33), illustrating why a single cosine gate incurs 18.3% false abstention and motivating the dual-gate ablation in Table II.</div>
     </div>
 
     <h2 class="section-title">V. Error Analysis and Discussion</h2>
     <p>
-        <em>1. Token Attribution in Retrieval Mismatches:</em> Using <tt>retriever.explain()</tt>, we examined query <tt>q_056</tt> ("How can I tell if my class times conflict with each other?"). The target document was <tt>faq_class_schedule_02</tt>, but top-1 returned <tt>notice_exam_02</tt>. Feature decomposition revealed that subwords of "conflict" (<tt>'ict '</tt>, <tt>'confl'</tt>) in <tt>notice_exam_02</tt> carried high IDF scores ($0.0182$), overpowering the generic "class" tokens.
+        <em>1. Token Attribution in Retrieval Mismatches:</em> Inspecting <tt>q_056</tt> (&ldquo;How can I tell if my class times conflict with each other?&rdquo;) with <tt>retriever.explain()</tt> reveals why <tt>notice_exam_02</tt> outranked target <tt>faq_class_schedule_02</tt> (rank 11, cosine 0.182 vs. 0.285). Subword <i>n</i>-grams of the high-IDF token &ldquo;conflict&rdquo; (<tt>'ict '</tt>, <tt>'confl'</tt>, <tt>'flic'</tt>) in <tt>notice_exam_02</tt> contributed &gt; 0.018 per feature, outweighing generic &ldquo;class&rdquo; tokens (~0.005).
     </p>
     <p>
-        <em>2. Deceptive OOC Defense:</em> 14 of 15 OOC queries contained campus terms (e.g., vegan food near campus <tt>q_004</tt>, airport shuttle <tt>q_010</tt>, dogs in dorm <tt>q_024</tt>, kayak rental <tt>q_086</tt>). Top-1 cosine scores ranged from $0.146$ to $0.394$ (mean $0.250$, median $0.241$), easily penetrating $T_{\text{sim}}=0.15$. However, because query terms did not align with official intents, posterior probability mass distributed flatly across all 7 classes ($\max P < 0.34$, mean $0.231$), allowing Gate 2 to block 100% (15/15) of deceptive queries.
+        <em>2. Deceptive OOC Defense:</em> Fourteen of 15 OOC queries contain campus terms (e.g., vegan restaurants near campus <tt>q_004</tt>, airport shuttle <tt>q_010</tt>, dogs in dorm <tt>q_024</tt>, kayak rental <tt>q_086</tt>). Their top-1 cosine scores span 0.146 to 0.394 (mean 0.250, median 0.241), allowing 14/15 to pass <i>T</i><sub>sim</sub> = 0.15. However, because their tokens do not align decisively with any of the 7 administrative domains, intent posteriors remain flat (mean max <i>P</i> = 0.261, median 0.250, max 0.332 &lt; 0.34), enabling Gate 2 to block 100% (15/15) of deceptive OOC queries.
     </p>
     <p>
-        <em>3. False Abstentions:</em> Only 2 in-corpus queries were rejected (<tt>q_064</tt> and <tt>q_066</tt>, false abstention rate 1.90%). Both were ambiguous boundary prompts whose intent confidence fell marginally below 0.34 (0.253 and 0.311). In regulatory environments, a 1.9% abstention on ambiguous inputs is an acceptable trade-off for 100% precision on out-of-domain queries.
+        <em>3. False Abstentions:</em> Two paraphrased in-corpus queries were rejected despite ranking #1 (<tt>q_064</tt> and <tt>q_066</tt>, false abstention rate 1.90%). Both lie near topic boundaries with intent posteriors of 0.253 and 0.311, marginally below 0.34. In regulatory settings, escalating 1.9% of ambiguous prompts is an acceptable safety trade-off for zero leaked OOC answers.
     </p>
 
     <h2 class="section-title">VI. Business Value and Operational Risk Analysis</h2>
     <p>
-        To evaluate institutional viability, we formulated an operational metrics framework based on benchmark telemetry:
+        We evaluate institutional readiness using operational metrics derived from <tt>experiments/business_metrics.py</tt>:
     </p>
     <p>
-        1) <em>Self-Service Deflection Rate:</em> The system successfully resolves 77.50% (93/120) of all student inquiries at Top-1. Within known regulatory scope, the resolution rate reaches 88.57% (93/105).
+        1) <em>Self-Service Deflection Rate:</em> The pipeline resolves 77.50% (93/120) of all inquiries at Top-1 (88.57%, or 93/105, within regulatory scope).
     </p>
     <p>
-        2) <em>Top-3 Rescue Rate (98.10%):</em> Across the 10 in-corpus queries where Top-1 returned a neighboring clause, 8 queries contained the exact target document at Rank 2 or 3. By presenting a structured 3-card interface, institutional resolution increases from 88.57% to 98.10% (103/105), rescuing 80% of Top-1 errors.
+        2) <em>Top-3 Delivered Resolution (96.19%):</em> Of the 10 in-corpus queries where Top-1 returned a neighboring document, 8 place the exact target at Rank 2 or 3. Rendering 3 ranked cards raises delivered in-corpus resolution from 88.57% (93/105) to 96.19% (101/105), rescuing 80% of Top-1 errors. (By contrast, raw pre-gate ranking Hit@3 is 98.10% or 103/105, as 2 Rank-1 matches were withheld by Gate 2.)
     </p>
     <p>
-        3) <em>Operational Cost Function:</em> Defining a penalty $w_{\text{wrong}} = 5.0$ for silent incorrect answers and $w_{\text{abstain}} = 1.0$ for human escalation, the expected institutional cost is $E[\text{Cost}] = (5 \times 10 + 1 \times 2) / 120 = 0.4333$ per query, demonstrating bounded financial and regulatory liability.
+        3) <em>Operational Cost Function &amp; Sensitivity:</em> Weighting silent in-corpus errors (<i>w</i><sub>wrong</sub> = 5.0) and leaked OOC answers (<i>w</i><sub>ooc_leak</sub> = 5.0) against safe escalations (<i>w</i><sub>abstain</sub> = 1.0), expected cost per query is <i>E</i>[Cost] = (5 &times; 10 + 5 &times; 0 + 1 &times; 2) / 120 = 0.4333. These 5:1 weights are an operational research assumption rather than empirical staff-time telemetry; across 1:1 to 10:1 sensitivity ratios, enabling the dual gate strictly minimizes expected cost because preventing 15 leaked OOC errors saves 15&ndash;150 penalty units.
     </p>
 
-    <h2 class="section-title">VII. Usability & Accessibility (WCAG 2.2 AA) Evaluation</h2>
+    <h2 class="section-title">VII. Usability &amp; Accessibility (WCAG 2.2 AA) Evaluation</h2>
     <p>
-        A cognitive walkthrough across freshman, exchange student, and out-of-scope personas led to key user-experience improvements:
+        An expert heuristic review and WCAG 2.2 AA audit of the Streamlit interface (<tt>starter/app.py</tt>, <tt>starter/theme.py</tt>, <tt>starter/ui_helpers.py</tt>) guided three key safeguards:
     </p>
     <p>
-        1) <em>Color-Independent Match Badges (SC 1.4.1):</em> Raw cosine values are translated into 3 qualitative categories with geometric icons: <em>Strong match</em> ($\ge 0.35$), <em>Possible match</em> ($0.22 - 0.35$), and <em>Weak match</em> ($< 0.22$), calibrated against empirical Hit@1 distributions.
+        1) <em>Color-Independent Match Badges (SC 1.4.1):</em> Cosine scores map to calibrated categories with geometric icons and text labels: <em>Strong match</em> (&ge; 0.35, capturing 85/95 Top-1 hits), <em>Possible match</em> (0.22&ndash;0.35), and <em>Weak match</em> (&lt; 0.22).
     </p>
     <p>
-        2) <em>Dual-State Conflict Elimination:</em> When abstention triggers, conflicting success banners are suppressed; the UI presents the predicted administrative office and rephrasing suggestions.
+        2) <em>Honest Abstention &amp; Gate Transparency:</em> When abstention triggers, conflicting success banners are suppressed and no classifier-guessed office routing is shown (avoiding misdirection on OOC queries). Instead, the UI displays which gate rejected the query (cosine similarity vs. intent confidence), lists the 7 covered topics, and suggests rephrasing steps.
     </p>
     <p>
-        3) <em>Notice Provenance and Non-English Detection:</em> Documents from <tt>notices.json</tt> display publication dates, and non-ASCII/Vietnamese inputs trigger bilingual guidance without system failure.
+        3) <em>Corpus Provenance &amp; Non-English Advisory:</em> The interface explicitly discloses that the 112-document corpus is synthetic and educational, cites only corpus-attested contact points (with no invented rooms or opening hours), shows notice publication dates (<tt>2026-05-11</tt> to <tt>2026-12-01</tt>), and provides a bilingual advisory for Vietnamese inputs.
     </p>
 
     <h2 class="section-title">VIII. Conclusion</h2>
     <p>
-        We presented a deterministic, first-principles Vector Space Model and Intent Classification architecture for academic regulations. By integrating sublinear TF-IDF with character $n$-grams within word boundaries (<tt>char_wb 3-5</tt>) and a calibrated dual-gate abstention mechanism, the system achieves 0.943 overall MRR, 97.1% intent accuracy, 100% OOC rejection, 98.10% Top-3 resolution, and sub-2 ms latency without GPU dependencies.
+        We presented a deterministic, first-principles Vector Space Model and Intent Classification pipeline for university administrative regulations. Combining <tt>char_wb (3,5)</tt> sublinear TF-IDF, Multinomial Logistic Regression, and a conjunctive dual-gate abstention rule yields 0.943 full MRR, 97.1% intent accuracy, 100% OOC rejection, 96.19% Top-3 delivered resolution, and 1.4 ms mean warm-query CPU latency without LLM APIs or GPU hardware.
     </p>
 
     <h2 class="section-title">References</h2>
     <div class="references">
         <ol>
-            <li>G. Salton, A. Wong, and C. S. Yang, "A vector space model for automatic indexing," <em>Commun. ACM</em>, vol. 18, no. 11, pp. 613–620, 1975.</li>
-            <li>S. E. Robertson et al., "Okapi at TREC-3," in <em>Proc. 3rd Text REtrieval Conf. (TREC-3)</em>, 1994, pp. 109–126.</li>
-            <li>P. Bojanowski et al., "Enriching word vectors with subword information," <em>Trans. Assoc. Comput. Linguist.</em>, vol. 5, pp. 135–146, 2017.</li>
-            <li>Y. Geifman and R. El-Yaniv, "Selective classification for deep neural networks," in <em>NeurIPS</em>, 2017.</li>
-            <li>C. D. Manning, P. Raghavan, and H. Schütze, <em>Introduction to Information Retrieval</em>, Cambridge Univ. Press, 2008.</li>
-            <li>J. Nielsen, "Usability inspection methods," in <em>Proc. Conf. Companion Human Factors Comput. Syst. (CHI)</em>, 1994.</li>
-            <li>W3C, "Web Content Accessibility Guidelines (WCAG) 2.2," <em>W3C Recommendation</em>, Oct. 2023.</li>
+            <li>G. Salton, A. Wong, and C. S. Yang, &ldquo;A vector space model for automatic indexing,&rdquo; <em>Commun. ACM</em>, vol. 18, no. 11, pp. 613&ndash;620, 1975.</li>
+            <li>S. E. Robertson et al., &ldquo;Okapi at TREC-3,&rdquo; in <em>Proc. 3rd Text REtrieval Conf. (TREC-3)</em>, 1994, pp. 109&ndash;126.</li>
+            <li>P. Bojanowski et al., &ldquo;Enriching word vectors with subword information,&rdquo; <em>Trans. Assoc. Comput. Linguist.</em>, vol. 5, pp. 135&ndash;146, 2017.</li>
+            <li>Y. Geifman and R. El-Yaniv, &ldquo;Selective classification for deep neural networks,&rdquo; in <em>NeurIPS</em>, 2017.</li>
+            <li>C. D. Manning, P. Raghavan, and H. Sch&uuml;tze, <em>Introduction to Information Retrieval</em>, Cambridge Univ. Press, 2008.</li>
+            <li>J. Nielsen, &ldquo;Usability inspection methods,&rdquo; in <em>Proc. Conf. Companion Human Factors Comput. Syst. (CHI)</em>, 1994.</li>
+            <li>W3C, &ldquo;Web Content Accessibility Guidelines (WCAG) 2.2,&rdquo; <em>W3C Recommendation</em>, Oct. 2023.</li>
         </ol>
     </div>
 

@@ -1,0 +1,10 @@
+services:
+  campus-faq-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./output/feedback:/app/output/feedback
+    restart: unless-stopped

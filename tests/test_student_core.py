@@ -41,6 +41,9 @@ def test_retrieve_out_of_corpus_abstains():
 def test_retrieve_empty_query():
     assert retrieve("") == []
     assert retrieve("   ") == []
+    assert retrieve("", threshold=0.0, intent_threshold=None) == []
+    assert retrieve("???", threshold=0.0, intent_threshold=None) == []
+    assert len(retrieve("", top_k=112, threshold=-1, intent_threshold=None)) == 112
 
 
 def test_classify_intent_basic():

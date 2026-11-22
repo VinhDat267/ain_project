@@ -17,7 +17,7 @@ Hệ thống trợ lý hỏi đáp quy chế học đường đóng vai trò là
 | **Tổng số câu hỏi đánh giá (`total_queries`)** | **120** | 105 câu trong kho tri thức + 15 câu ngoài kho (OOC) |
 | **Tỷ lệ Tự phục vụ Toàn cục (`self_service_deflection_rate`)** | **77.50% (93/120)** | 77.5% tổng nhu cầu sinh viên được giải đáp chính xác ngay lập tức ở Top-1 mà không cần nhân viên hỗ trợ |
 | **Tỷ lệ Phục vụ Thành công trong Kho (`in_corpus_resolution_top1`)** | **88.57% (93/105)** | Trong phạm vi quy chế đã ban hành, gần 9/10 câu hỏi nhận được câu trả lời chính xác ở thẻ đầu tiên |
-| **Tỷ lệ Cứu trợ Top-3 (`top3_rescue_rate`)** | **98.10% (103/105)** | **Cứu được 8/10 ca sai ở Top-1!** Khi giao diện hiển thị 3 thẻ, 98.1% sinh viên tìm thấy câu trả lời đúng |
+| **Tỷ lệ Hiển thị Thành công Top-3 (`top3_rescue_rate`)** | **96.19% (101/105)** | **Cứu được 8/10 ca sai ở Top-1!** Khi giao diện hiển thị 3 thẻ sau cổng từ chối, 96.19% sinh viên nhận được đáp án đúng (xếp hạng thô trước cổng `raw_hit3_rate` là 98.10% = 103/105, gồm 2 ca `q_064`, `q_066` bị Intent Gate chặn) |
 | **Tỷ lệ Sai sót Ngầm (`silent_wrong_answer_rate`)** | **9.52% (10/105)** | Hệ thống không từ chối nhưng tài liệu Top-1 bị lệch sang điều khoản lân cận (toàn bộ nằm ở nhóm paraphrase) |
 | **Tỷ lệ Chuyển tiếp An toàn (`safe_escalation_rate`)** | **14.17% (17/120)** | Chuyển tiếp sinh viên sang đúng văn phòng phụ trách: 15 câu ngoài kho + 2 câu từ chối thận trọng |
 | **Tỷ lệ Từ chối Nhầm (`false_abstention_rate`)** | **1.90% (2/105)** | Chỉ có 2 câu hỏi trong kho (`q_064`, `q_066`) bị từ chối do độ tin cậy ý định tiệm cận ngưỡng |
@@ -30,8 +30,8 @@ Hệ thống trợ lý hỏi đáp quy chế học đường đóng vai trò là
 
 | Nhóm Ý định (`expected_intent`) | Tổng số câu | Top-1 Đúng | Top-3 Đúng | Từ chối | Sai ngầm Top-1 | Tỷ lệ Giải quyết Top-1 | Tỷ lệ Cứu trợ Top-3 |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| `course_registration` (Đăng ký học phần) | 15 | 11 | 14 | 1 (`q_066`) | 3 | 73.33% | **93.33%** |
-| `class_schedule` (Thời khóa biểu) | 15 | 13 | 14 | 1 (`q_064`) | 1 | 86.67% | **93.33%** |
+| `course_registration` (Đăng ký học phần) | 15 | 11 | 13 | 1 (`q_066`) | 3 | 73.33% | **86.67%** |
+| `class_schedule` (Thời khóa biểu) | 15 | 13 | 13 | 1 (`q_064`) | 1 | 86.67% | **86.67%** |
 | `exam` (Khảo thí & Thi cử) | 15 | 14 | 15 | 0 | 1 | 93.33% | **100.00%** |
 | `graduation` (Tốt nghiệp & Bằng cấp) | 15 | 14 | 15 | 0 | 1 | 93.33% | **100.00%** |
 | `student_services` (Dịch vụ Sinh viên) | 15 | 15 | 15 | 0 | 0 | **100.00%** | **100.00%** |
@@ -44,7 +44,7 @@ Hệ thống trợ lý hỏi đáp quy chế học đường đóng vai trò là
 
 ### A. Tại sao bắt buộc hiển thị 3 thẻ câu trả lời?
 - Khi chỉ hiển thị 1 kết quả (Top-1), hệ thống giải quyết được 93 câu trong kho (`88.57%`). Có 10 câu bị sai lệch (`silent wrong rate = 9.52%`).
-- Khi mở rộng hiển thị **Top-3 thẻ**, hệ thống cứu trợ thành công **8/10 ca sai** (`q_017`, `q_065`, `q_080`, `q_082`, `q_104`, `q_111`, `q_115`, `q_117`), nâng tỷ lệ giải quyết thực tế lên **98.10% (103/105)**!
+- Khi mở rộng hiển thị **Top-3 thẻ**, hệ thống cứu trợ thành công **8/10 ca sai** (`q_017`, `q_065`, `q_080`, `q_082`, `q_104`, `q_111`, `q_115`, `q_117`), nâng tỷ lệ giải quyết được trả ra cho sinh viên lên **96.19% (101/105)** (trong khi `raw_hit3_rate` trước cổng là **98.10% = 103/105**, vì 2 câu `q_064` và `q_066` dù xếp Rank 1 nhưng bị Intent Gate chặn nên không hiển thị thẻ nào).
 - Do đó, quyết định thiết kế hiển thị 3 thẻ có thứ tự xếp hạng rõ ràng là một **bắt buộc mang tính sống còn** của sản phẩm.
 
 ### B. Căn cứ Định lượng cho Phân loại Nhãn Độ khớp (Match Calibration)
@@ -89,7 +89,7 @@ Hệ thống thiết lập thang nhãn 3 mức trực quan cho sinh viên:
 - **Hành động nghiệp vụ:** Trong giai đoạn triển khai thực tế, bộ phận hành chính cần chuẩn hóa bảng thuật ngữ tương đương (Bursar $\leftrightarrow$ Phòng Kế hoạch - Tài chính; Registrar $\leftrightarrow$ Phòng Quản lý Đào tạo) trong FAQ để sinh viên năm nhất không bỡ ngỡ.
 
 ### 2. Độ mới của Thông tin (Information Recency & Notice Lifecycles)
-- File `data/notices.json` chứa 28 thông báo chính thức có trường `date` (ban hành tháng 10 – 11/2026).
+- File `data/notices.json` chứa 28 thông báo tổng hợp có trường `date` (từ `2026-05-11` đến `2026-12-01`).
 - Rủi ro vận hành: Các thông báo về hạn nộp học phí hay hạn đăng ký học phần có tính thời điểm (ví dụ: hạn chót Fall 2026). Nếu sinh viên đọc phải thông báo hết hạn vào kỳ sau, hậu quả sẽ rất nghiêm trọng.
 - Giải pháp: Giao diện người dùng phải hiển thị rõ nhãn nguồn `[Official Notice · Published: YYYY-MM-DD]` kèm cảnh báo kiểm tra ngày hiệu lực.
 
@@ -100,7 +100,7 @@ Hệ thống thiết lập thang nhãn 3 mức trực quan cho sinh viên:
 - Không giống như LLM đưa ra kết quả không thể giải thích, phương thức `retriever.explain()` bóc tách trực tiếp phần trăm đóng góp của từng chuỗi $n$-gram vào điểm cosine. Ban giám hiệu và cán bộ thanh tra có thể kiểm toán tức thì lý do vì sao một tài liệu được đề xuất.
 
 ### 5. Chính sách Quyền riêng tư Tuyệt đối (Zero-PII & Privacy Protection)
-- Hệ thống tuân thủ nghiêm ngặt chính sách Zero-PII: Không lưu trữ email cá nhân sinh viên, mã số sinh viên, số điện thoại hay số tài khoản ngân hàng trong bộ nhớ đệm hay log hệ thống. Mọi truy vấn được xử lý stateless trong RAM.
+- Hệ thống không gọi API ngoài và không thu thập trường định danh cá nhân (email, mã sinh viên, số điện thoại hay tài khoản ngân hàng). Nếu người dùng chủ động bấm nút phản hồi (`Helpful` / `Needs Clarification`) trên giao diện demo, app chỉ ghi `{time, query, top_doc_id, helpful}` vào file cục bộ `output/feedback/feedback.jsonl` (đã đưa vào `.gitignore`).
 
 ### 6. Quy trình Vận hành Nội dung (Content Operations SOP)
 - Khi nhà trường ban hành quy chế mới:

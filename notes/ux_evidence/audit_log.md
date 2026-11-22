@@ -1,5 +1,7 @@
 # Visual and Accessibility Audit Log
 
+> **Archive Note (Updated 2026-11-21):** This log records the 2026-11-16 editorial redesign baseline. The screenshots in `notes/ux_evidence/` (`screenshot_01..04.png`) are pre-PR#14 Dark Mode baseline captures. Current PR #19 UI verification (Oxford Navy + Warm Light theme, no OOC office routing, and gate-rejection explanations) is captured in [`output/playwright/live-demo/`](../../output/playwright/live-demo/) and [`observations.json`](../../output/playwright/live-demo/observations.json).
+
 **Project:** Hanoi University (HANU) Student Regulations Knowledge Assistant  
 **Branch:** `vietanh/light-editorial-portal`  
 **Date:** 2026-11-16  
@@ -12,9 +14,9 @@
 
 | State | Description | Target Query / Trigger | Key Verified Elements |
 |---|---|---|---|
-| **First-Use Empty State** | 7-Topic Academic Directory + Recent Notices | Initial page load (query empty) | Bento Grid covering 7 campus offices (Registrar, Bursar, Financial Aid, Advising, IT...), 3 latest official notices with verified dates, zero empty/dark void. |
-| **In-Corpus Success State** | Answer cards with high-contrast typography | *"When is tuition due for the semester?"* | Match badge `🟢 Strong match`, Serif question header, 16px legible answer text, verified notice date badge, Bursar's Office routing box. |
-| **Safe Abstention State** | Out-of-scope safe abstention | *"Can I rent a kayak from the campus recreation center?"* | Clean card without AI left-border, exact error text `Information not found — please contact the administrative office.`, zero conflicting green success banner, escalation support routing. |
+| **First-Use Empty State** | 7-Topic Academic Directory + Recent Notices | Initial page load (query empty) | Bento Grid covering 7 corpus-attested contact points (`Student Portal`, `Bursar's Office`, `Registrar's Office`, `My Schedule`, `Advising Center`, `Registrar`, `IT Help Desk`), 3 latest synthetic notices with dates, zero empty/dark void. |
+| **In-Corpus Success State** | Answer cards with high-contrast typography | *"When is tuition due for the semester?"* | Match badge `🟢 Strong match`, Serif question header, 16px legible answer text, verified notice date badge, Bursar's Office contact point. |
+| **Safe Abstention State** | Out-of-scope safe abstention | *"Can I rent a kayak from the campus recreation center?"* | Clean abstention frame, exact error text `Information not found — please contact the administrative office.`, zero conflicting green success banner, gate-rejection explanation, and no classifier-guessed office routing. |
 | **Typo Robustness State** | Noisy query with term highlighting | *"tution dedline paymnt for upcomng semster"* | Subword character n-gram robustness, term highlighting, high-confidence tuition retrieval. |
 | **Research & Inspector Mode** | Dual-gate parameter inspection | Toggle enabled + *"How do I reset my Student Portal password?"* | Parameter threshold sliders ($\theta_{sim}$, $\theta_{intent}$), 3-way retrieval model comparison (Word vs Char vs BM25), `explain()` mathematical vector breakdown. |
 

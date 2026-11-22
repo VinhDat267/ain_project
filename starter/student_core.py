@@ -156,7 +156,7 @@ def retrieve(
     retriever = _get_retriever()
     ranked = retriever.rank(query)
     cutoff = retriever.config.threshold if threshold is None else threshold
-    if not ranked or ranked[0][1] < cutoff:
+    if not ranked or (cutoff >= 0 and ranked[0][1] <= 0.0) or ranked[0][1] < cutoff:
         return []
     if intent_threshold is not None and classify_intent(query)[1] < intent_threshold:
         return []

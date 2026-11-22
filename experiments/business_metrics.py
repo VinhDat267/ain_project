@@ -53,9 +53,13 @@ def compute_business_metrics(
     answered_correct_top1_mask = is_in_corpus & (~is_abstained) & is_hit1
     n_answered_correct_top1 = int(answered_correct_top1_mask.sum())
 
-    # Top-3 correct (includes rescued queries)
-    top3_correct_mask = is_in_corpus & is_hit3
-    n_top3_correct = int(top3_correct_mask.sum())
+    # Top-3 delivered (non-abstained in-corpus queries whose target is in Top-3 cards)
+    top3_delivered_mask = is_in_corpus & (~is_abstained) & is_hit3
+    n_top3_delivered = int(top3_delivered_mask.sum())
+
+    # Raw pre-gate Hit@3 (ranking only, includes abstained queries)
+    raw_hit3_mask = is_in_corpus & is_hit3
+    n_raw_hit3 = int(raw_hit3_mask.sum())
 
     # Abstentions
     false_abstentions_mask = is_in_corpus & is_abstained
@@ -76,7 +80,8 @@ def compute_business_metrics(
     # Rates
     self_service_deflection_rate = n_answered_correct_top1 / total_queries
     in_corpus_resolution_rate_top1 = n_answered_correct_top1 / n_in_corpus
-    top3_rescue_rate = n_top3_correct / n_in_corpus
+    top3_rescue_rate = n_top3_delivered / n_in_corpus
+    raw_hit3_rate = n_raw_hit3 / n_in_corpus
     silent_wrong_answer_rate = n_silent_wrong / n_in_corpus
     safe_escalation_rate = total_escalations / total_queries
     false_abstention_rate = n_false_abstentions / n_in_corpus
@@ -94,7 +99,8 @@ def compute_business_metrics(
         {"metric": "ooc_queries", "value": float(n_ooc), "description": "Out-of-corpus queries requiring abstention"},
         {"metric": "self_service_deflection_rate_overall", "value": round(self_service_deflection_rate, 4), "description": f"Fraction of all queries resolved correctly at Top-1 ({n_answered_correct_top1}/{total_queries})"},
         {"metric": "in_corpus_resolution_rate_top1", "value": round(in_corpus_resolution_rate_top1, 4), "description": f"In-corpus queries resolved correctly at Top-1 ({n_answered_correct_top1}/{n_in_corpus})"},
-        {"metric": "top3_rescue_rate", "value": round(top3_rescue_rate, 4), "description": f"In-corpus queries with correct document in Top-3 cards ({n_top3_correct}/{n_in_corpus})"},
+        {"metric": "top3_rescue_rate", "value": round(top3_rescue_rate, 4), "description": f"In-corpus queries answered with correct document in Top-3 cards ({n_top3_delivered}/{n_in_corpus})"},
+        {"metric": "raw_hit3_rate", "value": round(raw_hit3_rate, 4), "description": f"In-corpus raw ranking Hit@3 before abstention gate ({n_raw_hit3}/{n_in_corpus})"},
         {"metric": "silent_wrong_answer_rate", "value": round(silent_wrong_answer_rate, 4), "description": f"In-corpus queries answered incorrectly without abstaining ({n_silent_wrong}/{n_in_corpus})"},
         {"metric": "safe_escalation_rate", "value": round(safe_escalation_rate, 4), "description": f"Queries where the assistant abstained and referred the student onward ({total_escalations}/{total_queries})"},
         {"metric": "false_abstention_rate", "value": round(false_abstention_rate, 4), "description": f"Legitimate queries mistakenly abstained ({n_false_abstentions}/{n_in_corpus})"},
@@ -120,7 +126,7 @@ def compute_business_metrics(
     for intent_name, group in in_corpus_df.groupby("expected_intent"):
         n_group = len(group)
         corr_top1 = int(((~group["is_abstained"]) & group["is_hit1"]).sum())
-        corr_top3 = int(group["is_hit3"].sum())
+        corr_top3 = int(((~group["is_abstained"]) & group["is_hit3"]).sum())
         abstained = int(group["is_abstained"].sum())
         wrong_top1 = int(((~group["is_abstained"]) & (~group["is_hit1"])).sum())
         records.append({
@@ -158,7 +164,7 @@ def compute_business_metrics(
             })
         else:
             corr_top1 = int(((~group["is_abstained"]) & group["is_hit1"]).sum())
-            corr_top3 = int(group["is_hit3"].sum())
+            corr_top3 = int(((~group["is_abstained"]) & group["is_hit3"]).sum())
             abstained = int(group["is_abstained"].sum())
             wrong_top1 = int(((~group["is_abstained"]) & (~group["is_hit1"])).sum())
             records.append({

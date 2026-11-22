@@ -212,7 +212,8 @@ def test_load_dashboard_kpis():
     assert kpis["mrr"] == pytest.approx(0.943, abs=0.01)
     assert kpis["intent_accuracy"] == pytest.approx(0.9714, abs=0.01)
     assert kpis["intent_correct"] == 102
-    assert kpis["top3_rescue_rate"] == pytest.approx(0.9810, abs=0.01)
+    assert kpis["top3_rescue_rate"] == pytest.approx(0.9619, abs=0.01)
+    assert kpis["raw_hit3"] == pytest.approx(0.9810, abs=0.01)
     assert kpis["w_silent_wrong"] == 5.0
 
 
@@ -228,12 +229,13 @@ def test_load_dashboard_kpis_reads_the_files(tmp_path):
         encoding="utf-8",
     )
     (tmp_path / "business" / "business_summary.csv").write_text(
-        "metric,value,description\nexpected_cost_per_query,0.25,x\nw_silent_wrong,3.0,x\n",
+        "metric,value,description\ntop3_rescue_rate,0.45,x\nexpected_cost_per_query,0.25,x\nw_silent_wrong,3.0,x\n",
         encoding="utf-8",
     )
     kpis = load_dashboard_kpis(tmp_path)
     assert kpis["mrr"] == 0.6
     assert kpis["intent_accuracy"] == 0.75 and kpis["intent_correct"] == 30
+    assert kpis["raw_hit3"] == 0.5 and kpis["top3_rescue_rate"] == 0.45
     assert kpis["ooc_rejection_rate"] == 0.8
     assert (kpis["total_queries"], kpis["in_corpus_queries"], kpis["ooc_queries"]) == (50, 40, 10)
     assert kpis["expected_cost"] == 0.25 and kpis["w_silent_wrong"] == 3.0
