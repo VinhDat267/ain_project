@@ -256,3 +256,43 @@ def test_record_feedback_appends_json_lines(tmp_path):
     assert [e["helpful"] for e in entries] == [True, False]
     assert entries[0]["top_doc_id"] == "faq_tuition_01" and entries[0]["query"] == "When is tuition due?"
 
+
+
+def _text_outside_cells(markup):
+    """Text nodes that are not inside <td>, <th> or <caption> (i.e. visible stray text)."""
+    from html.parser import HTMLParser
+
+    class Collector(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.stack, self.stray = [], []
+
+        def handle_starttag(self, tag, attrs):
+            self.stack.append(tag)
+
+        def handle_endtag(self, tag):
+            if tag in self.stack:
+                del self.stack[len(self.stack) - 1 - self.stack[::-1].index(tag):]
+
+        def handle_data(self, data):
+            if data.strip() and not {"td", "th", "caption"} & set(self.stack):
+                self.stray.append(data.strip())
+
+    collector = Collector()
+    collector.feed(markup)
+    return collector.stray
+
+
+def test_table_html_has_no_stray_attribute_text_and_formats_cells():
+    import pandas as pd
+    from starter.ui_helpers import table_html
+
+    df = pd.DataFrame({"rule": ["no_gate", "dual <b>"], "cosine": [float("nan"), 0.15], "rate": [0.8666666, 10.0]})
+    markup = table_html(df, caption="Ablation & gates")
+
+    assert _text_outside_cells(markup) == []  # old code leaked 'border="0" class="dataframe orca-table">'
+    assert re.search(r'<table [^>]*><caption class="orca-table-caption">Ablation &amp; gates</caption>', markup)
+    assert markup.count("<table") == 1 and markup.startswith('<div class="orca-table-wrap">')
+    assert "NaN" not in markup and "—" in markup
+    assert ">0.8667<" in markup and ">10<" in markup and ">0.15<" in markup
+    assert "<b>" not in markup and "dual &lt;b&gt;" in markup
