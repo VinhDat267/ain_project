@@ -99,7 +99,7 @@ Khi các câu OOC vượt qua cổng Cosine $0.15$, chúng bắt buộc phải v
    - Tài liệu đích đúng: `faq_class_schedule_01`.
    - Kết quả xếp hạng: **Rank 1 (Hit@1 = 1)**, Cosine: `0.2971` (vượt ngưỡng `0.15`).
    - Độ tin cậy Intent: `0.2534` (dưới ngưỡng `0.34`).
-   - *Nguyên nhân:* Câu hỏi phân tán giữa `class_schedule` (0.253) và `course_registration` (0.241), khiến Intent Gate kích hoạt từ chối nhầm.
+   - *Nguyên nhân:* Phân phối intent gần như phẳng: `class_schedule` 0.253, `technical_support` 0.170, `graduation` 0.153, `student_services` 0.148 (còn `course_registration` chỉ 0.079). Câu hỏi không chứa từ nào đặc trưng mạnh cho một chủ đề, nên xác suất cao nhất (0.253) nằm dưới ngưỡng 0.34 và Intent Gate từ chối nhầm, dù tài liệu đúng đã đứng Rank 1. *(Sửa 25/11/2026: bản cũ ghi nhầm `course_registration` 0.241 là intent đứng thứ hai; số trên được tính lại bằng `IntentClassifier.predict_proba` của cấu hình sản phẩm.)*
 2. **Truy vấn `q_066`:** *"What should I do if the class section I need has no open seats?"*
    - Tài liệu đích đúng: `faq_course_registration_05`.
    - Kết quả xếp hạng: **Rank 1 (Hit@1 = 1)**, Cosine: `0.2021` (vượt ngưỡng `0.15`).
