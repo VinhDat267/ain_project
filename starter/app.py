@@ -117,27 +117,28 @@ with st.sidebar:
         unsafe_allow_html=True,
     )
 
+    similarity_thresh = st.slider(
+        "Cosine Similarity Threshold (θ_sim)",
+        min_value=0.0,
+        max_value=1.0,
+        value=float(RETRIEVAL_THRESHOLD),
+        step=0.01,
+        help="Minimum cosine similarity required before returning results. Sub-threshold queries trigger safe abstention.",
+    )
+
     inspector_param = st.query_params.get("inspector", "0") == "1"
     inspector_mode = st.toggle(
         "Research & Inspector Mode",
         value=inspector_param,
-        help="Enable technical inspectability: dual-gate parameter sliders, explain() feature attributions, and 3-way retrieval comparisons.",
+        help="Enable technical inspectability: intent confidence gate and top-k sliders, explain() feature attributions, and 3-way retrieval comparisons.",
     )
 
     if inspector_mode:
         st.markdown(
             "<div style='padding:0.6rem 0.75rem;background:#faf9f5;border-radius:6px;border:1px solid #d6d3c4;margin-bottom:0.75rem;font-size:0.8rem;color:#b45309;'>"
-            "<strong>Inspector Mode Active</strong>: Threshold sliders override production defaults."
+            "<strong>Inspector Mode Active</strong>: Intent gate, Top-K, explain() and 3-way comparisons unlocked."
             "</div>",
             unsafe_allow_html=True,
-        )
-        similarity_thresh = st.slider(
-            "Cosine Similarity Threshold (θ_sim)",
-            min_value=0.0,
-            max_value=1.0,
-            value=float(RETRIEVAL_THRESHOLD),
-            step=0.01,
-            help="Minimum cosine similarity required before returning results. Sub-threshold queries trigger safe abstention.",
         )
         intent_thresh = st.slider(
             "Intent Confidence Gate (θ_intent)",
@@ -156,7 +157,6 @@ with st.sidebar:
             help="Number of document cards to present to the user.",
         )
     else:
-        similarity_thresh = float(RETRIEVAL_THRESHOLD)
         intent_thresh = float(INTENT_THRESHOLD)
         top_k_val = 3
 
@@ -350,11 +350,12 @@ with tab_search:
                 badge_class = "orca-badge-strong" if label_text == "Strong match" else ("orca-badge-possible" if label_text == "Possible match" else "orca-badge-weak")
 
                 doc_date = notice_dates.get(doc["id"], "")
-                if doc["id"].startswith("notice_") or doc.get("source") == "notices.json":
-                    src_tag = f"Notice · Published {doc_date}" if doc_date else "Notice"
+                src_file = doc.get("source") or ("notices.json" if doc["id"].startswith("notice_") else "faq.json")
+                if doc["id"].startswith("notice_") or src_file == "notices.json":
+                    src_tag = f"Notice ({src_file}) · Published {doc_date}" if doc_date else f"Notice ({src_file})"
                     src_class = "orca-badge-notice"
                 else:
-                    src_tag = "FAQ Entry"
+                    src_tag = f"FAQ ({src_file})"
                     src_class = "orca-badge-faq"
 
                 # HTML-safe highlighting using <mark> (Fixes BE-1)
@@ -388,7 +389,7 @@ with tab_search:
                     <details>
                         <summary>Technical Details & Document Provenance</summary>
                         <p style="font-size:0.8rem;color:#5e5d59;margin:0.35rem 0 0 0;">
-                            Document ID: <code>{doc['id']}</code> | Relevance Cosine: <strong>{score:.4f}</strong> | Topic Intent: <code>{doc['intent']}</code>
+                            Document ID: <code>{doc['id']}</code> | Source: <code>{html.escape(src_file)}</code> | Relevance Cosine: <strong>{score:.4f}</strong> | Topic Intent: <code>{doc['intent']}</code>
                         </p>
                     </details>
                 </div>

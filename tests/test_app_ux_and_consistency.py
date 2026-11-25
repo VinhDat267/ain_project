@@ -181,3 +181,34 @@ def test_dashboard_tables_render_cleanly():
 
     assert len(app.metric) == 8
     assert all(not metric.delta for metric in app.metric)
+
+
+def test_app_exposes_similarity_threshold_slider_by_default_and_abstains_when_raised():
+    """Similarity threshold slider must be visible without toggling Inspector Mode and enforce abstention."""
+    app = AppTest.from_file(str(Path(student_core.__file__).with_name("app.py")), default_timeout=30).run()
+    assert not app.exception
+    assert len(app.slider) >= 1, "Cosine similarity threshold slider should be directly visible in the sidebar"
+    sim_slider = next((s for s in app.slider if "Cosine Similarity Threshold" in s.label), None)
+    assert sim_slider is not None
+    assert sim_slider.value == pytest.approx(student_core.RETRIEVAL_THRESHOLD, abs=1e-6)
+
+    sim_slider.set_value(0.95)
+    app.text_input[0].set_value("When is tuition due for the semester?")
+    app.button[1].click().run()
+
+    assert not app.exception
+    assert len(app.success) == 0
+    assert any("Information not found — please contact the administrative office." in item.value for item in app.error)
+
+
+def test_app_result_cards_display_explicit_source_file_attribution():
+    """Result cards must explicitly display source file provenance (faq.json vs. notices.json)."""
+    app = AppTest.from_file(str(Path(student_core.__file__).with_name("app.py")), default_timeout=30).run()
+    app.text_input[0].set_value("How do I reset my Student Portal password?")
+    app.button[1].click().run()
+
+    assert not app.exception
+    cards = [item.value for item in app.markdown if "orca-card" in item.value]
+    assert len(cards) >= 2
+    assert any("faq.json" in card for card in cards), "Expected faq.json attribution on FAQ result card"
+    assert any("notices.json" in card for card in cards), "Expected notices.json attribution on Notice result card"
