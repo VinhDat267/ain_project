@@ -1,0 +1,20 @@
+{
+  "created_at": "2026-11-25T11:16:21+00:00",
+  "commit": "dc14d2e6c57a615147192cb3caafbd052a91d3a6+dirty",
+  "frozen_hash": "fa159d7167764773786db5947b0ed06564f840f8d5cedd911c19881d4859a10a",
+  "runs": [
+    "baseline_jaccard_majority",
+    "bm25",
+    "char_wb_3_5",
+    "final",
+    "hybrid_05",
+    "logreg_tfidf_full",
+    "logreg_tfidf_lodo",
+    "nb_bow_full",
+    "nb_bow_lodo",
+    "svm_tfidf_full",
+    "svm_tfidf_lodo",
+    "word_default_knn1",
+    "word_sublinear"
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "split": "test",
+  "run_name": "nb_bow_full",
+  "retriever": {
+    "kind": "tfidf",
+    "analyzer": "word",
+    "index_field": "text",
+    "word_ngram_range": [
+      1,
+      1
+    ],
+    "char_ngram_range": [
+      3,
+      5
+    ],
+    "remove_stopwords": true,
+    "sublinear_tf": false,
+    "hybrid_alpha": 0.5,
+    "threshold": 0.0
+  },
+  "intent": {
+    "kind": "model",
+    "model": "nb",
+    "features": "bow",
+    "ngram_range": [
+      1,
+      1
+    ],
+    "nb_alpha": 1.0,
+    "lr_C": 1.0,
+    "svm_C": 1.0,
+    "include_descriptions": false,
+    "include_questions": false,
+    "sublinear_tf": false
+  },
+  "intent_mode": "full",
+  "n_queries": 120,
+  "query_files": [],
+  "commit": "dc14d2e6c57a615147192cb3caafbd052a91d3a6+dirty",
+  "created_at": "2026-11-25T11:16:19+00:00",
+  "intent_threshold": null
+}

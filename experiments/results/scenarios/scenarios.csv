@@ -1,0 +1,15 @@
+id,scenario,query,query_words,expected,abstained,returned_ids,top1_cosine,intent,intent_confidence,latency_ms,outcome
+S1,Typical question,How do I reset my Student Portal password?,8,faq_technical_support_01,0,faq_technical_support_01|notice_technical_support_02|faq_technical_support_10,0.5391,technical_support,0.8774,1.35,Pass
+S2,Single-swap typo,How do I reset my Sutdent Portal password?,8,faq_technical_support_01,0,faq_technical_support_01|notice_technical_support_02|faq_technical_support_10,0.5281,technical_support,0.8952,0.97,Pass
+S3,Three typos in one query,Hwo do I rseet my Sutdent Portal pasword?,8,faq_technical_support_01,0,faq_technical_support_01|notice_technical_support_02|faq_technical_support_10,0.3442,technical_support,0.6267,1.01,Pass
+S4,Light paraphrase,I forgot my Student Portal password - how do I reset it?,12,faq_technical_support_01,0,faq_technical_support_01|notice_technical_support_02|faq_technical_support_10,0.5143,technical_support,0.8476,1.11,Pass
+S5,Synonym paraphrase (overlap = conflict),Two of my finals overlap on the same day - who do I tell?,14,top3:faq_exam_02,0,faq_class_schedule_02|faq_exam_02|faq_class_schedule_06,0.2682,class_schedule,0.3666,1.06,Partial
+S6,Paraphrase near a topic boundary,Where do I go to see my current classes and times?,11,faq_class_schedule_01,1,,0.2971,class_schedule,0.2534,1.01,Fail
+S7,Two questions in one,When is tuition due and when does final exam week happen?,11,top3:faq_tuition_01,0,faq_tuition_01|faq_exam_01|faq_exam_06,0.3282,exam,0.5764,1.03,Pass
+S8,"Out of scope, shares 'campus'",Can I rent a kayak from the campus recreation center?,10,abstain,1,,0.3939,student_services,0.2913,1.05,Pass
+S9,"Out of scope, shares 'university'",Are university dining halls open during Thanksgiving holiday break?,9,abstain,0,faq_class_schedule_08|faq_exam_08|faq_exam_11,0.4409,exam,0.3458,1.08,Fail
+S10,"Out of scope, no campus words",What is the capital of Australia?,6,abstain,1,,0.14,course_registration,0.2547,0.54,Pass
+S11,Vietnamese input,Học phí kỳ này hạn chót là khi nào?,9,abstain,1,,0.0892,student_services,0.1847,0.64,Pass
+S12,Empty input,   ,0,abstain,1,,0.0,student_services,0.1847,0.56,Pass
+S13,Punctuation only,???!!!,1,abstain,1,,0.0,student_services,0.1847,0.49,Pass
+S14,Stress: 840-word query,When is tuition due for the semester and what happens if I pay late? When is tuition due for the semester and what ha...,840,top3:faq_tuition_01,0,faq_tuition_01|faq_tuition_03|notice_tuition_01,0.4049,tuition,0.8585,3.19,Pass

@@ -3,6 +3,10 @@
 The supplied benchmark has already been inspected. This reports a fixed sample
 configuration, not an untouched test estimate or a cross-validation result.
 Existing dev experiments and their frozen-test lock are left intact.
+
+``--split dev`` runs the same fixed product configuration (both gates) on the
+146 team-written dev queries in ``experiments/dev/``; the configuration was not
+re-tuned on them, so this is the closer estimate for fresh questions.
 """
 from __future__ import annotations
 
@@ -15,7 +19,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from experiments.evaluate import evaluate_run, load_queries, run_config, summarize, write_run
+from experiments.evaluate import dev_query_files, evaluate_run, load_queries, run_config, summarize, write_run
 from starter import student_core as core
 from starter.intent import build_training_data
 from starter.retrieval import Retriever
@@ -25,13 +29,18 @@ def main(argv: list[str] | None = None) -> int:
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output-dir", type=Path, default=ROOT / "experiments/results/midterm-sample")
+    parser.add_argument("--split", choices=["test", "dev"], default="test",
+                        help="test = data/queries_test.csv (default); dev = experiments/dev/*.csv")
+    parser.add_argument("--output-dir", type=Path, default=None)
     args = parser.parse_args(argv)
+    dev = args.split == "dev"
+    if args.output_dir is None:
+        args.output_dir = ROOT / ("experiments/results/final-dev" if dev else "experiments/results/midterm-sample")
 
     import numpy
     import sklearn
 
-    queries = load_queries("test")
+    queries = load_queries(args.split)
     documents = core.load_documents()
     training_texts, _ = build_training_data(
         documents, include_questions=core.DEFAULT_INTENT_CONFIG.include_questions,
@@ -53,12 +62,18 @@ def main(argv: list[str] | None = None) -> int:
             selected = selected[selected["type"] == row["type"]]
         summary.loc[index, "mrr"] = selected["rr_full"].mean()
 
+    query_files = (
+        [path.relative_to(ROOT).as_posix() for path in dev_query_files()] if dev else ["data/queries_test.csv"]
+    )
     config = run_config(
-        "reused_benchmark", "midterm-sample", core.DEFAULT_RETRIEVAL_CONFIG,
-        core.DEFAULT_INTENT_CONFIG, "full", len(queries), ["data/queries_test.csv"],
+        "dev" if dev else "reused_benchmark", "final-dev" if dev else "midterm-sample",
+        core.DEFAULT_RETRIEVAL_CONFIG, core.DEFAULT_INTENT_CONFIG, "full", len(queries), query_files,
     )
     config.update({
-        "evaluation": "fixed sample reproduction; benchmark previously inspected; not cross-validation",
+        "evaluation": (
+            "fixed product configuration on team-written dev queries; not re-tuned on them; not cross-validation"
+            if dev else "fixed sample reproduction; benchmark previously inspected; not cross-validation"
+        ),
         "intent_threshold": core.INTENT_THRESHOLD,
         "training_samples": len(training_texts),
         "normal_queries_overlap_training_questions": sum(
@@ -91,6 +106,18 @@ def main(argv: list[str] | None = None) -> int:
     import pandas as pd
 
     pd.DataFrame(ablation).to_csv(args.output_dir / "ablation.csv", index=False)
+    # Sensitivity of the intent gate with the cosine floor held at its product value.
+    sweep = []
+    for intent in (0.0, 0.30, 0.34, 0.40, 0.45, 0.50, 0.55, 0.60):
+        rejected = (per_query["top1_score"] < core.RETRIEVAL_THRESHOLD) | (per_query["intent_conf"] < intent)
+        sweep.append({
+            "intent_threshold": intent, "cosine_threshold": core.RETRIEVAL_THRESHOLD,
+            "ooc_rejected": int((is_ooc & rejected).sum()), "ooc_total": int(is_ooc.sum()),
+            "in_corpus_abstained": int((~is_ooc & rejected).sum()), "in_corpus_total": int((~is_ooc).sum()),
+            "correct": int(((is_ooc & rejected) | (~is_ooc & ~rejected & (per_query["hit1"] == 1))).sum()),
+            "total": len(per_query),
+        })
+    pd.DataFrame(sweep).to_csv(args.output_dir / "intent_gate_sweep.csv", index=False)
     for query_type in ("normal", "paraphrase", "typo"):
         row = summary[summary["type"] == query_type].iloc[0]
         print(f"{query_type:11s} MRR {row.mrr:.3f}  P@1 {row.p1:.3f}  "
@@ -100,7 +127,8 @@ def main(argv: list[str] | None = None) -> int:
     print(f"Overall MRR: {overall.mrr:.3f} (full ranking); MRR@10: {overall.mrr10:.3f}")
     print(f"End-to-end: {int(overall.e2e_count)}/{int(overall.n)}")
     print(f"OOC rejected: {int(ooc.abstained.sum())}/{len(ooc)}")
-    print("Fixed configuration on the reused benchmark; not a CV estimate.")
+    print("Fixed configuration on the team-written dev split; not a CV estimate." if dev
+          else "Fixed configuration on the reused benchmark; not a CV estimate.")
     print(f"Wrote {args.output_dir.resolve()}")
     return 0
 
