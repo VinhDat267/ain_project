@@ -72,8 +72,11 @@ try {
         Pop-Location
     }
 
-    & $PythonExe -c @"
-import os, sys, zipfile
+    $PackScript = Join-Path $StageParent "pack_submission.py"
+    $PyCode = @'
+import os
+import sys
+import zipfile
 from pathlib import Path
 
 code_zip = Path(sys.argv[1])
@@ -87,7 +90,7 @@ with zipfile.ZipFile(code_zip, "r") as zf:
 
 forbidden_parts = {
     ".venv", "venv", "env", "__pycache__", ".pytest_cache",
-    ".ipynb_checkpoints", ".git", ".idea", ".vscode", "node_modules", "__MACOSX"
+    ".ipynb_checkpoints", ".git", ".idea", ".vscode", "node_modules", "__MACOSX",
 }
 forbidden_files = {".DS_Store", ".env"}
 forbidden_suffixes = {".pyc", ".pyo", ".h5", ".pt", ".pkl", ".ckpt"}
@@ -123,7 +126,9 @@ print(f"Created: {out_zip}")
 print(f"Files packaged: {len(entries)} | Size: {size_mb:.2f} MB")
 if size_mb >= 50.0:
     raise SystemExit(f"Archive exceeds 50 MB guideline ({size_mb:.2f} MB)")
-"@ $CodeArchive (Join-Path $StageRoot "code") $StageParent $Prefix $OutputZip
+'@
+    Set-Content -Path $PackScript -Value $PyCode -Encoding UTF8
+    & $PythonExe $PackScript $CodeArchive (Join-Path $StageRoot "code") $StageParent $Prefix $OutputZip
 
     if ($LASTEXITCODE -ne 0) { throw "Packaging verification failed" }
 }
