@@ -625,12 +625,14 @@ REPRO_LINES = [
 CONTRIBUTIONS = [
     ("2301040198", "Nguyễn Đạt Vinh*", "Leader and reviewer; evaluation harness, metrics and baselines; BM25; "
                                         "threshold and gate experiments; integration of the midterm core; "
-                                        "midterm slides; final review fixes, web app packaging and CI; report", "[ ]"),
+                                        "midterm slides; final review fixes, web app packaging and CI; report", "40"),
     ("2301040004", "Lương Việt Anh", "Retrieval engine (TF-IDF, char_wb, cosine, explain()), preprocessing and "
                                       "core wiring; hand calculation; development paraphrase and OOC queries; "
                                       "noise curve, cross-validation, UI redesign, business metrics; IEEE draft",
-     "[ ]"),
-    ("2401040080", "Nguyễn Ánh Dương", "[Main tasks — to be confirmed by the group]", "[ ]"),
+     "40"),
+    ("2401040080", "Nguyễn Ánh Dương", "Development query drafting (paraphrase and OOC review); manual UI and "
+                                       "edge-case testing; midterm presentation and live demo support; oral Q&A "
+                                       "preparation and report proofreading", "20"),
 ]
 
 AI_TOOLS = [
@@ -638,5 +640,8 @@ AI_TOOLS = [
      "Pair programming for evaluation scripts, BM25, tests and the web app; code review; drafting and checking "
      "this report. Every number was regenerated from the committed scripts and checked by the team.",
      "experiments/, scripts/, webapp/, tests/, report/"),
-    ("[Tools used by other members — name and version]", "[What they were used for]", "[Where]"),
+    ("Google Antigravity (Google, Gemini models)",
+     "Frontend UI/UX design for the standalone web app, CI workflow expansion, final milestone audit, "
+     "Streamlit UX polish and submission packaging checks. All changes were verified by automated tests.",
+     "webapp/, .github/, starter/app.py, README.md, notes/, scripts/"),
 ]

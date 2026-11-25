@@ -33,3 +33,8 @@ webapp/frontend/node_modules/
 webapp/frontend/dist/
 *.tsbuildinfo
 
+# Generated submission archives & local Word preview PDFs
+*_P12.zip
+report/*.preview.pdf
+
+
