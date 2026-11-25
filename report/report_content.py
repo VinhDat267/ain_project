@@ -271,8 +271,8 @@ BLOCKS = [
      [("../output/playwright/live-demo/01-normal.png", "(a) A typical question answered with three cards."),
       ("../output/playwright/live-demo/05-kayak.png", "(b) An out-of-corpus question refused; the banner names "
                                                        "the failed gate.")]),
-    ("p", "*Research & Inspector Mode* (Figure {fig:flow2}(a)) exposes the cosine floor, the intent gate and *k* "
-          "as sliders, as the assignment requires, and adds an explain() table under each card listing the "
+    ("p", "The sidebar exposes the cosine floor slider, while *Research & Inspector Mode* (Figure {fig:flow2}(a)) "
+          "adds the intent gate, *k* and an explain() table under each card listing the "
           "n-grams that contribute most to its cosine. The second tab (Figure {fig:flow2}(b)) is an evaluation "
           "dashboard that reads every number from the result files of Section 4."),
     ("fig2", "flow2", "Inspector mode and the evaluation dashboard.",
@@ -526,7 +526,7 @@ BLOCKS = [
         "sliders, feedback, a dashboard read from result files, a Vietnamese-input notice and office contacts "
         "taken only from the corpus (an earlier version showed invented rooms and opening hours).",
         "**Engineering.** The core also runs as a FastAPI and React web app in Docker, and continuous "
-        "integration runs the 131 tests, builds the front end and smoke-tests the container.",
+        "integration runs the 133 tests, builds the front end and smoke-tests the container.",
     ]),
 
     ("h1", "6  Limitations, Ethics and Conclusion"),
@@ -606,7 +606,7 @@ REPRO_LINES = [
     "python3.11 -m venv .venv                     # Windows: py -3.11 -m venv .venv",
     ".venv/bin/python -m pip install -r requirements.txt",
     r"# On Windows replace .venv/bin/python with .venv\Scripts\python.exe",
-    ".venv/bin/python -m pytest -q                # 131 passed, 2 deselected",
+    ".venv/bin/python -m pytest -q                # 133 passed, 2 deselected",
     ".venv/bin/python scripts/evaluate.py         # Tables 3 and 5 (benchmark)",
     ".venv/bin/python scripts/evaluate.py --split dev      # Tables 3 and 5 (dev)",
     ".venv/bin/python experiments/run_ablation.py --split test --final",

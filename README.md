@@ -103,7 +103,7 @@ Repo GitHub: <https://github.com/VinhDat267/ain_project>. Cần Python 3.11; tr�
 ```bash
 python3.11 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
-.venv/bin/python -m pytest -q                         # 131 passed, 2 deselected
+.venv/bin/python -m pytest -q                         # 133 passed, 2 deselected
 .venv/bin/python -m streamlit run starter/app.py      # 1 lệnh chạy ứng dụng
 .venv/bin/python scripts/evaluate.py                  # Bảng 3 và 5 (benchmark 120 câu)
 .venv/bin/python scripts/evaluate.py --split dev      # Bảng 3 và 5 (tập dev 146 câu)
@@ -127,8 +127,8 @@ Batch `--split test --final` đã chạy một lần và ghi `experiments/result
 | `webapp/` | Ứng dụng web độc lập: backend FastAPI (`webapp/backend/`) và giao diện React/TypeScript (`webapp/frontend/`), đóng gói qua `Dockerfile` và `docker-compose.yml` |
 | `experiments/` | Script đánh giá và thí nghiệm (E0–E7, E3b, E5b), tập câu hỏi dev (146 câu), kết quả và biểu đồ |
 | `data/` | Kho tài liệu (84 FAQ, 28 thông báo) và 120 câu hỏi đánh giá của môn học, giữ nguyên bản gốc |
-| `report/` | Bài báo nghiên cứu khoa học chuẩn IEEE (bản HTML và PDF hoàn chỉnh) |
-| `tests/` | Kiểm thử tự động (127 active unit & integration tests, 2 deselected sanity stub tests) |
+| `report/` | Bộ sinh báo cáo cuối kỳ Word theo template chính thức (`build_final_report.py`, `report_content.py`, `finalize_report.ps1`) và bài báo chuẩn IEEE (`ieee_report.html`, `report.pdf`) |
+| `tests/` | Kiểm thử tự động (133 active unit & integration tests, 2 deselected sanity stub tests) |
 | `notes/` | Tính tay (TF-IDF & Naive Bayes), phân tích lỗi, phân tích kho dữ liệu, quy trình chọn cấu hình, ngân hàng câu hỏi vấn đáp |
 | `scripts/` | Sinh dữ liệu của môn học, `evaluate.py` tái lập code mẫu midterm và `run_webapp.ps1` |
 
