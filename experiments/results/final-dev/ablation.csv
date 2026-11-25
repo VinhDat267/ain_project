@@ -1,0 +1,5 @@
+rule,cosine_threshold,intent_threshold,correct,total,ooc_rejected,ooc_total
+no_gate,,,103,146,0,20
+cosine_only,0.15,,106,146,3,20
+intent_only,,0.34,111,146,12,20
+dual,0.15,0.34,111,146,12,20

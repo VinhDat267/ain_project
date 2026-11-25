@@ -95,6 +95,30 @@ Xem [cách xuất PDF và nguồn số liệu](presentation/README.md), [lời d
 
 Bài báo nghiên cứu chuẩn IEEE: [Bản PDF](report/report.pdf) · [Bản nguồn HTML](report/ieee_report.html) · [README](report/README.md).
 
+## Tái lập số liệu của báo cáo cuối kỳ
+
+Repo GitHub: <https://github.com/VinhDat267/ain_project>. Cần Python 3.11; trên Windows thay
+`.venv/bin/python` bằng `.\.venv\Scripts\python.exe`. Các lệnh dưới đây khớp với Phụ lục A của báo cáo.
+
+```bash
+python3.11 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python -m pytest -q                         # 131 passed, 2 deselected
+.venv/bin/python -m streamlit run starter/app.py      # 1 lệnh chạy ứng dụng
+.venv/bin/python scripts/evaluate.py                  # Bảng 3 và 5 (benchmark 120 câu)
+.venv/bin/python scripts/evaluate.py --split dev      # Bảng 3 và 5 (tập dev 146 câu)
+.venv/bin/python experiments/run_ablation.py --split test --final   # baseline của Bảng 3
+.venv/bin/python experiments/run_ablation.py --split dev --group E0 # tương tự E1, E2, E3, E4, E5, E7
+.venv/bin/python experiments/intent_cv.py             # Bảng 4
+.venv/bin/python experiments/noise_curve.py           # đường cong lỗi chính tả, mục 4.3
+.venv/bin/python experiments/scenarios.py             # Bảng 6 (14 kịch bản)
+.venv/bin/python experiments/business_metrics.py      # top-3 trả đúng 101/105
+```
+
+Batch `--split test --final` đã chạy một lần và ghi `experiments/results/test/LOCK`; muốn chạy lại phải thêm
+`--rerun-reason "<lý do>"`. File Word của báo cáo được dựng bằng `report/build_final_report.py`
+(nội dung ở `report/report_content.py`), rồi `report/finalize_report.ps1` để Word cập nhật mục lục.
+
 ## Cấu trúc repo
 
 | Đường dẫn | Nội dung |

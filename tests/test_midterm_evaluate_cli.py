@@ -32,3 +32,21 @@ def test_sample_cli_reproduces_results_with_a_unicode_output_path(tmp_path):
             for key in ("no_gate", "cosine_only", "intent_only", "dual")] == [
                 (95, 0), (96, 1), (108, 15), (108, 15),
             ]
+
+
+def test_dev_split_runs_the_product_configuration_on_team_written_queries(tmp_path):
+    root = Path(__file__).resolve().parent.parent
+    destination = tmp_path / "final-dev"
+    environment = os.environ.copy()
+    environment["OPENBLAS_NUM_THREADS"] = "1"
+    result = subprocess.run(
+        [sys.executable, "-B", "scripts/evaluate.py", "--split", "dev", "--output-dir", str(destination)],
+        cwd=root, env=environment, capture_output=True, timeout=90,
+    )
+    assert result.returncode == 0, result.stderr.decode("utf-8", errors="replace")
+    assert "End-to-end: 111/146" in result.stdout.decode("utf-8")
+    config = json.loads((destination / "config.json").read_text(encoding="utf-8"))
+    assert config["split"] == "dev" and config["intent_threshold"] == 0.34
+    with (destination / "ablation.csv").open(encoding="utf-8", newline="") as source:
+        ablation = {row["rule"]: row for row in csv.DictReader(source)}
+    assert int(ablation["dual"]["ooc_rejected"]) == 12 and int(ablation["dual"]["ooc_total"]) == 20
