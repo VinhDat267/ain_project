@@ -32,7 +32,7 @@ rồi bấm **Retrieve documents**. Lời dẫn chi tiết nằm trong
 | 50–65 giây | Hỏi thuê kayak trong campus | Cũng từ chối dù có từ campus: cosine 0.39 vẫn qua ngưỡng 0.15, chỉ cổng intent (29%) chặn |
 | 65–90 giây | Trùng lịch thi cuối kỳ | Sai top-1: faq_class_schedule_02, cosine 0.27; FAQ đúng faq_exam_02 ở hạng 2, cosine 0.19 |
 
-Với hai câu ngoài phạm vi, chỉ vào dòng *Why it was rejected* trong khung xanh:
+Với hai câu ngoài phạm vi, chỉ vào dòng *Why it was rejected* trong khung giải thích:
 độ tin cậy intent thấp hơn ngưỡng 0.34. Câu kayak là ví dụ cho thấy chỉ dùng cosine
 thì không đủ.
 Với câu cuối, chỉ rõ hệ thống còn nhầm “lịch học” với “lịch thi”; không gọi đây là

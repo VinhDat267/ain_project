@@ -1,32 +1,35 @@
-"""Centralized Theme, Design Tokens, and CSS for the Campus FAQ Assistant.
+"""Design tokens and CSS for the Campus FAQ Assistant.
 
-Provides disciplined Oxford Navy & Claude Warm Light surface hierarchy, accessible color tokens,
-literary typography (Serif display), domain chromatic palettes, visual meters, and prefers-reduced-motion compliance.
+Style: an achromatic ledger. The chrome is ink and greys on a neutral ground; the one
+data hue (#1d5fbf) marks the screen's main data element, the cosine relevance bar of
+each answer card; status colours appear only as pale pairs on the refusal and on the
+match label. One typeface (Source Sans Pro, bundled with Streamlit so the app runs
+offline), Source Code Pro for document IDs only, tabular figures on every number.
 """
 from __future__ import annotations
 
 import streamlit as st
 
 TOKENS: dict[str, str] = {
-    # 3-tier Surface Hierarchy (Claude Warm Light Parchment / Ivory / Warm Sand)
-    "surface_0": "#f5f4ed",  # Base page canvas (Parchment, never pure white)
-    "surface_1": "#faf9f5",  # Cards, containers, elevation 1 (Ivory)
-    "surface_2": "#e8e6dc",  # Inputs, elevated buttons, badges (Warm Sand)
-    "surface_border": "#d6d3c4",  # Subtle warm border
+    # Surfaces: page ground, card surface, raised fill (pills, the sidebar's active rows)
+    "surface_0": "#f8f8f8",
+    "surface_1": "#ffffff",
+    "surface_2": "#eeeeee",
+    "surface_border": "#e6e6e6",
 
-    # Typography Tiers (Anthropic Near-Black and Warm Grays)
-    "text_primary": "#141413",    # Primary text (Warm near-black ink)
-    "text_secondary": "#5e5d59",  # Secondary metadata (Olive Gray)
-    "text_muted": "#87867f",      # Helper text (Stone Gray)
+    # Text in three tiers, each at 4.5:1 or more on every surface above
+    "text_primary": "#0a0a0a",
+    "text_secondary": "#5f5f5f",
+    "text_muted": "#6b6b6b",
 
-    # Accent & Brand (Terracotta / Warm Amber)
-    "accent_teal": "#b45309",     # Action and focus ring (WCAG AA >= 4.5:1 on #faf9f5)
+    # The one data hue: the cosine bar on each answer card (5.9:1 on white)
+    "accent_teal": "#1d5fbf",
 
-    # Semantic Match Colors (WCAG 2.2 AA compliant >= 4.5:1 on light surface #faf9f5)
-    "match_strong": "#166534",    # Forest green (Score >= 0.35, contrast ~6.7:1)
-    "match_possible": "#b45309",  # Warm Amber (0.22 <= Score < 0.35, contrast ~4.8:1)
-    "match_weak": "#5e5d59",      # Slate/Olive gray (Score < 0.22, contrast ~6.3:1)
-    "status_error": "#b91c1c",    # Deep Crimson error (contrast ~6.1:1)
+    # Match labels and status (text colours; pills use the pale pairs in the CSS)
+    "match_strong": "#2e7d32",
+    "match_possible": "#92400e",
+    "match_weak": "#5f5f5f",
+    "status_error": "#c4242a",
 }
 
 
@@ -53,461 +56,289 @@ def contrast_ratio(hex1: str, hex2: str) -> float:
     return (lighter + 0.05) / (darker + 0.05)
 
 
+# Type scale: 12 / 13 / 14 / 16 / 18 / 24, KPI figures 30. One gap value: 12px.
 CUSTOM_CSS = """
-/* ==========================================================================
-   Campus Notice & FAQ Assistant — Oxford Navy & Daylight Chromatic CSS Theme
-   ========================================================================== */
-
-/* Main App Canvas Styling */
-.stApp {
-    background-color: #f5f4ed !important;
-    color: #141413 !important;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+:root {
+    --ground: #f8f8f8;
+    --surface: #ffffff;
+    --raised: #eeeeee;
+    --border: #e6e6e6;
+    --rule: #f0f0f0;
+    --control: #d4d4d4;
+    --text: #0a0a0a;
+    --muted: #5f5f5f;
+    --data: #1d5fbf;
+    --pill-positive-bg: #dcfae5; --pill-positive-ink: #04250e;
+    --pill-negative-bg: #ffedea; --pill-negative-ink: #831c1e;
+    --pill-warning-bg: #fffbeb; --pill-warning-ink: #92400e;
+    --pill-neutral-bg: #eeeeee; --pill-neutral-ink: #3d3d3d;
+    --radius-card: 8px;
+    --radius-control: 6px;
+    --gap: 12px;
 }
 
-/* Sidebar Styling */
+/* Streamlit chrome that is not part of this product */
+[data-testid="stDecoration"] { display: none; }
+[data-testid="stHeader"] { background: var(--ground); }
+/* Streamlit fades an overflowing tab bar with a gradient; the two tabs fit, so drop the fade. */
+.stTabs::after { display: none; }
+
+.stApp { font-variant-numeric: tabular-nums; }
+/* The canvas starts under the (empty) header instead of 6rem below it */
+.block-container, [data-testid="stMainBlockContainer"] { padding-top: 2.5rem; }
+/* Narrow canvases (a tablet beside the open sidebar) keep 24px gutters instead of 80px */
+@media (max-width: 1024px) {
+    .block-container, [data-testid="stMainBlockContainer"] { padding-left: 1.5rem; padding-right: 1.5rem; }
+}
+/* Button rows size each column to its button and wrap when the canvas is narrow */
+[data-testid="stHorizontalBlock"]:has(.stButton) { flex-wrap: wrap; gap: 0.5rem; }
+[data-testid="stHorizontalBlock"]:has(.stButton) > [data-testid="stColumn"],
+[data-testid="stHorizontalBlock"]:has(.stButton) > [data-testid="column"] {
+    flex: 0 0 auto;
+    width: auto !important;
+    min-width: 0;
+}
+code, kbd { font-size: 0.8125rem; }
+
+/* Sidebar on the page ground, split from the canvas by one hairline */
 [data-testid="stSidebar"] {
-    background-color: #e8e6dc !important;
-    border-right: 1px solid #d6d3c4 !important;
+    background: var(--ground);
+    border-right: 1px solid var(--border);
+}
+[data-testid="stSidebar"] h3 { font-size: 1.125rem; font-weight: 600; }
+/* A folded sidebar is off screen: keep its text out of view and out of the tab order. */
+[data-testid="stSidebar"][aria-expanded="false"] { visibility: hidden; }
+[data-testid="stSidebar"][aria-expanded="false"] [data-testid="stSidebarUserContent"] { display: none; }
+/* Streamlit opens the sidebar at exactly 768px ("auto" folds it only below 768) but lays the canvas
+   under it there; at that one width put the canvas beside the sidebar, as it is from 769px up. */
+@media (min-width: 768px) and (max-width: 768.98px) {
+    [data-testid="stSidebar"][aria-expanded="true"] { position: relative; box-shadow: none; }
+    [data-testid="stMain"] { position: relative; }
 }
 
-[data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {
-    font-family: Georgia, "Times New Roman", serif !important;
-    color: #141413 !important;
-}
-
-/* Oxford Navy Hero Masthead Banner */
-.orca-hero-banner {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-    border: 1px solid #334155;
-    border-radius: 12px;
-    padding: 1.75rem 2rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.12);
-}
-
-.orca-hero-overline {
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: #fbbf24;
-    margin-bottom: 0.4rem;
-}
-
-.orca-hero-title {
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: 2.1rem;
-    font-weight: 600;
-    color: #f8fafc;
-    line-height: 1.25;
-    margin-bottom: 0.4rem;
-}
-
-.orca-hero-subtitle {
-    font-size: 0.975rem;
-    color: #cbd5e1;
-    line-height: 1.5;
-    max-width: 74ch;
-    margin-bottom: 1rem;
-}
-
-.orca-stat-strip {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.orca-stat-pill {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    color: #f1f5f9;
-    padding: 0.25rem 0.65rem;
-    border-radius: 9999px;
-    font-size: 0.8125rem;
-    font-weight: 500;
-    backdrop-filter: blur(4px);
-}
-
-.orca-stat-pill strong {
-    color: #38bdf8;
-}
-
-/* Streamlit Native Input Overrides */
-.stTextInput > div > div > input {
-    background-color: #faf9f5 !important;
-    color: #141413 !important;
-    border: 1.5px solid #d6d3c4 !important;
-    border-radius: 8px !important;
-    font-size: 1rem !important;
-    padding: 0.65rem 1rem !important;
-}
-
-.stTextInput > div > div > input:focus {
-    border-color: #2563eb !important;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
-}
-
-/* Streamlit Button Overrides */
-.stButton > button {
-    background-color: #faf9f5 !important;
-    color: #141413 !important;
-    border: 1px solid #d6d3c4 !important;
-    border-radius: 6px !important;
-    font-weight: 600 !important;
-    transition: all 120ms ease !important;
-}
-
-.stButton > button:hover {
-    background-color: #f1f5f9 !important;
-    border-color: #2563eb !important;
-    color: #1d4ed8 !important;
-}
-
-/* Primary Document Card */
-.orca-card {
-    background-color: #faf9f5;
-    border: 1px solid #e8e6dc;
-    border-radius: 8px;
-    padding: 1.35rem 1.5rem;
-    margin-bottom: 1.15rem;
-    box-shadow: 0 1px 3px rgba(20, 20, 19, 0.04);
-    transition: transform 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
-    animation: orcaFadeIn 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.orca-card:hover {
-    border-color: #cbd5e1;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 14px rgba(20, 20, 19, 0.07);
-}
-
-/* Top #1 Featured Card */
-.orca-card-featured {
-    background-color: #ffffff;
-    border: 2px solid #0f172a;
-    border-radius: 10px;
-    padding: 1.5rem 1.75rem;
-    margin-bottom: 1.25rem;
-    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
-    animation: orcaFadeIn 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.orca-featured-badge {
-    background: #0f172a;
-    color: #fbbf24;
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    padding: 0.2rem 0.6rem;
+/* Inline code (document IDs, intents) in the ink on the raised fill, not Streamlit's green */
+[data-testid="stMarkdownContainer"] code, [data-testid="stCaptionContainer"] code, .orca-provenance code,
+.orca-ticket-row code, .orca-ticket-text code {
+    color: #3d3d3d;
+    background: var(--raised);
     border-radius: 4px;
-    display: inline-flex;
-    align-items: center;
-    margin-bottom: 0.5rem;
+    padding: 0 0.25em;
+}
+[data-testid="stSidebar"] [data-testid="stCaptionContainer"],
+[data-testid="stCaptionContainer"] { color: var(--muted); font-size: 0.8125rem; }
+
+/* Slider figures in the text face, not the code face */
+[data-testid="stSliderThumbValue"],
+[data-testid="stSliderTickBarMin"],
+[data-testid="stSliderTickBarMax"] {
+    font-family: inherit;
+    font-variant-numeric: tabular-nums;
 }
 
-/* Staggered Entrance Animation for Cards */
-.orca-card:nth-of-type(1), .orca-card-featured { animation-delay: 40ms; }
-.orca-card:nth-of-type(2) { animation-delay: 120ms; }
-.orca-card:nth-of-type(3) { animation-delay: 200ms; }
-
-@keyframes orcaFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(6px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Card Question Title (Serif Editorial Gravitas) */
-.orca-question {
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: 1.15rem;
+/* Title row */
+.orca-title-row { margin: 0 0 1.25rem 0; }
+.orca-title {
+    font-size: 1.5rem;
+    line-height: 1.25;
     font-weight: 600;
-    color: #141413;
-    line-height: 1.4;
-    margin-bottom: 0.5rem;
+    color: var(--text);
+    margin: 0 0 0.25rem 0;
+    padding: 0;
 }
+.orca-subtitle { font-size: 0.875rem; color: var(--muted); margin: 0; line-height: 1.45; }
+.orca-section-title { font-size: 1.125rem; font-weight: 600; color: var(--text); margin: 0 0 0.25rem 0; }
+.orca-section-note { font-size: 0.875rem; color: var(--muted); margin: 0 0 0.75rem 0; }
 
-/* Card Body Answer — Disciplined width <= 68ch, line-height 1.65 */
-.orca-answer {
-    font-size: 1.0rem;
-    line-height: 1.65;
-    color: #2d2c2a;
-    max-width: 68ch;
-    margin-top: 0.5rem;
-    margin-bottom: 0.75rem;
+/* Controls: white fields with a control border; buttons follow the theme (primary is near-black) */
+.stTextInput input {
+    background: var(--surface);
+    border-radius: var(--radius-control);
 }
+.stButton > button { border-radius: var(--radius-control); min-height: 36px; }
 
-/* Relevance Score Meter Bar */
-.orca-meter-container {
-    display: flex;
-    align-items: center;
-    gap: 0.65rem;
-    font-size: 0.8125rem;
-    color: #5e5d59;
-    margin-bottom: 0.5rem;
+/* Alerts: the refusal keeps the pale negative pair; the rest sit on the card surface */
+[data-testid="stAlertContainer"]:has([data-testid="stAlertContentSuccess"]),
+[data-testid="stAlertContainer"]:has([data-testid="stAlertContentInfo"]) {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
 }
-
-.orca-meter-track {
-    width: 140px;
-    height: 6px;
-    background: #e8e6dc;
-    border-radius: 9999px;
-    overflow: hidden;
+[data-testid="stAlertContentSuccess"], [data-testid="stAlertContentInfo"] { color: var(--text); }
+[data-testid="stAlertContainer"]:has([data-testid="stAlertContentError"]) {
+    background: var(--pill-negative-bg);
+    color: var(--pill-negative-ink);
 }
+[data-testid="stAlertContentError"] { color: var(--pill-negative-ink); }
 
-.orca-meter-fill {
-    height: 100%;
-    border-radius: 9999px;
+/* Answer cards: one surface, one quiet border, no shadow */
+.orca-card, .orca-card-featured {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: 1rem 1.25rem;
+    margin: 0 0 var(--gap) 0;
 }
+.orca-card-featured { border-color: var(--control); }
+.orca-card:hover, .orca-card-featured:hover { border-color: #bdbdbd; }
 
-/* Meta Tags & Rows */
 .orca-meta-row {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 0.8125rem;
-    color: #5e5d59;
+    gap: 8px;
     margin-bottom: 0.5rem;
 }
-
 .orca-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.2rem 0.55rem;
-    border-radius: 4px;
+    flex: none;
+    white-space: nowrap;
+    display: inline-block;
     font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.6;
+    padding: 0 0.45rem;
+    border-radius: 4px;
+    background: var(--pill-neutral-bg);
+    color: var(--pill-neutral-ink);
+}
+.orca-badge-strong { background: var(--pill-positive-bg); color: var(--pill-positive-ink); }
+.orca-badge-possible { background: var(--pill-warning-bg); color: var(--pill-warning-ink); }
+.orca-badge-weak, .orca-badge-faq, .orca-badge-notice { background: var(--pill-neutral-bg); color: var(--pill-neutral-ink); }
+
+.orca-question {
+    font-size: 1.125rem;
     font-weight: 600;
-    letter-spacing: 0.02em;
+    line-height: 1.35;
+    color: var(--text);
+    margin: 0 0 0.5rem 0;
 }
-
-.orca-badge-strong {
-    background-color: #dcfce7;
-    color: #166534;
-    border: 1px solid #bbf7d0;
+.orca-meter-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.8125rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
 }
-
-.orca-badge-possible {
-    background-color: #fef3c7;
-    color: #b45309;
-    border: 1px solid #fde68a;
+.orca-meter-container strong { color: var(--text); font-weight: 600; }
+.orca-meter-container span { white-space: nowrap; }
+.orca-meter-track {
+    width: 160px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--raised);
+    overflow: hidden;
 }
+.orca-meter-fill { height: 100%; border-radius: 999px; background: var(--data); }
+.orca-answer { font-size: 1rem; line-height: 1.55; color: var(--text); margin-bottom: 0.5rem; }
 
-.orca-badge-weak {
-    background-color: #f3f2ee;
-    color: #5e5d59;
-    border: 1px solid #e8e6dc;
-}
-
-.orca-badge-notice {
-    background-color: #fee2e2;
-    color: #991b1b;
-    border: 1px solid #fecaca;
-}
-
-.orca-badge-faq {
-    background-color: #f3f2ee;
-    color: #44403c;
-    border: 1px solid #e7e5e4;
-}
-
-/* Matched Term Highlight with <mark> (Fixes BE-1) */
+/* Query terms found in the answer: weight, not a coloured box */
 mark.orca-highlight, .orca-highlight {
-    background-color: #fef08a !important;
-    color: #854d0e !important;
-    padding: 0.1rem 0.3rem !important;
-    border-radius: 3px !important;
-    font-weight: 600 !important;
+    background: none;
+    color: inherit;
+    font-weight: 600;
+    padding: 0;
 }
 
-/* 7-Domain Chromatic Top Bars */
-.domain-course_registration { border-top: 3.5px solid #2563eb !important; }
-.domain-tuition { border-top: 3.5px solid #059669 !important; }
-.domain-exam { border-top: 3.5px solid #e11d48 !important; }
-.domain-class_schedule { border-top: 3.5px solid #4f46e5 !important; }
-.domain-student_services { border-top: 3.5px solid #d97706 !important; }
-.domain-graduation { border-top: 3.5px solid #9333ea !important; }
-.domain-technical_support { border-top: 3.5px solid #0284c7 !important; }
+details summary {
+    font-size: 0.8125rem;
+    color: var(--muted);
+    cursor: pointer;
+}
+details summary:hover { color: var(--text); }
+.orca-provenance { font-size: 0.8125rem; color: var(--muted); margin: 0.35rem 0 0 0; }
 
-/* Academic Directory (Bento Grid) */
+/* Intent ticket (Classify intent) */
+.orca-office-ticket {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: 1rem 1.25rem;
+    margin: 0 0 var(--gap) 0;
+}
+.orca-ticket-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.orca-ticket-label { font-size: 0.8125rem; color: var(--muted); margin-bottom: 0.25rem; }
+.orca-ticket-name { font-size: 1.125rem; font-weight: 600; color: var(--text); margin-bottom: 0.25rem; }
+.orca-ticket-text { font-size: 0.875rem; color: var(--muted); line-height: 1.45; }
+.orca-ticket-well { background: var(--ground); border-radius: 6px; padding: 0.65rem 0.85rem; margin-top: 0.75rem; }
+.orca-ticket-row { display: flex; justify-content: space-between; font-size: 0.875rem; line-height: 1.8; }
+.orca-ticket-row span:last-child { font-weight: 600; }
+@media (max-width: 640px) { .orca-ticket-grid { grid-template-columns: 1fr; } }
+
+/* Empty state: topic directory and recent notices */
 .orca-directory-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-    gap: 1.15rem;
-    margin: 1.25rem 0;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: var(--gap);
+    margin-bottom: 2rem;
 }
-
+/* Seven topics: the last card takes the whole row rather than leaving an orphan cell */
+.orca-directory-grid > .orca-directory-card:last-child:nth-child(3n+1) { grid-column: 1 / -1; }
 .orca-directory-card {
-    background-color: #faf9f5;
-    border: 1px solid #e8e6dc;
-    border-radius: 8px;
-    padding: 1.25rem 1.35rem;
-    box-shadow: 0 1px 3px rgba(20, 20, 19, 0.03);
-    transition: all 140ms ease;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: 1rem 1.25rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
+.orca-directory-office { font-size: 0.8125rem; color: var(--muted); margin-bottom: 0.25rem; }
+.orca-directory-title { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 0.25rem; }
+.orca-directory-desc { font-size: 0.875rem; color: var(--muted); line-height: 1.45; }
+.orca-directory-footer { font-size: 0.8125rem; color: var(--muted); margin-top: 0.75rem; }
 
-.orca-directory-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(20, 20, 19, 0.08);
-}
-
-.orca-directory-title {
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #141413;
-    margin-bottom: 0.3rem;
-}
-
-.orca-directory-office {
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 0.4rem;
-}
-
-.orca-directory-desc {
-    font-size: 0.875rem;
-    color: #5e5d59;
-    line-height: 1.5;
-    margin-bottom: 0.75rem;
-}
-
-.orca-directory-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.78rem;
-    color: #87867f;
-    border-top: 1px solid #f0eee6;
-    padding-top: 0.5rem;
-    margin-top: auto;
-}
-
-/* Recent Notice Mini-Card */
 .orca-notice-card {
-    background-color: #faf9f5;
-    border: 1px solid #e8e6dc;
-    border-radius: 6px;
-    padding: 0.95rem 1.25rem;
-    margin-bottom: 0.75rem;
-    box-shadow: 0 1px 2px rgba(20, 20, 19, 0.02);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: 0.85rem 1.25rem;
+    margin-bottom: var(--gap);
 }
+.orca-notice-title { font-weight: 600; font-size: 1rem; color: var(--text); margin-bottom: 0.25rem; }
+.orca-notice-text { font-size: 0.875rem; color: var(--muted); line-height: 1.5; }
 
-.orca-notice-card:hover {
-    border-color: #d6d3c4;
-}
+/* Inspector notice in the sidebar */
+.orca-inspector-note { font-size: 0.8125rem; color: var(--muted); margin: 0 0 0.75rem 0; }
 
-/* Administrative Office Ticket (Two-Column Ticket) */
-.orca-office-ticket {
-    background: #ffffff;
-    border: 1.5px solid #e8e6dc;
-    border-radius: 8px;
-    padding: 1.25rem 1.5rem;
-    margin: 1rem 0;
-    box-shadow: 0 2px 8px rgba(20, 20, 19, 0.04);
-}
+/* Dashboard */
+.orca-dash-title { font-size: 1.5rem; font-weight: 600; color: var(--text); margin: 0 0 0.25rem 0; }
+[data-testid="stMetricValue"] { font-size: 1.875rem; font-weight: 400; }
+[data-testid="stMetricLabel"] p { font-size: 0.875rem; color: var(--muted); }
 
-.orca-ticket-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.25rem;
-}
-
-/* Abstention Escalation Box */
-.orca-abstain-box {
-    background-color: #faf9f5;
-    border: 1px solid #e8e6dc;
-    border-radius: 8px;
-    padding: 1.25rem 1.5rem;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    box-shadow: 0 1px 3px rgba(20, 20, 19, 0.04);
-}
-
-/* Accessible Details / Expandable */
-details summary {
-    cursor: pointer;
-    color: #5e5d59;
-    font-size: 0.8125rem;
-    font-weight: 500;
-    transition: color 100ms ease;
-}
-
-details summary:hover {
-    color: #141413;
-}
-
-/* HTML Table Styling */
+/* Tables: rules and alignment, no header band, numbers right-aligned in tabular figures */
+.orca-table-wrap { max-width: 100%; overflow-x: auto; margin: 0.75rem 0; }
 table.orca-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 0.75rem 0;
     font-size: 0.875rem;
-    background-color: #faf9f5;
-}
-
-table.orca-table th, table.orca-table td {
-    border: 1px solid #e8e6dc;
-    padding: 0.55rem 0.75rem;
-    text-align: left;
-}
-
-table.orca-table th {
-    background-color: #e8e6dc;
-    color: #141413;
-    font-weight: 600;
-}
-
-table.orca-table td {
-    color: #2d2c2a;
-}
-
-/* Wide tables scroll inside their own box instead of spilling into the next column */
-.orca-table-wrap {
-    max-width: 100%;
-    overflow-x: auto;
-    margin: 0.75rem 0;
-}
-
-.orca-table-wrap table.orca-table {
+    background: var(--surface);
     margin: 0;
+    font-variant-numeric: tabular-nums;
 }
-
-.orca-table-wrap table.orca-table {
-    font-size: 0.8125rem;
-}
-
-.orca-table-wrap table.orca-table th,
-.orca-table-wrap table.orca-table td {
-    padding: 0.45rem 0.55rem;
-}
-
-.orca-table-wrap table.orca-table td {
+table.orca-table th, table.orca-table td {
+    border: none;
+    border-bottom: 1px solid var(--rule);
+    padding: 0.5rem 0.75rem;
+    text-align: left;
     white-space: nowrap;
 }
-
-.orca-table-wrap table.orca-table th {
+table.orca-table th {
+    background: none;
+    color: var(--muted);
+    font-weight: 400;
+    font-size: 0.8125rem;
+    border-bottom: 1px solid var(--border);
     vertical-align: bottom;
 }
-
+table.orca-table td { color: var(--text); }
+table.orca-table .num { text-align: right; }
 caption.orca-table-caption {
     caption-side: top;
     font-weight: 600;
     text-align: left;
     padding: 6px 0;
-    font-size: 0.9rem;
-    color: #5e5d59;
+    font-size: 0.875rem;
+    color: var(--text);
 }
 
 /* Reduced Motion Discipline (WCAG 2.2 SC 2.3.3) */
@@ -523,5 +354,5 @@ caption.orca-table-caption {
 
 
 def apply_theme() -> None:
-    """Inject centralized high-craft design tokens and CSS into the Streamlit app."""
+    """Inject the design tokens and CSS into the Streamlit app."""
     st.markdown(f"<style>{CUSTOM_CSS}</style>", unsafe_allow_html=True)

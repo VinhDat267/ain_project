@@ -1,5 +1,11 @@
 # Hệ thống Token Thiết kế & Chuẩn Giao diện Sinh viên (Design Tokens Specification)
 
+> **Đã được thay thế (26/11/2026).** Giao diện Streamlit đã chuyển sang phong cách *achromatic ledger*:
+> nền trung tính `#f8f8f8`, thẻ trắng viền `#e6e6e6`, nút chính gần đen, một màu dữ liệu `#1d5fbf` cho thanh
+> cosine, một font (Source Sans Pro, đi kèm Streamlit nên chạy offline). Token hiện hành nằm trong
+> `starter/theme.py` và `.streamlit/config.toml`; phần dưới đây là bản thiết kế cũ (nền kem, màu cam đất, banner
+> xanh đậm), giữ lại để tham khảo.
+
 > **Tài liệu đặc tả hệ thống Design Tokens — Project 12 (Campus FAQ Assistant)**  
 > **Chuyên gia phụ trách:** `agency-ui-designer` & `agency-accessibility-auditor`  
 > **Phong cách định hướng:** Tinh giản, học thuật, trang nhã theo triết lý của **Oxford Navy & Claude Daylight Chromatic (`od-design-systems`)**; tuân thủ nghiêm ngặt nguyên tắc **Anti-AI-Slop** và **WCAG 2.2 Level AA**.
