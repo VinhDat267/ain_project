@@ -121,8 +121,10 @@ python3.11 -m venv .venv
 .venv/bin/python experiments/noise_curve.py           # đường cong lỗi chính tả, mục 4.3
 .venv/bin/python experiments/scenarios.py             # Bảng 6 (14 kịch bản)
 .venv/bin/python experiments/business_metrics.py      # top-3 trả đúng 101/105
-.venv/bin/python experiments/slide_comparisons.py     # bảng so sánh ở slide 6 và 7 giữa kỳ
 ```
+
+Ngoài Phụ lục A, `experiments/slide_comparisons.py` tính lại bảng so sánh ở slide 6 và 7 giữa kỳ (xem mục trên);
+hai bảng này không có trong báo cáo cuối kỳ.
 
 Batch `--split test --final` đã chạy một lần và ghi `experiments/results/test/LOCK`; muốn chạy lại phải thêm
 `--rerun-reason "<lý do>"`. File Word của báo cáo được dựng bằng `report/build_final_report.py`
