@@ -34,6 +34,7 @@ from starter.ui_helpers import (  # noqa: E402
     highlight_matched_terms_html,
     is_non_english_query,
     load_dashboard_kpis,
+    load_dev_split_summary,
     load_notice_dates,
     match_badge,
     match_label,
@@ -146,7 +147,7 @@ with st.sidebar:
             max_value=1.0,
             value=float(INTENT_THRESHOLD),
             step=0.01,
-            help="Minimum posterior confidence required from the calibrated intent classifier.",
+            help="Minimum Logistic Regression posterior (uncalibrated) required before results are shown.",
         )
         top_k_val = st.slider(
             "Top-K Cards",
@@ -272,7 +273,7 @@ with tab_search:
                     </div>
                     <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:0.65rem 0.85rem;">
                         <div style="font-size:0.75rem; font-weight:600; color:#64748b; margin-bottom:0.35rem;">
-                            Calibrated Intent Probability Breakdown
+                            Intent Posterior Breakdown (uncalibrated)
                         </div>
                         {ranking_items}
                     </div>
@@ -294,7 +295,7 @@ with tab_search:
         render_html(ticket_html)
 
     elif should_retrieve and query.strip():
-        # Retrieve candidate documents using calibrated dual-gate
+        # Retrieve candidate documents through the dual gate (cosine + intent posterior)
         results = retrieve(
             query,
             top_k=top_k_val,
@@ -587,6 +588,23 @@ with tab_eval:
     kpi(col_m7, "False Abstention", fmt_rate(kpis["false_abstention_rate"]),
         f"{fmt_count(kpis['false_abstention_rate'], kpis['in_corpus_queries'])} in-corpus queries rejected")
     kpi(col_m8, "Expected Cost / Query", fmt_rate(kpis["expected_cost"], ".4f"), weights)
+
+    dev = load_dev_split_summary()
+    if dev is None:
+        dev_text = (
+            "Held-out dev split: result file missing. Run <code>python scripts/evaluate.py --split dev</code>."
+        )
+    else:
+        dev_text = (
+            f"<strong>Held-out dev split</strong> ({dev['total_queries']} queries outside the course benchmark, "
+            f"<code>experiments/results/final-dev/</code>): end-to-end {dev['e2e_count']}/{dev['total_queries']}, "
+            f"Balanced E2E {dev['balanced_e2e']:.3f}, OOC refused {dev['ooc_refused']}/{dev['ooc_queries']}, "
+            f"paraphrase Hit@1 {dev['paraphrase_hit1']}/{dev['paraphrase_queries']}. "
+            "The thresholds were chosen on the benchmark above, so the benchmark OOC rate is optimistic."
+        )
+    render_html(
+        f"<p style='font-size:0.85rem; color:#5e5d59; margin:0.5rem 0 0;'>{dev_text}</p>"
+    )
 
     st.markdown("---")
     # Figures sit in pairs; wide tables get the full width so they never overlap a figure.

@@ -258,7 +258,7 @@ BLOCKS = [
     ("p", "The student starts the Streamlit application with one command (Appendix A), types a question or picks "
           "a sample and presses Enter. Figure {fig:flow1}(a) shows the typical case: a banner with the predicted "
           "intent, its confidence and the matching office, then three answer cards. Each card states its source "
-          "(FAQ entry, or Notice with its publication date), a match label derived from the cosine (Strong ≥ "
+          "file (faq.json, or notices.json with the publication date), a match label derived from the cosine (Strong ≥ "
           "0.35, Possible 0.22–0.35, Weak < 0.22, shown as text and icon, not colour alone), a score bar and the "
           "full answer with the query terms highlighted. *Helpful* and *Needs clarification* buttons store a "
           "vote in a local file."),
@@ -274,7 +274,7 @@ BLOCKS = [
     ("p", "The sidebar exposes the cosine floor slider, while *Research & Inspector Mode* (Figure {fig:flow2}(a)) "
           "adds the intent gate, *k* and an explain() table under each card listing the "
           "n-grams that contribute most to its cosine. The second tab (Figure {fig:flow2}(b)) is an evaluation "
-          "dashboard that reads every number from the result files of Section 4."),
+          "dashboard that reads every number from the result files of Section 4, including the development split."),
     ("fig2", "flow2", "Inspector mode and the evaluation dashboard.",
      [("figures/fig_inspector_explain.png", "(a) Threshold sliders and explain() for failure F1 of Section 5.2."),
       ("figures/fig_dashboard.png", "(b) Dashboard read from the committed result files.")]),
@@ -526,7 +526,7 @@ BLOCKS = [
         "sliders, feedback, a dashboard read from result files, a Vietnamese-input notice and office contacts "
         "taken only from the corpus (an earlier version showed invented rooms and opening hours).",
         "**Engineering.** The core also runs as a FastAPI and React web app in Docker, and continuous "
-        "integration runs the 133 tests, builds the front end and smoke-tests the container.",
+        "integration runs the 137 tests, builds the front end and smoke-tests the container.",
     ]),
 
     ("h1", "6  Limitations, Ethics and Conclusion"),
@@ -606,7 +606,7 @@ REPRO_LINES = [
     "python3.11 -m venv .venv                     # Windows: py -3.11 -m venv .venv",
     ".venv/bin/python -m pip install -r requirements.txt",
     r"# On Windows replace .venv/bin/python with .venv\Scripts\python.exe",
-    ".venv/bin/python -m pytest -q                # 133 passed, 2 deselected",
+    ".venv/bin/python -m pytest -q                # 137 passed, 2 deselected",
     ".venv/bin/python scripts/evaluate.py         # Tables 3 and 5 (benchmark)",
     ".venv/bin/python scripts/evaluate.py --split dev      # Tables 3 and 5 (dev)",
     ".venv/bin/python experiments/run_ablation.py --split test --final",

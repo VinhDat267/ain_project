@@ -1,0 +1,9 @@
+method,slide_mrr,repo_mrr,slide_paraphrase_hit1,repo_paraphrase_hit1,mrr_diff,settings
+TF-IDF char 3-5-grams,0.943,0.943,0.714,0.714,0.0,"char_wb (3,5), sublinear TF, smooth IDF, L2 (product retrieval)"
+Hybrid: 0.5 word + 0.5 char,0.936,0.937,0.714,0.714,0.001,"0.5 x cosine(word TF-IDF) + 0.5 x cosine(char_wb 3-5 TF-IDF, raw TF)"
+TF-IDF words,0.927,0.927,0.657,0.657,0.0,sklearn TfidfVectorizer defaults
+"BM25 (k1 = 1.5, b = 0.75)",0.912,0.912,0.6,0.6,0.0,"Lucene IDF log(1 + (N-df+0.5)/(df+0.5)), query term counts, 1-char tokens kept"
+"TF-IDF words, 1-2-grams",0.905,0.905,0.6,0.6,0.0,"word (1,2)-grams, English stopwords removed, sublinear TF"
+"TF-IDF words, no stopwords + sublinear",0.896,0.897,0.629,0.629,0.001,"word TF-IDF, English stopwords removed, sublinear TF"
+Bag-of-Words + cosine (baseline),0.893,0.893,0.571,0.571,0.0,"raw term counts (CountVectorizer), cosine"
+LSA (TF-IDF + 60-dim SVD),0.873,0.878,0.6,0.6,0.005,"word TF-IDF without English stopwords, TruncatedSVD(60, random_state=42)"

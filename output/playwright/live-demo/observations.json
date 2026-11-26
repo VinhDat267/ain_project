@@ -1,7 +1,7 @@
 {
-  "checked_on": "2026-11-20",
+  "checked_on": "2026-11-26",
   "url": "http://127.0.0.1:8501/",
-  "branch": "vinh/fix-review-findings (PR #19)",
+  "branch": "vinh/audit-fixes (retaken after PR #24 relabelled the cards and the Top-3 pill)",
   "viewport": "1280x960, scrolled so the query box is at the top",
   "method": "Playwright: fill the query box, click Retrieve documents, wait for the Streamlit run to finish, read alerts and result cards from the page, then take a viewport screenshot",
   "scenarios": [
@@ -64,5 +64,5 @@
     "errors": 0,
     "warnings": 0
   },
-  "note": "All six results match the 03/11 check and the demo script. Scenario 6 intentionally shows a wrong top-ranked document: the correct FAQ (faq_exam_02) is ranked 2nd. Scenario 5 shows why the intent gate is needed: its cosine (0.39) passes the cosine gate."
+  "note": "All six results match the 20/11 and 03/11 checks and the demo script; only the labels changed (source cards read 'FAQ (faq.json)' / 'Notice (notices.json)', the hero pill reads '96.2% Top-3 Delivered'). Scenario 6 intentionally shows a wrong top-ranked document: the correct FAQ (faq_exam_02) is ranked 2nd. Scenario 5 shows why the intent gate is needed: its cosine (0.39) passes the cosine gate."
 }

@@ -1,0 +1,6 @@
+model,slide_accuracy,repo_accuracy,slide_conf_in_scope,repo_conf_in_scope,slide_conf_ooc,repo_conf_ooc,train_texts,settings
+TF-IDF + Logistic Regression,0.971,0.971,0.74,0.74,0.26,0.26,231,"word TF-IDF, sublinear TF, LogisticRegression(C=10) (product intent model)"
+TF-IDF char + Logistic Regression,0.971,0.971,0.76,0.76,0.3,0.3,231,"char_wb (3,5) TF-IDF, sublinear TF, LogisticRegression(C=10)"
+TF-IDF char + Naive Bayes,0.962,0.962,0.96,0.96,0.59,0.59,231,"char_wb (3,5) TF-IDF, sublinear TF, MultinomialNB(alpha=0.1)"
+BoW + Naive Bayes (baseline),0.943,0.943,0.97,0.97,0.45,0.45,231,"raw term counts, MultinomialNB(alpha=0.5)"
+"kNN (k = 5, cosine)",0.876,0.876,0.72,0.72,0.47,0.47,231,"word TF-IDF, sublinear TF, KNeighborsClassifier(5, metric='cosine')"
