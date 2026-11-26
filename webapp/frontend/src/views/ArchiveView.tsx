@@ -10,7 +10,17 @@ interface ArchiveViewProps {
 
 type ArchiveTabId = 'documents' | 'contacts'
 
+const ARCHIVE_PAGE = 12
+
+/** A short excerpt cut at a word boundary, so the row never clips its text. */
+function excerpt(text: string, max = 150): string {
+  if (text.length <= max) return text
+  const cut = text.slice(0, max)
+  return cut.slice(0, cut.lastIndexOf(" ")) + "…"
+}
+
 export function ArchiveView({ onOpenDocument, onOpenDocumentById }: ArchiveViewProps) {
+  const [showAll, setShowAll] = useState(false)
   const [activeTab, setActiveTab] = useState<ArchiveTabId>('documents')
   const [search, setSearch] = useState('')
   const [selectedIntent, setSelectedIntent] = useState('')
@@ -164,8 +174,14 @@ export function ArchiveView({ onOpenDocument, onOpenDocumentById }: ArchiveViewP
             <p className="muted-note">No documents match those filters.</p>
           </div>
         ) : (
+          <>
+          <p className="small-meta" style={{ marginBottom: '8px' }}>
+            {showAll || documents.length <= ARCHIVE_PAGE
+              ? `${documents.length} documents`
+              : `Showing ${ARCHIVE_PAGE} of ${documents.length} documents`}
+          </p>
           <div className="doc-list">
-            {documents.map((doc) => {
+            {(showAll ? documents : documents.slice(0, ARCHIVE_PAGE)).map((doc) => {
               const st = topicStyle(doc.intent)
               return (
                 <button
@@ -176,7 +192,7 @@ export function ArchiveView({ onOpenDocument, onOpenDocumentById }: ArchiveViewP
                 >
                   <div className="doc-row__main">
                     <div className="doc-row__title">{doc.question}</div>
-                    <div className="doc-row__excerpt">{doc.answer}</div>
+                    <div className="doc-row__excerpt">{excerpt(doc.answer)}</div>
                   </div>
                   <div className="doc-row__meta">
                     <span className="topic-tag" style={{ fontSize: '13px' }}>
@@ -192,6 +208,12 @@ export function ArchiveView({ onOpenDocument, onOpenDocumentById }: ArchiveViewP
               )
             })}
           </div>
+          {!showAll && documents.length > ARCHIVE_PAGE && (
+            <button type="button" className="btn btn--sm btn--secondary" style={{ marginTop: '12px' }} onClick={() => setShowAll(true)}>
+              Show all {documents.length}
+            </button>
+          )}
+          </>
         )}
       </div>
 
@@ -209,7 +231,7 @@ export function ArchiveView({ onOpenDocument, onOpenDocumentById }: ArchiveViewP
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', maxWidth: '640px' }}>
                   <span className="topic-tag" style={{ fontSize: '13px' }}>
                     <span className="topic-dot" style={{ background: st.fg }} aria-hidden="true" />
-                    {cat.title} · <span className="num">{cat.faq_count} FAQs, {cat.notice_count} Notices</span>
+                    {cat.title} · <span className="num">{cat.faq_count} FAQs, {cat.notice_count} notices</span>
                   </span>
                   <div style={{ fontFamily: 'var(--font-display)', fontSize: '18px', fontWeight: 500 }}>
                     {cat.office_name}

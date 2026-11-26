@@ -1,4 +1,4 @@
-import { useState, type KeyboardEvent } from 'react'
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { topicStyle } from '../constants/topics'
 import type { ChatResponse } from '../types/api'
 
@@ -38,6 +38,15 @@ export function InspectorPanel({
   activeTurnResponse,
 }: InspectorPanelProps) {
   const [activeTab, setActiveTab] = useState<InspectorTabId>('features')
+  const panelRef = useRef<HTMLElement | null>(null)
+
+  // On opening, bring the panel's top (the threshold controls) into view below the sticky header.
+  useEffect(() => {
+    const panel = panelRef.current
+    if (panel && panel.getBoundingClientRect().top < 76) {
+      window.scrollBy({ top: panel.getBoundingClientRect().top - 76 })
+    }
+  }, [])
 
   const handleTabKeyDown = (e: KeyboardEvent<HTMLButtonElement>, currentIndex: number) => {
     let nextIndex = currentIndex
@@ -60,7 +69,7 @@ export function InspectorPanel({
   const explainSum = explainItems.reduce((acc, item) => acc + item.contribution, 0)
 
   return (
-    <aside className="card inspector-panel" aria-label="Pipeline inspector">
+    <aside ref={panelRef} className="card inspector-panel" aria-label="Pipeline inspector">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h2 style={{ fontSize: '18px' }}>Pipeline Inspector</h2>
         {activeTurnResponse && (

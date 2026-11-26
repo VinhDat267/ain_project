@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
-import { submitFeedback } from '../api/client'
+import { fetchDocuments, submitFeedback } from '../api/client'
 import { HighlightedText } from '../components/HighlightedText'
 import { InspectorPanel } from '../components/InspectorPanel'
 import { STARTER_PROMPTS, topicStyle } from '../constants/topics'
-import type { ChatTurn } from '../types/api'
+import type { ChatTurn, DomainCatalogItem } from '../types/api'
 
 interface AssistantViewProps {
   turns: ChatTurn[]
@@ -50,6 +50,41 @@ export function AssistantView({
   const [feedbackNotice, setFeedbackNotice] = useState<string>('')
   const prevTurnCountRef = useRef(turns.length)
   const latestTurnRef = useRef<HTMLElement | null>(null)
+  const [catalog, setCatalog] = useState<DomainCatalogItem[]>([])
+
+  useEffect(() => {
+    let cancelled = false
+    fetchDocuments()
+      .then((res) => {
+        if (!cancelled) setCatalog(res.catalog)
+      })
+      .catch(() => {
+        if (!cancelled) setCatalog([])
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  // The cosine floor sits beside the question box, as the assignment asks; it applies to the next question.
+  const thresholdControl = (
+    <div className="threshold-row">
+      <label htmlFor="cosine-threshold-input" className="field-label">
+        Cosine threshold
+      </label>
+      <input
+        id="cosine-threshold-input"
+        type="range"
+        min={0}
+        max={1}
+        step={0.01}
+        value={cosineThreshold}
+        onChange={(e) => onChangeCosineThreshold(Number(e.target.value))}
+      />
+      <span className="num threshold-row__value">{cosineThreshold.toFixed(2)}</span>
+      <span className="small-meta">intent gate {Math.round(intentThreshold * 100)}% · applies to the next question</span>
+    </div>
+  )
 
   useEffect(() => {
     if (turns.length > prevTurnCountRef.current) {
@@ -95,7 +130,8 @@ export function AssistantView({
               <div>
                 <h1 id="assistant-heading">Ask campus notices &amp; FAQs</h1>
                 <p className="empty-hero__sub" style={{ marginTop: '8px' }}>
-                  Retrieval-only search across 112 synthetic HANU documents. Zero external LLMs.
+                  Answers from 112 synthetic HANU FAQs and notices, each with its source file and cosine; other
+                  questions are refused.
                 </p>
               </div>
 
@@ -138,6 +174,25 @@ export function AssistantView({
                   </button>
                 ))}
               </div>
+
+              {thresholdControl}
+
+              {catalog.length > 0 && (
+                <div className="topic-section">
+                  <h2 className="section-title">Topics and contacts</h2>
+                  <div className="topic-grid">
+                    {catalog.map((cat) => (
+                      <div key={cat.intent} className="topic-card">
+                        <div className="small-meta">{cat.office_name}</div>
+                        <div className="topic-card__title">{cat.title}</div>
+                        <div className="small-meta">
+                          <span className="num">{cat.faq_count}</span> FAQs · <span className="num">{cat.notice_count}</span> notices
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <>
@@ -151,7 +206,6 @@ export function AssistantView({
                   const isSelected = activeTurn?.id === turn.id
                   const isLatest = idx === turns.length - 1
                   const topDoc = res.results[0]
-                  const secondaryDocs = res.results.slice(1)
                   const intentTheme = topicStyle(res.intent)
 
                   return (
@@ -200,76 +254,57 @@ export function AssistantView({
                                   style={{ background: intentTheme.fg }}
                                   aria-hidden="true"
                                 />
-                                <span>{topDoc.intent_label}</span>
+                                <span>Intent: {res.intent_label}</span>
                                 <span className="muted-note">
-                                  · {topDoc.match_label} (<span className="num">{topDoc.score.toFixed(2)}</span>)
+                                  · confidence <span className="num">{Math.round(res.intent_confidence * 100)}%</span>
                                 </span>
                               </span>
-
-                              <span>
-                                <button
-                                  type="button"
-                                  className="link-btn mono"
-                                  onClick={() => onOpenDocumentById(topDoc.id)}
-                                >
-                                  {topDoc.id}
-                                </button>
-                                {topDoc.date ? ` · ${topDoc.date}` : ''}
+                              <span className="small-meta">
+                                {res.results.length} matching document{res.results.length === 1 ? '' : 's'}
                               </span>
                             </div>
 
-                            <h2 className="answer-heading">{topDoc.question}</h2>
-
-                            <p className="answer-body">
-                              <HighlightedText
-                                segments={topDoc.answer_segments}
-                                fallback={topDoc.answer}
-                              />
-                            </p>
-
-                            {res.office && (
-                              <p className="contact-line">
-                                <strong>{res.office.name}</strong> — {res.office.contact} (
-                                <button
-                                  type="button"
-                                  className="link-btn mono"
-                                  onClick={() => onOpenDocumentById(res.office!.evidence)}
-                                >
-                                  {res.office.evidence}
-                                </button>
-                                )
-                              </p>
-                            )}
-
-                            {secondaryDocs.length > 0 && (
-                              <details className="related-disclosure">
-                                <summary>
-                                  Related matches ({secondaryDocs.length})
-                                </summary>
-                                <div className="related-list">
-                                  {secondaryDocs.map((doc) => (
-                                    <div key={doc.id} className="related-item">
-                                      <div style={{ display: 'flex', justifyContent: 'space-between', gap: '8px', flexWrap: 'wrap' }}>
-                                        <strong style={{ fontWeight: 500 }}>{doc.question}</strong>
-                                        <button
-                                          type="button"
-                                          className="link-btn mono"
-                                          onClick={() => onOpenDocumentById(doc.id)}
-                                        >
-                                          {doc.id} ({doc.score.toFixed(2)})
-                                        </button>
-                                      </div>
-                                      <p className="muted-note">
-                                        <HighlightedText
-                                          segments={doc.answer_segments}
-                                          fallback={doc.answer}
-                                        />
-                                      </p>
-                                    </div>
-                                  ))}
+                            {res.results.map((doc, docIdx) => (
+                              <div key={doc.id} className={`result-card ${docIdx === 0 ? 'result-card--top' : ''}`}>
+                                <div className="result-card__meta">
+                                  <span className="source-pill">
+                                    {doc.source === 'notices.json' ? 'Notice' : 'FAQ'} ({doc.source})
+                                    {doc.date ? ` · ${doc.date}` : ''}
+                                  </span>
+                                  <span className="small-meta">
+                                    {doc.match_label} · cosine <span className="num">{doc.score.toFixed(3)}</span>
+                                  </span>
+                                  <button
+                                    type="button"
+                                    className="link-btn mono result-card__id"
+                                    onClick={() => onOpenDocumentById(doc.id)}
+                                  >
+                                    {doc.id}
+                                  </button>
                                 </div>
-                              </details>
-                            )}
+                                {docIdx === 0 ? (
+                                  <h2 className="answer-heading">{doc.question}</h2>
+                                ) : (
+                                  <h3 className="result-card__title">{doc.question}</h3>
+                                )}
+                                <p className={docIdx === 0 ? 'answer-body' : 'result-card__body'}>
+                                  <HighlightedText segments={doc.answer_segments} fallback={doc.answer} />
+                                </p>
+                                {docIdx === 0 && res.office && (
+                                  <p className="contact-line">
+                                    <strong>{res.office.name}</strong> — {res.office.contact} (
+                                    <button
+                                      type="button"
+                                      className="link-btn mono"
+                                      onClick={() => onOpenDocumentById(res.office!.evidence)}
+                                    >
+                                      {res.office.evidence}
+                                    </button>
+                                    )
+                                  </p>
+                                )}
+                              </div>
+                            ))}
                           </div>
                         )
                       )}
@@ -283,7 +318,7 @@ export function AssistantView({
                             void handleFeedback(turn, true)
                           }}
                         >
-                          {turn.feedbackGiven === true ? 'Helpful ✓' : 'Helpful'}
+                          {turn.feedbackGiven === true ? 'Marked helpful' : 'Helpful'}
                         </button>
                         <button
                           type="button"
@@ -352,10 +387,9 @@ export function AssistantView({
                   {isSubmitting ? 'Searching...' : 'Ask'}
                 </button>
               </div>
+              {thresholdControl}
               <div className="composer-dock__foot">
-                <span className="num">
-                  Dual-gate θ_sim {cosineThreshold.toFixed(2)} / θ_intent {intentThreshold.toFixed(2)}
-                </span>
+                <span />
                 <button
                   type="button"
                   className="link-btn"

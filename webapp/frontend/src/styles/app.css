@@ -1245,3 +1245,202 @@ dialog.doc-dialog::backdrop {
     animation-iteration-count: 1 !important;
   }
 }
+
+/* ------------------------------------------------------------------
+   Audit restyle (26/11/2026): one text face for figures, one left edge,
+   the assignment's features on the answer, honest states.
+   ------------------------------------------------------------------ */
+
+/* Figures in the text face with tabular digits; the mono face stays for document IDs (.mono). */
+.num {
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+/* App titles stay at app size */
+.empty-hero h1,
+.view-head h1 {
+  font-size: 28px;
+  letter-spacing: -0.02em;
+}
+
+/* The chat column shares the header's left edge instead of floating in the middle */
+.chat-column {
+  margin-inline: 0;
+  max-width: 800px;
+}
+.assistant-layout--inspector {
+  grid-template-columns: minmax(0, 800px) minmax(320px, 370px);
+  justify-content: start;
+}
+
+/* Skip link: visually hidden until focused (the standard clip pattern) */
+.skip-link {
+  left: 16px;
+  top: 12px;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.skip-link:focus {
+  width: auto;
+  height: auto;
+  padding: 10px 16px;
+  clip-path: none;
+}
+
+/* A disabled control stays legible and reads as unavailable */
+.btn:disabled,
+.btn--primary:disabled {
+  opacity: 1;
+  background: var(--surface);
+  color: var(--muted);
+  border-color: var(--line-strong);
+}
+
+/* The inspector never runs under the sticky header: it scrolls inside its own height */
+.inspector-panel {
+  max-height: calc(100vh - 92px);
+  overflow-y: auto;
+}
+
+/* Cosine threshold beside the question box */
+.threshold-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-top: 12px;
+}
+.threshold-row .field-label { margin: 0; }
+.threshold-row input[type='range'] { width: 200px; accent-color: var(--action); }
+.threshold-row__value { min-width: 2.5em; font-weight: 500; }
+
+/* Topic directory on the empty screen */
+.section-title {
+  font-size: 18px;
+  margin: var(--s-4) 0 12px;
+}
+.topic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+.topic-grid > .topic-card:last-child:nth-child(3n + 1) { grid-column: 1 / -1; }
+.topic-card {
+  background: var(--surface-elevated);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.topic-card__title { font-weight: 600; color: var(--ink); }
+
+/* One card per retrieved document (top-k), each naming its source file */
+.result-card {
+  background: var(--surface-elevated);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-top: 12px;
+}
+.result-card--top { border-color: var(--line-strong); }
+.result-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  margin-bottom: 8px;
+}
+.result-card__id { margin-left: auto; }
+.source-pill {
+  flex: none;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 1px 8px;
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--ink);
+}
+.result-card__title { font-size: 17px; margin-bottom: 6px; }
+.result-card__body { color: var(--ink); font-size: 15px; line-height: 1.55; }
+
+/* Tables: no header band, numbers right-aligned with their headers */
+.data-table thead th {
+  background: var(--surface-elevated);
+  color: var(--muted);
+  font-weight: 400;
+}
+.data-table .num { text-align: right; }
+
+/* Archive rows wrap their (already shortened) excerpt instead of clipping it */
+.doc-row__excerpt {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+/* On a phone the section tabs wrap rather than run past the screen edge */
+@media (max-width: 500px) {
+  .tab-list {
+    flex-wrap: wrap;
+    overflow-x: visible;
+    white-space: normal;
+  }
+}
+
+/* The eight-column stress-test table turns into labelled rows wherever it would not fit its frame
+   (a tablet or a phone), the way narrow tables already do below 460px. */
+@container (max-width: 900px) {
+  .table-wrapper--wide .data-table thead { display: none; }
+  .table-wrapper--wide .data-table tbody tr {
+    display: grid;
+    gap: 6px;
+    padding: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .table-wrapper--wide .data-table tbody th,
+  .table-wrapper--wide .data-table tbody td {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    padding: 2px 0;
+    border-bottom: none;
+    text-align: right;
+  }
+  .table-wrapper--wide .data-table tbody th { position: static; background: transparent; }
+  .table-wrapper--wide .data-table tbody td[data-label]::before,
+  .table-wrapper--wide .data-table tbody th[data-label]::before {
+    content: attr(data-label);
+    font-weight: 500;
+    color: var(--muted);
+    text-align: left;
+    flex-shrink: 0;
+  }
+}
+
+/* Empty screen: the question block keeps the 800px column; the topic directory uses the full width */
+.chat-column:has(.empty-hero) { max-width: none; }
+.empty-hero > *:not(.topic-section) { max-width: 800px; width: 100%; }
+.topic-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 900px) { .topic-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .topic-grid { grid-template-columns: minmax(0, 1fr); } }
+
+/* Long document IDs in the stacked stress-test rows wrap instead of running off a phone screen */
+@container (max-width: 900px) {
+  .table-wrapper--wide .data-table tbody td { flex-wrap: wrap; overflow-wrap: anywhere; }
+}
+
+/* The four destinations fit a phone; no scrollbar track under the header */
+@media (max-width: 780px) {
+  .primary-nav { scrollbar-width: none; }
+  .primary-nav::-webkit-scrollbar { display: none; }
+  .primary-nav .nav-link { padding-inline: 8px; }
+}
