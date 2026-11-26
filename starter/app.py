@@ -1,7 +1,8 @@
 """Interactive Streamlit application for Project 12 — Campus Notice and FAQ Assistant.
 
-Redesigned with Oxford Navy & Claude Daylight Chromatic design tokens, student-centric academic directory,
-staggered card animations, accessible WCAG 2.2 AA contrast, visual score meters, and research inspector mode.
+Achromatic-ledger style (starter/theme.py): the answer comes first, set in ink on white cards, with the
+cosine bar as the one coloured data element; a topic directory when nothing has been asked yet; and a
+research inspector mode with the intent gate, top-k, explain() and a 3-way retrieval comparison.
 """
 from __future__ import annotations
 
@@ -92,9 +93,9 @@ def _get_comparison_retrievers() -> tuple[Retriever, BM25Retriever]:
 
 st.set_page_config(
     page_title="HANU Student Knowledge Assistant",
-    page_icon="🎓",
     layout="wide",
-    initial_sidebar_state="expanded",
+    # "auto" keeps the sidebar open on desktop and folded on a phone, where it would cover the question box.
+    initial_sidebar_state="auto",
 )
 
 # Apply centralized high-craft design tokens & CSS
@@ -111,12 +112,6 @@ n_notices = sum(1 for d in documents if d["source"] == "notices.json" or d["id"]
 # DO NOT declare any st.text_input or st.button inside the sidebar prior to the main search inputs!
 with st.sidebar:
     st.markdown("### HANU Assistant")
-    st.markdown(
-        "<p style='font-size:0.875rem;color:#5e5d59;line-height:1.45;margin-bottom:0.75rem;'>"
-        f"{DISCLAIMER}"
-        "</p>",
-        unsafe_allow_html=True,
-    )
 
     similarity_thresh = st.slider(
         "Cosine Similarity Threshold (θ_sim)",
@@ -136,9 +131,7 @@ with st.sidebar:
 
     if inspector_mode:
         st.markdown(
-            "<div style='padding:0.6rem 0.75rem;background:#faf9f5;border-radius:6px;border:1px solid #d6d3c4;margin-bottom:0.75rem;font-size:0.8rem;color:#b45309;'>"
-            "<strong>Inspector Mode Active</strong>: Intent gate, Top-K, explain() and 3-way comparisons unlocked."
-            "</div>",
+            "<p class='orca-inspector-note'>Intent gate, top-k, explain() and the 3-way comparison are shown.</p>",
             unsafe_allow_html=True,
         )
         intent_thresh = st.slider(
@@ -162,32 +155,29 @@ with st.sidebar:
         top_k_val = 3
 
     st.markdown("---")
-    st.markdown("#### Sample Inquiries")
     presets = {
-        "(Type your own question or select)": "",
-        "1. Tuition payment deadline": "When is tuition due for the semester?",
-        "2. Student Portal login & password": "How do I reset my Student Portal password?",
-        "3. Timetable schedule conflict [q_056]": "How can I tell if my class times conflict with each other?",
-        "4. Registration account hold [q_111]": "My account has a registration hold - what does that mean and how do I remove it?",
-        "5. Checking class times [q_064]": "Where do I go to see my current classes and times?",
-        "6. Noisy query with typos": "tution dedline paymnt for upcomng semster",
-        "7. Wi-Fi connection issue": "I conncet to Wi-Fi!",
-        "8. Out-of-scope query (Recreation kayak)": "Can I rent a kayak from the campus recreation center?",
-        "9. Out-of-scope query (Campus dining)": "What's the best restaurant near campus for vegan food?",
+        "Choose a sample question": "",
+        "Tuition payment deadline": "When is tuition due for the semester?",
+        "Student Portal password": "How do I reset my Student Portal password?",
+        "Timetable conflict (q_056)": "How can I tell if my class times conflict with each other?",
+        "Registration hold (q_111)": "My account has a registration hold - what does that mean and how do I remove it?",
+        "Checking class times (q_064)": "Where do I go to see my current classes and times?",
+        "Typo-heavy question": "tution dedline paymnt for upcomng semster",
+        "Wi-Fi connection issue": "I conncet to Wi-Fi!",
+        "Out of scope: kayak rental": "Can I rent a kayak from the campus recreation center?",
+        "Out of scope: campus dining": "What's the best restaurant near campus for vegan food?",
     }
-    selected_preset = st.selectbox("Quick-load sample questions:", list(presets.keys()))
+    selected_preset = st.selectbox("Sample questions", list(presets.keys()))
 
     st.markdown("---")
     st.markdown("#### Document Archive")
     st.markdown(
-        f"<p style='font-size:0.8rem;color:#5e5d59;margin-bottom:0.5rem;'>"
-        f"Archive contains <strong>{len(documents)}</strong> synthetic corpus documents ({n_faqs} FAQs, {n_notices} Notices)."
-        f"</p>",
+        f"<p class='orca-section-note'>{len(documents)} synthetic documents: {n_faqs} FAQs, {n_notices} notices.</p>",
         unsafe_allow_html=True,
     )
 
     intents = sorted({doc["intent"] for doc in documents})
-    chosen_intent = st.selectbox("Browse archive by topic:", ["(all)"] + intents)
+    chosen_intent = st.selectbox("Browse by topic", ["(all)"] + intents)
     filtered_docs = documents if chosen_intent == "(all)" else [d for d in documents if d["intent"] == chosen_intent]
     with st.expander(f"View archive documents ({len(filtered_docs)})", expanded=False):
         for doc in filtered_docs[:30]:
@@ -197,28 +187,17 @@ with st.sidebar:
             st.caption(f"Source: {doc['source']} | Topic: `{doc['intent']}`")
 
 # ----------------- MAIN TABS -----------------
-tab_search, tab_eval = st.tabs(["Student Assistant", "Operational & Research Dashboard"])
+tab_search, tab_eval = st.tabs(["Student Assistant", "Dashboard"])
 
 # ----------------- TAB 1: ASSISTANT -----------------
 with tab_search:
-    # Oxford Navy Hero Masthead Banner
+    # Title row: a noun title and one line, so the question box and the answer stay on the first screen.
     render_html(
         f"""
-        <div class="orca-hero-banner">
-            <div class="orca-hero-overline">AIN Course Project · Synthetic HANU Corpus</div>
-            <div class="orca-hero-title">HANU Student Knowledge Assistant</div>
-            <div class="orca-hero-subtitle">
-                Retrieval-only answers on course registration, tuition, exams, schedules, graduation,
-                student services and IT support. {DISCLAIMER}
-            </div>
-            <div class="orca-stat-strip">
-                <span class="orca-stat-pill"><strong>{len(documents)}</strong> Documents</span>
-                <span class="orca-stat-pill"><strong>{n_faqs}</strong> FAQs</span>
-                <span class="orca-stat-pill"><strong>{n_notices}</strong> Notices</span>
-                <span class="orca-stat-pill"><strong>{len(DOMAIN_PALETTE)}</strong> Topics</span>
-                <span class="orca-stat-pill"><strong>{fmt_rate(kpis['top3_rescue_rate'])}</strong> Top-3 Delivered</span>
-                <span class="orca-stat-pill"><strong>Dual-Gate</strong> Rejection</span>
-            </div>
+        <div class="orca-title-row">
+            <h1 class="orca-title">HANU Student Knowledge Assistant</h1>
+            <p class="orca-subtitle">Answers from {n_faqs} FAQs and {n_notices} notices, with source file and cosine;
+            other questions are refused. {DISCLAIMER}</p>
         </div>
         """
     )
@@ -234,11 +213,12 @@ with tab_search:
     )
 
     # CRITICAL: app.button[0] = "Classify intent", app.button[1] = "Retrieve documents"
-    col1, col2 = st.columns(2)
+    # Both buttons on one left edge; Retrieve is the screen's main job, so it is the one primary.
+    col1, col2, _ = st.columns([1.5, 2, 4.5], gap="small")
     with col1:
-        classify_clicked = st.button("Classify intent")
+        classify_clicked = st.button("Classify intent", use_container_width=True)
     with col2:
-        retrieve_clicked = st.button("Retrieve documents")
+        retrieve_clicked = st.button("Retrieve documents", type="primary", use_container_width=True)
 
     # If user pressed enter, clicked retrieve, auto_retrieved, or picked a preset
     should_retrieve = retrieve_clicked or auto_retrieve or bool(query.strip() and not classify_clicked)
@@ -251,43 +231,26 @@ with tab_search:
         # Structured Two-Column Office Ticket with Intent Probability Ranking (Fixes BE-4)
         top_intents = get_intent_ranking(query, top_n=3)
         ranking_items = "".join([
-            f"<div style='display:flex; justify-content:space-between; margin-bottom:0.25rem; font-size:0.8125rem;'>"
-            f"<span><strong>#{idx}</strong> <code>{int_name}</code></span>"
-            f"<span style='color:#2563eb; font-weight:600;'>{prob:.1%}</span>"
-            f"</div>"
+            f"<div class='orca-ticket-row'><span>{idx}. <code>{int_name}</code></span><span>{prob:.1%}</span></div>"
             for idx, (int_name, prob) in enumerate(top_intents, start=1)
         ])
 
         ticket_html = f"""
-        <div class="orca-office-ticket domain-{intent}">
+        <div class="orca-office-ticket">
             <div class="orca-ticket-grid">
                 <div>
-                    <div style="font-size:0.75rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:#2563eb; margin-bottom:0.25rem;">
-                        Suggested Contact (named in the corpus)
-                    </div>
-                    <div style="font-family:Georgia, serif; font-size:1.15rem; font-weight:600; color:#141413; margin-bottom:0.35rem;">
-                        {office['name']}
-                    </div>
-                    <div style="font-size:0.875rem; color:#5e5d59; line-height:1.45; margin-bottom:0.75rem;">
-                        {office['role']}
-                    </div>
-                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:0.65rem 0.85rem;">
-                        <div style="font-size:0.75rem; font-weight:600; color:#64748b; margin-bottom:0.35rem;">
-                            Intent Posterior Breakdown (uncalibrated)
-                        </div>
+                    <div class="orca-ticket-label">Contact named in the corpus</div>
+                    <div class="orca-ticket-name">{office['name']}</div>
+                    <div class="orca-ticket-text">{office['role']}</div>
+                    <div class="orca-ticket-well">
+                        <div class="orca-ticket-label">Intent posterior (uncalibrated)</div>
                         {ranking_items}
                     </div>
                 </div>
                 <div>
-                    <div style="font-size:0.75rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:#64748b; margin-bottom:0.25rem;">
-                        Self-Service Channel
-                    </div>
-                    <div style="font-size:0.95rem; font-weight:600; color:#141413; margin-bottom:0.35rem;">
-                        {office['contact']}
-                    </div>
-                    <div style="font-size:0.8125rem; color:#87867f; border-top:1px solid #e8e6dc; padding-top:0.5rem;">
-                        Source: <code>{office['evidence']}</code>. The corpus lists no buildings, rooms or opening hours.
-                    </div>
+                    <div class="orca-ticket-label">Self-service channel</div>
+                    <div class="orca-ticket-name">{office['contact']}</div>
+                    <div class="orca-ticket-text">Source: <code>{office['evidence']}</code>. The corpus lists no buildings, rooms or opening hours.</div>
                 </div>
             </div>
         </div>
@@ -328,21 +291,24 @@ with tab_search:
                 return f"{shown} (gate ≥ {bound}, {'passed' if value >= limit else 'failed'})"
 
             st.info(
-                f"**Outside the indexed documents.** This assistant answers only from its {len(documents)} "
-                f"FAQ and notice documents and found none that matches well enough.\n\n"
+                f"**Outside the indexed documents.** None of the {len(documents)} FAQs and notices matches well enough.\n\n"
                 f"**Why it was rejected:** best cosine similarity {gate(best_cosine, similarity_thresh, False)} · "
                 f"intent confidence {gate(confidence, intent_thresh, True)}.\n\n"
                 f"**Topics it covers:** {topic_list}.\n\n"
                 f"**Tips:**\n"
-                f"1. If your question is about one of these topics, rephrase it with campus terms "
-                f"(e.g. *'tuition payment'*, *'course add/drop'*, *'final exam'*).\n"
-                f"2. Check spelling and expand abbreviations.\n"
-                f"3. Otherwise, ask the university directly: the corpus has no information on this question."
+                f"- Rephrase with campus terms: *tuition payment*, *course add/drop*, *final exam*.\n"
+                f"- Check spelling and expand abbreviations.\n"
+                f"- Otherwise ask the university: the corpus has nothing on this."
             )
         else:
             # Successful retrieval: Render green success banner with intent, confidence, and office routing
             st.success(f"Intent: {intent} · confidence {confidence:.0%} · Contact: {office['name']}")
-            st.markdown(f"### Found {len(results)} relevant documents:")
+            # The dual-gate readout: the same two gates the refusal panel reports, here both passed.
+            st.caption(
+                f"Passed both gates: best cosine {results[0][1]:.2f} ≥ {similarity_thresh:.2f} · "
+                f"intent {confidence:.0%} ≥ {intent_thresh:.0%}"
+            )
+            st.markdown(f"### {len(results)} matching documents")
 
             retriever = _get_retriever()
             for rank_idx, (doc, score) in enumerate(results, start=1):
@@ -361,37 +327,27 @@ with tab_search:
 
                 # HTML-safe highlighting using <mark> (Fixes BE-1)
                 highlighted_answer = highlight_matched_terms_html(doc["answer"], query)
-                is_featured = (rank_idx == 1)
-                card_class = f"orca-card-featured domain-{doc['intent']}" if is_featured else f"orca-card domain-{doc['intent']}"
-                featured_badge_html = '<div class="orca-featured-badge">★ TOP RECOMMENDED ANSWER</div>' if is_featured else ''
-
-                meter_pct = min(max(int(score * 100), 5), 100)
-                meter_color = "#166534" if score >= 0.35 else ("#b45309" if score >= 0.22 else "#64748b")
+                card_class = "orca-card-featured" if rank_idx == 1 else "orca-card"
+                # The bar is the cosine itself on a 0-1 scale, with no minimum stub.
+                meter_pct = min(max(score, 0.0), 1.0) * 100
 
                 card_html = f"""
                 <div class="{card_class}">
-                    {featured_badge_html}
                     <div class="orca-meta-row">
                         <span class="orca-badge {src_class}">{src_tag}</span>
                         <span class="orca-badge {badge_class}">{badge_str}</span>
-                        <span style="font-size:0.75rem; color:#87867f; margin-left:auto;">
-                            Domain: <strong>{doc['intent']}</strong>
-                        </span>
                     </div>
-                    <div class="orca-question">#{rank_idx} · {html.escape(doc['question'])}</div>
+                    <div class="orca-question">{rank_idx}. {html.escape(doc['question'])}</div>
                     <div class="orca-meter-container">
-                        <span>Relevance Match: <strong>{score:.3f}</strong></span>
-                        <div class="orca-meter-track">
-                            <div class="orca-meter-fill" style="width:{meter_pct}%; background:{meter_color};"></div>
+                        <span>Cosine <strong>{score:.3f}</strong></span>
+                        <div class="orca-meter-track" role="img" aria-label="Cosine {score:.3f} on a 0 to 1 scale">
+                            <div class="orca-meter-fill" style="width:{meter_pct:.1f}%;"></div>
                         </div>
-                        <span>({label_text})</span>
                     </div>
                     <div class="orca-answer">{highlighted_answer}</div>
                     <details>
-                        <summary>Technical Details & Document Provenance</summary>
-                        <p style="font-size:0.8rem;color:#5e5d59;margin:0.35rem 0 0 0;">
-                            Document ID: <code>{doc['id']}</code> | Source: <code>{html.escape(src_file)}</code> | Relevance Cosine: <strong>{score:.4f}</strong> | Topic Intent: <code>{doc['intent']}</code>
-                        </p>
+                        <summary>Document details</summary>
+                        <p class="orca-provenance">ID <code>{doc['id']}</code> · source <code>{html.escape(src_file)}</code> · cosine {score:.4f} · intent <code>{doc['intent']}</code></p>
                     </details>
                 </div>
                 """
@@ -413,12 +369,8 @@ with tab_search:
                         else:
                             st.caption("No overlapping subword features found.")
 
-                st.markdown("---")
-
             # Feedback mechanism
-            render_html(
-                "<p style='font-size:0.85rem;color:#5e5d59;margin-bottom:0.5rem;'>Was this answer helpful for your inquiry?</p>"
-            )
+            render_html("<p class='orca-section-note'>Was the top answer helpful?</p>")
             fb_col1, fb_col2, _ = st.columns([1, 1, 6])
             with fb_col1:
                 vote_yes = st.button("Helpful", key="fb_yes")
@@ -461,13 +413,9 @@ with tab_search:
         # FIRST-USE EMPTY STATE: Dynamic 7-Domain Bento Grid with Chromatic Cards (Fixes BE-2)
         render_html(
             f"""
-            <div style="margin: 1.5rem 0 0.5rem 0;">
-                <div style="font-family: Georgia, 'Times New Roman', serif; font-size: 1.3rem; font-weight: 600; color: #141413; margin-bottom: 0.35rem;">
-                    Topic Directory & Contact Points
-                </div>
-                <p style="font-size: 0.925rem; color: #5e5d59; margin-bottom: 1.25rem;">
-                    The corpus indexes {len(documents)} synthetic documents across {len(DOMAIN_PALETTE)} topics. Each card names the contact point the corpus gives for that topic:
-                </p>
+            <div>
+                <h2 class="orca-section-title">Topic Directory & Contact Points</h2>
+                <p class="orca-section-note">{len(documents)} documents across {len(DOMAIN_PALETTE)} topics, with the contact the corpus names for each.</p>
             </div>
             """
         )
@@ -476,22 +424,13 @@ with tab_search:
         cards_html = []
         for item in domain_catalog:
             c_html = f"""
-            <div class="orca-directory-card domain-{item['intent']}">
+            <div class="orca-directory-card">
                 <div>
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
-                        <span class="orca-directory-office" style="color:{item['color']};">
-                            {item['office_name']}
-                        </span>
-                        <span style="font-size:0.75rem; background:{item['bg_badge']}; color:{item['text_badge']}; border:1px solid {item['border']}; padding:0.1rem 0.45rem; border-radius:4px; font-weight:600;">
-                            {item['total_count']} docs
-                        </span>
-                    </div>
+                    <div class="orca-directory-office">{item['office_name']}</div>
                     <div class="orca-directory-title">{item['title']}</div>
                     <div class="orca-directory-desc">{item['desc']}</div>
                 </div>
-                <div class="orca-directory-footer">
-                    <span>{item['faq_count']} FAQs · {item['notice_count']} Notices</span>
-                </div>
+                <div class="orca-directory-footer">{item['faq_count']} FAQs · {item['notice_count']} notices</div>
             </div>
             """
             cards_html.append(clean_html(c_html))
@@ -501,13 +440,9 @@ with tab_search:
 
         render_html(
             """
-            <div style="margin: 2rem 0 0.75rem 0; border-top: 1px solid #e8e6dc; padding-top: 1.25rem;">
-                <div style="font-family: Georgia, 'Times New Roman', serif; font-size: 1.15rem; font-weight: 600; color: #141413; margin-bottom: 0.25rem;">
-                    Recent Campus Notices
-                </div>
-                <p style="font-size: 0.875rem; color: #5e5d59; margin-bottom: 1rem;">
-                    The three most recent notices in the corpus, by publication date:
-                </p>
+            <div>
+                <h2 class="orca-section-title">Recent Campus Notices</h2>
+                <p class="orca-section-note">The three latest notices in the corpus.</p>
             </div>
             """
         )
@@ -520,21 +455,16 @@ with tab_search:
         for notice in recent_notices[:3]:
             d_date = notice_dates.get(notice["id"], "")
             date_part = f" · Published {d_date}" if d_date else ""
-            excerpt = notice["answer"][:170] + ("..." if len(notice["answer"]) > 170 else "")
+            text = notice["answer"]
+            excerpt = text if len(text) <= 120 else text[:120].rsplit(" ", 1)[0] + "…"
             render_html(
                 f"""
-                <div class="orca-notice-card domain-{notice['intent']}">
-                    <div class="orca-meta-row" style="margin-bottom:0.25rem;">
-                        <span class="orca-badge orca-badge-notice">Notice{date_part}</span>
-                        <span style="font-size:0.75rem; color:#87867f;">Record ID: <code>{notice['id']}</code></span>
-                        <span style="font-size:0.75rem; color:#87867f; margin-left:auto;">Domain: <code>{notice['intent']}</code></span>
+                <div class="orca-notice-card">
+                    <div class="orca-meta-row">
+                        <span class="orca-badge orca-badge-notice">Notice (notices.json){date_part}</span>
                     </div>
-                    <div style="font-family:Georgia, serif; font-weight:600; font-size:0.95rem; color:#141413; margin-bottom:0.25rem;">
-                        {html.escape(notice['question'])}
-                    </div>
-                    <div style="font-size:0.875rem; color:#5e5d59; line-height:1.5;">
-                        {html.escape(excerpt)}
-                    </div>
+                    <div class="orca-notice-title">{html.escape(notice['question'])}</div>
+                    <div class="orca-notice-text">{html.escape(excerpt)}</div>
                 </div>
                 """
             )
@@ -544,14 +474,10 @@ with tab_eval:
     n_bench = kpis["total_queries"] if kpis["total_queries"] is not None else "n/a"
     render_html(
         f"""
-        <div style="margin-bottom:1.25rem; border-bottom:1px solid #e8e6dc; padding-bottom:1rem;">
-            <h2 style="font-family:Georgia, serif; font-size:1.6rem; font-weight:600; color:#141413; margin-bottom:0.25rem;">
-                Benchmark Evaluation & Operational Business Dashboard
-            </h2>
-            <p style="font-size:0.95rem; color:#5e5d59; margin-bottom:0;">
-                Measured on the course's {n_bench} benchmark queries and {len(documents)} corpus documents
-                (read from <code>experiments/results/midterm-sample/</code> and <code>experiments/results/business/</code>).
-            </p>
+        <div class="orca-title-row">
+            <h2 class="orca-dash-title">Benchmark Evaluation & Operational Business Dashboard</h2>
+            <p class="orca-subtitle">Measured on the course's {n_bench} benchmark queries and {len(documents)} corpus documents
+            (read from <code>experiments/results/midterm-sample/</code> and <code>experiments/results/business/</code>).</p>
         </div>
         """
     )
@@ -603,7 +529,7 @@ with tab_eval:
             "The thresholds were chosen on the benchmark above, so the benchmark OOC rate is optimistic."
         )
     render_html(
-        f"<p style='font-size:0.85rem; color:#5e5d59; margin:0.5rem 0 0;'>{dev_text}</p>"
+        f"<p class='orca-section-note' style='margin-top:0.5rem;'>{dev_text}</p>"
     )
 
     st.markdown("---")

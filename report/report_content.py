@@ -259,8 +259,8 @@ BLOCKS = [
           "a sample and presses Enter. Figure {fig:flow1}(a) shows the typical case: a banner with the predicted "
           "intent, its confidence and the matching office, then three answer cards. Each card states its source "
           "file (faq.json, or notices.json with the publication date), a match label derived from the cosine (Strong ≥ "
-          "0.35, Possible 0.22–0.35, Weak < 0.22, shown as text and icon, not colour alone), a score bar and the "
-          "full answer with the query terms highlighted. *Helpful* and *Needs clarification* buttons store a "
+          "0.35, Possible 0.22–0.35, Weak < 0.22, shown in words, not colour alone), a cosine bar and the "
+          "full answer with the query terms in bold. *Helpful* and *Needs clarification* buttons store a "
           "vote in a local file."),
     ("p", "When the gate refuses (Figure {fig:flow1}(b)), the application shows the refusal banner required by "
           "the assignment, states which gate failed with the measured values (here the cosine 0.39 passed and the "

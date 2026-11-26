@@ -163,13 +163,8 @@ def match_label(score: float) -> str:
 
 
 def match_badge(score: float) -> str:
-    """Return accessible badge with both geometric icon and textual label (WCAG 2.2 SC 1.4.1)."""
-    label = match_label(score)
-    if label == "Strong match":
-        return f"🟢 {label}"
-    if label == "Possible match":
-        return f"🟡 {label}"
-    return f"⚪ {label}"
+    """Return the badge text: the match label in words, so colour is never the only cue (WCAG 2.2 SC 1.4.1)."""
+    return match_label(score)
 
 
 def office_for_intent(intent: str) -> dict[str, str]:
@@ -242,16 +237,41 @@ def table_html(df: Any, caption: str = "Data Table") -> str:
     scrolls horizontally so a wide table never spills into a neighbouring column.
     Cell values and the caption are HTML-escaped.
     """
-    # "total_queries" -> "total queries" so long headers can wrap instead of widening the table.
-    df = df.rename(columns=lambda name: str(name).replace("_", " "))
+    import pandas as pd
+
+    # "total_queries" -> "Total queries" so long headers can wrap instead of widening the table.
+    df = df.rename(columns=lambda name: (lambda t: t[:1].upper() + t[1:])(str(name).replace("_", " ")))
+    numeric = [pd.api.types.is_numeric_dtype(df[col]) and not pd.api.types.is_bool_dtype(df[col]) for col in df.columns]
+
+    # One fixed number of decimals per float column (0 to 4), so digits line up down the column.
+    formatters = {}
+    for col, is_num in zip(df.columns, numeric):
+        if is_num and pd.api.types.is_float_dtype(df[col]):
+            places = max((len(_format_cell_number(v).partition(".")[2]) for v in df[col].dropna()), default=0)
+            formatters[col] = lambda v, p=places: f"{v:,.{p}f}"
     raw = df.to_html(
         index=False,
         classes="orca-table",
         border=0,
         na_rep="—",
+        formatters=formatters,
         float_format=_format_cell_number,
         escape=True,
     )
+
+    # Right-align numeric columns (header and cells) by position.
+    def mark(row_html: str, tag: str) -> str:
+        cells = re.split(rf"(<{tag}[^>]*>)", row_html)
+        out, index = [], -1
+        for piece in cells:
+            if re.fullmatch(rf"<{tag}[^>]*>", piece):
+                index += 1
+                if index < len(numeric) and numeric[index]:
+                    piece = piece.replace(f"<{tag}", f'<{tag} class="num"', 1)
+            out.append(piece)
+        return "".join(out)
+
+    raw = re.sub(r"<tr[^>]*>.*?</tr>", lambda m: mark(mark(m.group(0), "th"), "td"), raw, flags=re.S)
     open_end = raw.index(">", raw.index("<table")) + 1
     opening = '<table role="table" class="dataframe orca-table">'
     caption_html = f'<caption class="orca-table-caption">{html.escape(caption)}</caption>'

@@ -38,10 +38,12 @@ def test_match_label_calibration():
     assert match_label(0.0) == "Weak match"
 
 
-def test_match_badge_has_icon_and_label():
-    assert "🟢" in match_badge(0.40) and "Strong match" in match_badge(0.40)
-    assert "🟡" in match_badge(0.28) and "Possible match" in match_badge(0.28)
-    assert "⚪" in match_badge(0.18) and "Weak match" in match_badge(0.18)
+def test_match_badge_states_the_label_in_words_without_emoji():
+    assert match_badge(0.40) == "Strong match"
+    assert match_badge(0.28) == "Possible match"
+    assert match_badge(0.18) == "Weak match"
+    for score in (0.40, 0.28, 0.18):
+        assert all(ord(ch) < 0x2000 for ch in match_badge(score))
 
 
 def test_office_for_all_seven_intents():
@@ -308,5 +310,9 @@ def test_table_html_has_no_stray_attribute_text_and_formats_cells():
     assert re.search(r'<table [^>]*><caption class="orca-table-caption">Ablation &amp; gates</caption>', markup)
     assert markup.count("<table") == 1 and markup.startswith('<div class="orca-table-wrap">')
     assert "NaN" not in markup and "—" in markup
-    assert ">0.8667<" in markup and ">10<" in markup and ">0.15<" in markup
+    # One fixed number of decimals per column, so digits line up: 0.8667 and 10.0000.
+    assert ">0.8667<" in markup and ">10.0000<" in markup and ">0.15<" in markup
     assert "<b>" not in markup and "dual &lt;b&gt;" in markup
+    # Numeric columns are right-aligned, header and cells; the text column is not.
+    assert '<th class="num"' in markup and '<td class="num">0.8667</td>' in markup
+    assert "<td>no_gate</td>" in markup and ">Rule</th>" in markup

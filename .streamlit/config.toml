@@ -1,10 +1,14 @@
 [theme]
 base = "light"
-primaryColor = "#c96442"
-backgroundColor = "#f5f4ed"
-secondaryBackgroundColor = "#e8e6dc"
-textColor = "#141413"
-font = "serif"
+# Achromatic ledger: near-black primary action, neutral ground, one sans face (bundled, works offline)
+primaryColor = "#141414"
+backgroundColor = "#f8f8f8"
+secondaryBackgroundColor = "#eeeeee"
+textColor = "#0a0a0a"
+font = "sans serif"
+
+[client]
+toolbarMode = "minimal"
 
 [server]
 headless = true
