@@ -12,6 +12,7 @@ from starter.ui_helpers import (
     highlight_matched_terms_html,
     is_non_english_query,
     load_dashboard_kpis,
+    load_dev_split_summary,
     load_notice_dates,
     match_badge,
     match_label,
@@ -244,6 +245,19 @@ def test_load_dashboard_kpis_reads_the_files(tmp_path):
 
 def test_load_dashboard_kpis_without_files(tmp_path):
     assert all(value is None for value in load_dashboard_kpis(tmp_path).values())
+
+
+def test_load_dev_split_summary_matches_committed_results():
+    dev = load_dev_split_summary()
+    assert dev is not None
+    assert (dev["e2e_count"], dev["total_queries"]) == (111, 146)
+    assert (dev["ooc_refused"], dev["ooc_queries"]) == (12, 20)
+    assert (dev["paraphrase_hit1"], dev["paraphrase_queries"]) == (5, 28)
+    assert dev["balanced_e2e"] == pytest.approx(0.659, abs=0.001)
+
+
+def test_load_dev_split_summary_without_file(tmp_path):
+    assert load_dev_split_summary(tmp_path) is None
 
 
 def test_record_feedback_appends_json_lines(tmp_path):

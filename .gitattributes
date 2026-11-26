@@ -1,0 +1,8 @@
+# Files left out of `git archive`, and so out of code/ in the submission zip
+# (scripts/package_submission.ps1). They stay in the GitHub repository.
+#
+# The post-midterm IEEE paper is superseded by the final report
+# (report/61FIT3AIN-TUT02_G07_P12_report.docx): it quotes benchmark-only numbers
+# and no development-split results, so it must not ship as a second report.
+report/report.pdf export-ignore
+report/ieee_report.html export-ignore

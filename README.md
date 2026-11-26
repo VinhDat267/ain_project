@@ -57,8 +57,8 @@ docker compose up --build
 
 ## Bản midterm tích hợp từ tài liệu của nhóm
 
-Phần code mẫu ở mục 12 của `Project12_Nghien_cuu_thuat_toan.md` đã được ghép
-vào cấu trúc module hiện có:
+Phần code mẫu ở mục 12 của `Project12_Nghien_cuu_thuat_toan.md` (tài liệu nghiên cứu
+nội bộ của nhóm, **không nằm trong repo**) đã được ghép vào cấu trúc module hiện có:
 
 - Retrieval: **TF-IDF char_wb 3–5, sublinear TF, L2 + cosine**, tự viết bằng numpy;
   được đối chiếu điểm số với scikit-learn.
@@ -84,6 +84,10 @@ slide và MRR@10 của bộ thí nghiệm cũ. Toàn bộ các bài thực nghi�
 - `experiments/noise_curve.py` (E3b): Đo lường suy thoái nhiễu chính tả 0..3 lỗi gõ, lưu tại `experiments/results/dev/noise_curve.csv` và hình vẽ `experiments/results/figures/noise_curve.png`.
 - `experiments/intent_cv.py` (E5b): 5-fold Stratified Cross-Validation cho 9 mô hình phân loại intent, lưu tại `experiments/results/dev/intent_cv.csv`.
 - `experiments/run_ablation.py`: Chạy đầy đủ các nhóm E0, E1, E2, E3 (char_wb), E4 (hybrid) và E7 (BM25).
+- `experiments/slide_comparisons.py`: Tính lại bảng 8 phương pháp truy hồi ở slide 6 (kể cả BM25 và LSA)
+  và bảng 5 mô hình intent ở slide 7 — hai bảng vốn chép từ tài liệu nghiên cứu nói trên. Slide 7 khớp
+  cả 5 dòng; slide 6 khớp Hit@1 paraphrase ở mọi dòng, full MRR lệch tối đa 0,005 (LSA). Kết quả ở
+  `experiments/results/midterm-sample/slide6_comparison.csv` và `slide7_intent_comparison.csv`.
 
 Chi tiết cấu hình và thay đổi API tương thích: [notes/midterm_integration.md](notes/midterm_integration.md).
 
@@ -93,7 +97,11 @@ Slide đã rà soát: [HTML tiếng Việt](presentation/presentation.html),
 [PDF tiếng Anh](presentation/presentation_en.pdf).
 Xem [cách xuất PDF và nguồn số liệu](presentation/README.md), [lời dẫn thuyết trình 10 phút](presentation/speaker_notes_vi_10min.md), cùng [kịch bản live demo 90s](presentation/LIVE_DEMO.md) ([danh sách câu hỏi demo](presentation/demo_queries.txt)).
 
-Bài báo nghiên cứu chuẩn IEEE: [Bản PDF](report/report.pdf) · [Bản nguồn HTML](report/ieee_report.html) · [README](report/README.md).
+Bài báo IEEE viết sau giữa kỳ ([Bản PDF](report/report.pdf) · [Bản nguồn HTML](report/ieee_report.html) ·
+[README](report/README.md)) **đã được thay thế** bởi báo cáo cuối kỳ
+`report/61FIT3AIN-TUT02_G07_P12_report.docx`. Bài này chỉ có số trên benchmark (ví dụ 100% OOC) mà
+không có kết quả tập dev, nên không dùng để trích số; hai file PDF/HTML của nó không được đưa vào gói nộp
+(xem `.gitattributes`).
 
 ## Tái lập số liệu của báo cáo cuối kỳ
 
@@ -103,7 +111,7 @@ Repo GitHub: <https://github.com/VinhDat267/ain_project>. Cần Python 3.11; tr�
 ```bash
 python3.11 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
-.venv/bin/python -m pytest -q                         # 133 passed, 2 deselected
+.venv/bin/python -m pytest -q                         # 137 passed, 2 deselected
 .venv/bin/python -m streamlit run starter/app.py      # 1 lệnh chạy ứng dụng
 .venv/bin/python scripts/evaluate.py                  # Bảng 3 và 5 (benchmark 120 câu)
 .venv/bin/python scripts/evaluate.py --split dev      # Bảng 3 và 5 (tập dev 146 câu)
@@ -113,6 +121,7 @@ python3.11 -m venv .venv
 .venv/bin/python experiments/noise_curve.py           # đường cong lỗi chính tả, mục 4.3
 .venv/bin/python experiments/scenarios.py             # Bảng 6 (14 kịch bản)
 .venv/bin/python experiments/business_metrics.py      # top-3 trả đúng 101/105
+.venv/bin/python experiments/slide_comparisons.py     # bảng so sánh ở slide 6 và 7 giữa kỳ
 ```
 
 Batch `--split test --final` đã chạy một lần và ghi `experiments/results/test/LOCK`; muốn chạy lại phải thêm
@@ -127,8 +136,8 @@ Batch `--split test --final` đã chạy một lần và ghi `experiments/result
 | `webapp/` | Ứng dụng web độc lập: backend FastAPI (`webapp/backend/`) và giao diện React/TypeScript (`webapp/frontend/`), đóng gói qua `Dockerfile` và `docker-compose.yml` |
 | `experiments/` | Script đánh giá và thí nghiệm (E0–E7, E3b, E5b), tập câu hỏi dev (146 câu), kết quả và biểu đồ |
 | `data/` | Kho tài liệu (84 FAQ, 28 thông báo) và 120 câu hỏi đánh giá của môn học, giữ nguyên bản gốc |
-| `report/` | Bộ sinh báo cáo cuối kỳ Word theo template chính thức (`build_final_report.py`, `report_content.py`, `finalize_report.ps1`) và bài báo chuẩn IEEE (`ieee_report.html`, `report.pdf`) |
-| `tests/` | Kiểm thử tự động (133 active unit & integration tests, 2 deselected sanity stub tests) |
+| `report/` | Bộ sinh báo cáo cuối kỳ Word theo template chính thức (`build_final_report.py`, `report_content.py`, `finalize_report.ps1`) và bài báo IEEE cũ đã được thay thế (`ieee_report.html`, `report.pdf`, không có trong gói nộp) |
+| `tests/` | Kiểm thử tự động (137 active unit & integration tests, 2 deselected sanity stub tests) |
 | `notes/` | Tính tay (TF-IDF & Naive Bayes), phân tích lỗi, phân tích kho dữ liệu, quy trình chọn cấu hình, ngân hàng câu hỏi vấn đáp |
 | `scripts/` | Sinh dữ liệu của môn học, `evaluate.py` tái lập code mẫu midterm và `run_webapp.ps1` |
 

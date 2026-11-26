@@ -35,7 +35,12 @@ Chạy từ gốc repo:
   intent-only và hai cổng. Tương ứng 95, 96, 108, 108 câu đúng trên 120.
 - `config.json`: cấu hình, phiên bản thư viện, commit nguồn và hash mã nguồn.
 - Các bảng so sánh lịch sử trên slide 6–7 được ghi nguồn là tài liệu nghiên cứu
-  của nhóm. Script hiện tại tái lập cấu hình mẫu đã chọn và bảng ablation.
+  của nhóm (`Project12_Nghien_cuu_thuat_toan.md`, không nằm trong repo). Từ cuối kỳ,
+  `python experiments/slide_comparisons.py` tính lại cả hai bảng từ code của repo và ghi
+  `slide6_comparison.csv`, `slide7_intent_comparison.csv` vào `experiments/results/midterm-sample/`.
+  Slide 7: 5/5 dòng khớp. Slide 6: Hit@1 paraphrase khớp cả 8 dòng; full MRR khớp 5 dòng,
+  hybrid và "bỏ stopword + sublinear" lệch 0,001, LSA lệch 0,005 (SVD ngẫu nhiên). Tài liệu
+  gốc không ghi đủ tham số, nên cột `settings` ghi tham số gần nhất mà nhóm tìm lại được.
 
 Mức 90% là kết quả cấu hình cố định trên benchmark đã được xem, không gắn nhãn
 cross-validation. 35 câu normal trùng câu hỏi trong train. 231 mẫu train được

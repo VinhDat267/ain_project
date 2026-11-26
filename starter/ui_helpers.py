@@ -149,7 +149,7 @@ DOMAIN_PALETTE: dict[str, dict[str, str]] = {
 
 
 def match_label(score: float) -> str:
-    """Return calibrated match quality label based on empirical cosine distributions.
+    """Return a match-quality label from cosine cut-offs chosen on the benchmark's cosine distribution.
 
     - score >= 0.35: Strong match (contains 89.5% of Hit@1==1 queries).
     - 0.22 <= score < 0.35: Possible match (covers low-overlap paraphrases and boundary questions).
@@ -395,6 +395,34 @@ def load_dashboard_kpis(results_dir: str | Path | None = None) -> dict[str, Any]
             pass
 
     return kpis
+
+
+def load_dev_split_summary(results_dir: str | Path | None = None) -> dict[str, Any] | None:
+    """Read the held-out dev-split check written by ``scripts/evaluate.py --split dev``.
+
+    Returns ``None`` when ``final-dev/summary.csv`` is missing or malformed, so the
+    dashboard can say the file is absent instead of showing a stale number.
+    """
+    import pandas as pd
+
+    base = Path(results_dir) if results_dir else PROJECT_ROOT / "experiments" / "results"
+    summary_file = base / "final-dev" / "summary.csv"
+    if not summary_file.exists():
+        return None
+    try:
+        rows = pd.read_csv(summary_file).set_index("type")
+        all_rows, ooc, para = rows.loc["all"], rows.loc["out_of_corpus"], rows.loc["paraphrase"]
+        return {
+            "total_queries": int(all_rows["n"]),
+            "e2e_count": int(all_rows["e2e_count"]),
+            "balanced_e2e": float(all_rows["balanced_e2e"]),
+            "ooc_queries": int(ooc["n"]),
+            "ooc_refused": int(ooc["e2e_count"]),
+            "paraphrase_queries": int(para["n"]),
+            "paraphrase_hit1": int(para["hit1_count"]),
+        }
+    except (OSError, KeyError, ValueError):
+        return None
 
 
 def record_feedback(query: str, doc_id: str, helpful: bool, log_path: str | Path | None = None) -> Path:

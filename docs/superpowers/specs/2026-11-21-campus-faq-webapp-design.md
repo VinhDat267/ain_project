@@ -7,7 +7,7 @@ UI Language: English (with bilingual advisory when Vietnamese input is detected)
 ## 1. Intent, Goals, Non-Goals, and Anti-Goals
 
 ### Intent
-Package **Project 12: HANU Campus Notice & FAQ Assistant** into a standalone, production-ready web application running cleanly alongside [starter/app.py](file:///d:/Môn%20Học/AIN/ProjectAIN/starter/app.py) on port `8000` (local one-command launcher and multi-stage Docker container), preserving classical IR/NLP fidelity with zero LLM/API dependencies and 100% offline classroom capability.
+Package **Project 12: HANU Campus Notice & FAQ Assistant** into a standalone, production-ready web application running cleanly alongside [starter/app.py](../../../starter/app.py) on port `8000` (local one-command launcher and multi-stage Docker container), preserving classical IR/NLP fidelity with zero LLM/API dependencies and 100% offline classroom capability.
 
 ### Goals
 1. **Multi-Turn Conversational Q&A (`Assistant` view):** Student-first Q&A flow with `localStorage` session history, 8 representative starter prompts across all 4 query types (`normal`, `paraphrase`, `typo`, `out_of_corpus`), match-quality calibration (`Strong match` / `Possible match` / `Weak match`), safe keyword highlighting, attested contact routing (`OFFICE_REGISTRY`, strictly suppressed when abstained), helpfulness votes logged to `output/feedback/feedback.jsonl`, and Vietnamese input advisory.

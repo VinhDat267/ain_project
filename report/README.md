@@ -1,5 +1,13 @@
 # IEEE Conference Research Paper — Project 12
 
+> **Đã được thay thế.** Báo cáo chính thức là `61FIT3AIN-TUT02_G07_P12_report.docx`
+> (dựng bằng `build_final_report.py` + `finalize_report.ps1`). Bài IEEE dưới đây viết sau
+> giữa kỳ và chỉ có số trên benchmark 120 câu mà nhóm đã xem khi phát triển. Các khẳng định
+> "100% OOC rejection" và "Zero-Hallucination" không đứng vững trên tập dev 146 câu: hai cổng
+> chỉ từ chối 12/20 câu OOC, và Hit@1 paraphrase là 5/28 (mục 5 của báo cáo cuối kỳ). Xác suất
+> intent cũng chưa được hiệu chuẩn. `report.pdf` và `ieee_report.html` không được đưa vào gói nộp
+> (`.gitattributes`, `export-ignore`).
+
 Tài liệu báo cáo khoa học hoàn chỉnh theo chuẩn định dạng hội nghị quốc tế IEEE (2 cột, chuẩn font Times New Roman, công thức toán học MathML thuần chạy offline, bảng biểu đối chiếu thực nghiệm E0–E7, E3b, E5b, và các hình đồ thị trực quan).
 
 ## Các phiên bản tài liệu
