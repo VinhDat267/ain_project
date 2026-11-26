@@ -68,7 +68,7 @@ export function DualGateChart({
             return (
               <g key={tick}>
                 <line x1={margin.left} y1={y} x2={W - margin.right} y2={y} stroke="#dbe2e6" strokeDasharray={tick === 0 ? undefined : '4 4'} />
-                <text x={margin.left - 8} y={y + 4} textAnchor="end" fontSize="11" fill="#5d6b72" fontFamily="var(--font-mono)">
+                <text x={margin.left - 8} y={y + 4} textAnchor="end" fontSize="11" fill="#5d6b72" fontFamily="var(--font-text)">
                   {Math.round(tick * 100)}%
                 </text>
               </g>
@@ -95,11 +95,11 @@ export function DualGateChart({
                 style={{ cursor: 'pointer' }}
               >
                 <rect x={x1} y={y1} width={barW} height={h1} rx={3} fill="#0d7480" />
-                <text x={x1 + barW / 2} y={y1 - 6} textAnchor="middle" fontSize="11" fill="#1f3038" fontFamily="var(--font-mono)">
+                <text x={x1 + barW / 2} y={y1 - 6} textAnchor="middle" fontSize="11" fill="#1f3038" fontFamily="var(--font-text)">
                   {(e2e * 100).toFixed(1)}%
                 </text>
                 <rect x={x2} y={y2} width={barW} height={h2} rx={3} fill="#1f3038" />
-                <text x={x2 + barW / 2} y={y2 - 6} textAnchor="middle" fontSize="11" fill="#1f3038" fontFamily="var(--font-mono)">
+                <text x={x2 + barW / 2} y={y2 - 6} textAnchor="middle" fontSize="11" fill="#1f3038" fontFamily="var(--font-text)">
                   {Math.round(ooc * 100)}%
                 </text>
                 <text x={cx} y={H - 18} textAnchor="middle" fontSize="12" fill="#1f3038">
@@ -202,7 +202,7 @@ export function ConfusionMatrixChart({ data }: { data: ConfusionMatrixData | nul
                       textAnchor="middle"
                       fontSize="13"
                       fontWeight={val > 0 ? 500 : 400}
-                      fontFamily="var(--font-mono)"
+                      fontFamily="var(--font-text)"
                       fill={textFill}
                     >
                       {val}
@@ -271,7 +271,7 @@ export function IntentCvChart({ rows }: { rows: AnalyticsPayload['intent_cv'] })
           return (
             <g key={tick}>
               <line x1={x} y1={margin.top} x2={x} y2={H - margin.bottom} stroke="#dbe2e6" strokeDasharray="4 4" />
-              <text x={x} y={H - 12} textAnchor="middle" fontSize="11" fill="#5d6b72" fontFamily="var(--font-mono)">
+              <text x={x} y={H - 12} textAnchor="middle" fontSize="11" fill="#5d6b72" fontFamily="var(--font-text)">
                 {Math.round(tick * 100)}%
               </text>
             </g>
@@ -293,7 +293,7 @@ export function IntentCvChart({ rows }: { rows: AnalyticsPayload['intent_cv'] })
                 textAnchor="end"
                 fontSize="12"
                 fontWeight={isBest ? 600 : 400}
-                fontFamily="var(--font-mono)"
+                fontFamily="var(--font-text)"
                 fill={isBest ? '#0d7480' : '#1f3038'}
               >
                 {row.model}
@@ -308,7 +308,7 @@ export function IntentCvChart({ rows }: { rows: AnalyticsPayload['intent_cv'] })
                 y={cy + 4}
                 textAnchor="end"
                 fontSize="11"
-                fontFamily="var(--font-mono)"
+                fontFamily="var(--font-text)"
                 fill={isBest ? '#0d7480' : '#5d6b72'}
               >
                 {(row.acc_mean * 100).toFixed(1)}% ± {(row.acc_std * 100).toFixed(1)}
@@ -368,7 +368,7 @@ export function NoiseCurveChart({ rows }: { rows: AnalyticsPayload['noise_curve'
             return (
               <g key={tick}>
                 <line x1={margin.left} y1={y} x2={W - margin.right} y2={y} stroke="#dbe2e6" strokeDasharray="4 4" />
-                <text x={margin.left - 8} y={y + 4} textAnchor="end" fontSize="11" fill="#5d6b72" fontFamily="var(--font-mono)">
+                <text x={margin.left - 8} y={y + 4} textAnchor="end" fontSize="11" fill="#5d6b72" fontFamily="var(--font-text)">
                   {Math.round(tick * 100)}%
                 </text>
               </g>
@@ -381,7 +381,7 @@ export function NoiseCurveChart({ rows }: { rows: AnalyticsPayload['noise_curve'
             return (
               <g key={k} style={{ cursor: 'pointer' }} tabIndex={0} onClick={() => setSelectedK(k)} onFocus={() => setSelectedK(k)} onMouseEnter={() => setSelectedK(k)}>
                 <line x1={x} y1={margin.top} x2={x} y2={H - margin.bottom} stroke={active ? '#0d7480' : '#ecf0f2'} strokeWidth={active ? 2 : 1} />
-                <text x={x} y={H - 16} textAnchor="middle" fontSize="12" fontFamily="var(--font-mono)" fill={active ? '#0d7480' : '#1f3038'}>
+                <text x={x} y={H - 16} textAnchor="middle" fontSize="12" fontFamily="var(--font-text)" fill={active ? '#0d7480' : '#1f3038'}>
                   k={k} swaps
                 </text>
               </g>
@@ -469,7 +469,7 @@ export function ThresholdSweepChart({
             return (
               <g key={tick}>
                 <line x1={margin.left} y1={y} x2={W - margin.right} y2={y} stroke="#dbe2e6" strokeDasharray="4 4" />
-                <text x={margin.left - 8} y={y + 4} textAnchor="end" fontSize="11" fill="#5d6b72" fontFamily="var(--font-mono)">
+                <text x={margin.left - 8} y={y + 4} textAnchor="end" fontSize="11" fill="#5d6b72" fontFamily="var(--font-text)">
                   {Math.round(tick * 100)}%
                 </text>
               </g>
@@ -484,7 +484,7 @@ export function ThresholdSweepChart({
               textAnchor="middle"
               fontSize="11"
               fill="#5d6b72"
-              fontFamily="var(--font-mono)"
+              fontFamily="var(--font-text)"
             >
               {tick.toFixed(1)}
             </text>
@@ -495,7 +495,7 @@ export function ThresholdSweepChart({
             x={chosenX + 6}
             y={margin.top + plotH * 0.48}
             fontSize="11"
-            fontFamily="var(--font-mono)"
+            fontFamily="var(--font-text)"
             fill="#1f3038"
             style={{ paintOrder: 'stroke', stroke: '#ffffff', strokeWidth: 4, strokeLinejoin: 'round' }}
           >
@@ -553,7 +553,7 @@ export function CostSensitivityChart({ rows }: { rows: AnalyticsPayload['cost_se
           return (
             <g key={f}>
               <line x1={margin.left} y1={y} x2={W - margin.right} y2={y} stroke="#dbe2e6" strokeDasharray="4 4" />
-              <text x={margin.left - 8} y={y + 4} textAnchor="end" fontSize="11" fill="#5d6b72" fontFamily="var(--font-mono)">
+              <text x={margin.left - 8} y={y + 4} textAnchor="end" fontSize="11" fill="#5d6b72" fontFamily="var(--font-text)">
                 {Math.round(maxCost * f)}
               </text>
             </g>
@@ -574,10 +574,10 @@ export function CostSensitivityChart({ rows }: { rows: AnalyticsPayload['cost_se
                 rx={4}
                 fill={row.penalty_ratio === '5:1' ? '#0d7480' : '#3d515b'}
               />
-              <text x={cx} y={y - 6} textAnchor="middle" fontSize="11" fill="#1f3038" fontFamily="var(--font-mono)">
+              <text x={cx} y={y - 6} textAnchor="middle" fontSize="11" fill="#1f3038" fontFamily="var(--font-text)">
                 {row.cost_per_1000_queries.toFixed(0)}
               </text>
-              <text x={cx} y={H - 16} textAnchor="middle" fontSize="12" fill="#1f3038" fontFamily="var(--font-mono)">
+              <text x={cx} y={H - 16} textAnchor="middle" fontSize="12" fill="#1f3038" fontFamily="var(--font-text)">
                 {row.penalty_ratio}
               </text>
             </g>
@@ -628,12 +628,12 @@ export function PerIntentResolutionChart({
             const w3 = item.top3_rescue_rate * plotW
             return (
               <g key={item.segment_name}>
-                <text x={margin.left - 10} y={yBase + 16} textAnchor="end" fontSize="12" fontFamily="var(--font-mono)" fill="#1f3038">
+                <text x={margin.left - 10} y={yBase + 16} textAnchor="end" fontSize="12" fontFamily="var(--font-text)" fill="#1f3038">
                   {item.segment_name}
                 </text>
                 <rect x={margin.left} y={yBase} width={w1} height={9} rx={2} fill="#1f3038" />
                 <rect x={margin.left} y={yBase + 11} width={w3} height={9} rx={2} fill="#0d7480" />
-                <text x={W - 6} y={yBase + 17} textAnchor="end" fontSize="11" fontFamily="var(--font-mono)" fill="#1f3038">
+                <text x={W - 6} y={yBase + 17} textAnchor="end" fontSize="11" fontFamily="var(--font-text)" fill="#1f3038">
                   {(item.resolution_rate_top1 * 100).toFixed(0)}% / {(item.top3_rescue_rate * 100).toFixed(0)}%
                 </text>
               </g>

@@ -161,6 +161,9 @@ def test_analytics_matches_ground_truth(client: TestClient) -> None:
     assert kpis["raw_hit3"] == pytest.approx(0.9810, abs=1e-3)
     assert kpis["ooc_rejection_rate"] == pytest.approx(1.0, abs=1e-4)
     assert kpis["intent_correct"] == 102
+    dev = data["dev_split"]
+    assert (dev["ooc_refused"], dev["ooc_queries"]) == (12, 20)
+    assert (dev["e2e_count"], dev["total_queries"]) == (111, 146)
 
     cm = data["confusion_matrix"]
     assert cm["total"] == 105

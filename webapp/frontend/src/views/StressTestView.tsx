@@ -242,7 +242,7 @@ export function StressTestView({
             </div>
           </div>
 
-          <div className="table-wrapper" tabIndex={0} role="region" aria-label="Stress-test evaluation results">
+          <div className="table-wrapper table-wrapper--wide" tabIndex={0} role="region" aria-label="Stress-test evaluation results">
             <table className="data-table">
               <thead>
                 <tr>
@@ -250,8 +250,8 @@ export function StressTestView({
                   <th scope="col">Type</th>
                   <th scope="col">Query</th>
                   <th scope="col">Outcome</th>
-                  <th scope="col">Cosine</th>
-                  <th scope="col">Intent</th>
+                  <th scope="col" className="num">Cosine</th>
+                  <th scope="col" className="num">Intent</th>
                   <th scope="col">Top-1 / Expected</th>
                   <th scope="col">Action</th>
                 </tr>

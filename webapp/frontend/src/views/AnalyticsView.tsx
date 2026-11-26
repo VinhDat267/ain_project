@@ -103,6 +103,7 @@ export function AnalyticsView() {
       : null
 
   const expRows = data.dev_ablations[selectedExp] ?? []
+  const dev = data.dev_split ?? null
 
   return (
     <section aria-labelledby="analytics-heading">
@@ -142,7 +143,8 @@ export function AnalyticsView() {
           <div className="metric-cell__label">OOC Rejection</div>
           <div className="metric-cell__value num">{fmtPct(k.ooc_rejection_rate, 0)}</div>
           <div className="metric-cell__note">
-            {k.ooc_rejection_rate !== null ? Math.round(k.ooc_rejection_rate * oocN) : 'n/a'}/{oocN} dual gate
+            {k.ooc_rejection_rate !== null ? Math.round(k.ooc_rejection_rate * oocN) : 'n/a'}/{oocN} benchmark
+            {dev ? ` · ${dev.ooc_refused}/${dev.ooc_queries} dev` : ''}
           </div>
         </div>
 
@@ -160,6 +162,21 @@ export function AnalyticsView() {
           </div>
         </div>
       </div>
+
+      <p className="view-lead" style={{ margin: '12px 0 24px' }}>
+        {dev ? (
+          <>
+            <strong>Held-out dev split</strong> ({dev.total_queries} queries outside the benchmark): end-to-end{' '}
+            <span className="num">{dev.e2e_count}/{dev.total_queries}</span>, Balanced E2E{' '}
+            <span className="num">{dev.balanced_e2e.toFixed(3)}</span>, OOC refused{' '}
+            <span className="num">{dev.ooc_refused}/{dev.ooc_queries}</span>, paraphrase Hit@1{' '}
+            <span className="num">{dev.paraphrase_hit1}/{dev.paraphrase_queries}</span>. The thresholds were chosen on
+            the benchmark, so its OOC rate is optimistic.
+          </>
+        ) : (
+          'Held-out dev split: result file missing. Run python scripts/evaluate.py --split dev.'
+        )}
+      </p>
 
       <div className="tab-list" role="tablist" aria-label="Analytics sections" style={{ marginBottom: '20px' }}>
         {ANALYTICS_TABS.map((tab, idx) => {
@@ -207,11 +224,11 @@ export function AnalyticsView() {
                 <thead>
                   <tr>
                     <th scope="col">Subset</th>
-                    <th scope="col">N</th>
-                    <th scope="col">MRR</th>
-                    <th scope="col">Hit@1</th>
-                    <th scope="col">Intent Acc</th>
-                    <th scope="col">E2E Acc@1</th>
+                    <th scope="col" className="num">N</th>
+                    <th scope="col" className="num">MRR</th>
+                    <th scope="col" className="num">Hit@1</th>
+                    <th scope="col" className="num">Intent Acc</th>
+                    <th scope="col" className="num">E2E Acc@1</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -279,7 +296,7 @@ export function AnalyticsView() {
                     <th scope="col">Query</th>
                     <th scope="col">Expected intent</th>
                     <th scope="col">Predicted intent</th>
-                    <th scope="col">Posterior</th>
+                    <th scope="col" className="num">Posterior</th>
                   </tr>
                 </thead>
                 <tbody>

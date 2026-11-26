@@ -192,7 +192,18 @@ export interface ConfusionMatrixData {
   }>
 }
 
+export interface DevSplitSummary {
+  total_queries: number
+  e2e_count: number
+  balanced_e2e: number
+  ooc_queries: number
+  ooc_refused: number
+  paraphrase_queries: number
+  paraphrase_hit1: number
+}
+
 export interface AnalyticsPayload {
+  dev_split?: DevSplitSummary | null
   kpis: {
     mrr: number | null
     intent_accuracy: number | null

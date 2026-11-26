@@ -29,6 +29,7 @@ from starter.ui_helpers import (
     get_intent_ranking,
     is_non_english_query,
     load_dashboard_kpis,
+    load_dev_split_summary,
     load_notice_dates,
     match_label,
     office_for_intent,
@@ -565,6 +566,8 @@ def get_analytics_payload(results_dir: Path | None = None) -> dict[str, Any]:
 
     return {
         "kpis": kpis,
+        # The held-out check the report leads with (scripts/evaluate.py --split dev); None if missing.
+        "dev_split": _sanitize_value(load_dev_split_summary(base)),
         "manifest": manifest,
         "midterm_summary": _read_csv_records(base / "midterm-sample" / "summary.csv"),
         "dual_gate_ablation": _read_csv_records(base / "midterm-sample" / "ablation.csv"),

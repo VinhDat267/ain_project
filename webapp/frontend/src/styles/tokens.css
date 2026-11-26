@@ -31,8 +31,8 @@
   --accent-ink: var(--p-accent-ink);
   --action: var(--p-action);
   --action-ink: var(--p-action-ink);
-  --line: color-mix(in oklab, var(--ink) 11%, transparent);
-  --line-strong: color-mix(in oklab, var(--ink) 20%, transparent);
+  --line: #e4e7e8; /* the ink at 11% on white, as a solid colour */
+  --line-strong: #d2d6d8; /* the ink at 20% on white */
 
   /* Status tokens (strictly non-violet, WCAG AA contrast on light surface) */
   --ok: #047857;
@@ -49,11 +49,11 @@
   --info-line: #bfd3f8;
 
   /* Typography */
-  --font-display: "Funnel Display", system-ui, -apple-system, sans-serif;
+  --font-display: "Funnel Sans", system-ui, -apple-system, sans-serif; /* one family: headings in the text face */
   --font-text: "Funnel Sans", system-ui, -apple-system, sans-serif;
   --font-mono: "DM Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
-  --display-weight: 400;
-  --display-tracking: -0.03em;
+  --display-weight: 500;
+  --display-tracking: -0.02em;
   --display-tracking-xl: -0.04em;
   --ly-scale: 0.98;
 
